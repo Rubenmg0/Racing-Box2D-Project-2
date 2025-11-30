@@ -14,6 +14,9 @@
 #define METERS_TO_PIXELS(m) ((int) floor(PIXELS_PER_METER * m))
 #define PIXEL_TO_METERS(p)  ((float) METER_PER_PIXEL * p)
 
+#define carHeigh 100
+#define carWidth 50
+
 // Small class to return to other modules to track position and rotation of physics bodies
 class PhysBody
 {
@@ -53,6 +56,10 @@ public:
 	PhysBody* CreateRectangle(int x, int y, int width, int height);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height);
 	PhysBody* CreateChain(int x, int y, const int* points, int size);
+
+	PhysBody* CreateCar(int x, int y, int mass = 100);
+	b2Body* CreateWheels(int x, int y);
+
 	void DeleteBody(PhysBody* body);
 
 	// b2ContactListener ---

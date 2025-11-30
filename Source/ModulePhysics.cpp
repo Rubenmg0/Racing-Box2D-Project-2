@@ -26,27 +26,9 @@ bool ModulePhysics::Start()
 	world = new b2World(b2Vec2(GRAVITY_X, -GRAVITY_Y));
 	world->SetContactListener(this);
 
-	// needed to create joints like mouse joint
+	// Needed to create joints like mouse joint
 	b2BodyDef bd;
 	ground = world->CreateBody(&bd);
-
-	// big static circle as "ground" in the middle of the screen
-	int x = (int)(SCREEN_WIDTH / 2);
-	int y = (int)(SCREEN_HEIGHT / 1.5f);
-	int diameter = SCREEN_WIDTH / 2;
-
-	b2BodyDef body;
-	body.type = b2_staticBody;
-	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
-
-	b2Body* big_ball = world->CreateBody(&body);
-
-	b2CircleShape shape;
-	shape.m_radius = PIXEL_TO_METERS(diameter) * 0.5f;
-
-	b2FixtureDef fixture;
-	fixture.shape = &shape;
-	big_ball->CreateFixture(&fixture);
 
 	return true;
 }
@@ -210,6 +192,100 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size)
 	pbody->width = pbody->height = 0;
 
 	return pbody;
+}
+
+PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
+{
+	//Create PhysBody
+	PhysBody* pbody = new PhysBody();
+
+	//Create Chasis
+	b2BodyDef body;
+	body.type = b2_dynamicBody;
+	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+	body.userData.pointer = reinterpret_cast<uintptr_t>(pbody);
+
+	b2Body* chassis = world->CreateBody(&body);
+
+	b2PolygonShape box;
+	box.SetAsBox(PIXEL_TO_METERS(carWidth/2), PIXEL_TO_METERS(carHeigh/2));
+
+	b2FixtureDef fixture;
+	fixture.shape = &box;
+	fixture.density = mass/(carHeigh*carHeigh);
+	fixture.isSensor = false;
+
+	chassis->CreateFixture(&fixture);
+
+	//Physic Body variables
+	pbody->body = chassis;
+	pbody->width = carWidth;
+	pbody->height = carHeigh;
+
+
+	//Create Wheels
+	b2Vec2 flWheelPos = { (float)x - carWidth / 2, (float)y - carHeigh / 2 }; //Front Left
+	b2Vec2 frWheelPos = { (float)x + carWidth / 2, (float)y - carHeigh / 2 }; //Front Right
+	b2Vec2 blWheelPos = { (float)x - carWidth / 2, (float)y + carHeigh / 2 }; //Back Left
+	b2Vec2 brWheelPos = { (float)x + carWidth / 2, (float)y + carHeigh / 2 }; //Back Right
+
+	b2Body* flWheel = CreateWheels(flWheelPos.x, flWheelPos.y);
+	b2Body* frWheel = CreateWheels(frWheelPos.x, frWheelPos.y);
+	b2Body* blWheel = CreateWheels(blWheelPos.x, blWheelPos.y);
+	b2Body* brWheel = CreateWheels(brWheelPos.x, brWheelPos.y);
+
+	//Create Joints
+	b2RevoluteJointDef joint;
+	joint.bodyA = chassis;
+
+	//Frontal Wheels (can rotate)
+	joint.enableLimit = true;
+	joint.lowerAngle = - PI/4; //Radians (-45º aprox)
+	joint.upperAngle = PI / 4; //Radians (45º aprox)
+
+	joint.localAnchorA.Set(flWheelPos.x, flWheelPos.y);
+	joint.bodyB = flWheel;
+	b2RevoluteJoint* flWheelJoint = (b2RevoluteJoint*)world->CreateJoint(&joint);
+
+	joint.localAnchorA.Set(frWheelPos.x, frWheelPos.y);
+	joint.bodyB = frWheel;
+	b2RevoluteJoint* frWheelJoint = (b2RevoluteJoint*)world->CreateJoint(&joint);
+
+	//Back Wheels (cannot rotate)
+	joint.lowerAngle = 0;
+	joint.upperAngle = 0;
+
+	joint.localAnchorA.Set(blWheelPos.x, blWheelPos.y);
+	joint.bodyB = blWheel;
+	b2RevoluteJoint* blWheelJoint = (b2RevoluteJoint*)world->CreateJoint(&joint);
+
+	joint.localAnchorA.Set(brWheelPos.x, brWheelPos.y);
+	joint.bodyB = brWheel;
+	b2RevoluteJoint* brWheelJoint = (b2RevoluteJoint*)world->CreateJoint(&joint);
+
+	return pbody;
+}
+
+b2Body* ModulePhysics::CreateWheels(int x, int y)
+{
+	b2BodyDef body;
+	body.type = b2_staticBody;
+	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+
+	b2Body* b = world->CreateBody(&body);
+
+	b2PolygonShape box;
+	box.SetAsBox(PIXEL_TO_METERS(carWidth / 8), PIXEL_TO_METERS(carHeigh / 8));
+
+	b2FixtureDef fixture;
+	fixture.shape = &box;
+	fixture.density = 1.0f;
+	fixture.friction = 0.9f;
+	fixture.filter.groupIndex = -1; //Not collide
+
+	b->CreateFixture(&fixture);
+
+	return b;
 }
 
 void ModulePhysics::DeleteBody(PhysBody* body)

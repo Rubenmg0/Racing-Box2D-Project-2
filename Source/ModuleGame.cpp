@@ -65,11 +65,11 @@ private:
 
 };
 
-class Box : public PhysicEntity
+class Car : public PhysicEntity
 {
 public:
-	Box(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 50), _listener)
+	Car(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateCar(_x, _y), _listener)
 		, texture(_texture)
 	{
 
@@ -81,7 +81,7 @@ public:
 		body->GetPhysicPosition(x, y);
 		DrawTexturePro(texture, Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
 			Rectangle{ (float)x, (float)y, (float)texture.width, (float)texture.height },
-			Vector2{ (float)texture.width / 2.0f, (float)texture.height / 2.0f }, body->GetRotation() * RAD2DEG, WHITE);
+			Vector2{ (float)texture.width / 2.0f, (float)texture.height / 2.0f }, 90 + body->GetRotation() * RAD2DEG, WHITE);
 	}
 
 	int RayHit(vec2<int> ray, vec2<int> mouse, vec2<float>& normal) override
@@ -146,7 +146,7 @@ update_status ModuleGame::Update()
 
 	if (IsKeyPressed(KEY_TWO))
 	{
-		entities.emplace_back(new Box(App->physics, GetMouseX(), GetMouseY(), this, box));
+		entities.emplace_back(new Car(App->physics, GetMouseX(), GetMouseY(), this, box));
 	}
 
 
