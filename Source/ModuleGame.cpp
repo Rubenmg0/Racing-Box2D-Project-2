@@ -72,6 +72,21 @@ public:
 
 	void Update() override
 	{
+		body->wheels[0]->SetAngularVelocity(0);
+		body->wheels[1]->SetAngularVelocity(0);
+		
+		float friction = 0.85f;
+		
+		if (!IsKeyPressedRepeat(KEY_SPACE))
+		{
+			b2Dot(body->body->GetLinearVelocity(),b2Vec2_zero); //Canel Lateral Velocity
+		}
+
+		body->wheels[0]->SetLinearVelocity({(float)body->wheels[0]->GetLinearVelocity().x * friction,(float)body->wheels[0]->GetLinearVelocity().y * friction});
+		body->wheels[1]->SetLinearVelocity({(float)body->wheels[1]->GetLinearVelocity().x * friction,(float)body->wheels[1]->GetLinearVelocity().y * friction });
+
+
+
 		int x, y;
 		body->GetPhysicPosition(x, y);
 		DrawTexturePro(texture, Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
@@ -93,7 +108,7 @@ void ModuleGame::move()
 	// Si no tenemos coche, no hacemos nada
 	if (playerCar == nullptr) return;
 
-	float acceleration = 0.2f; 
+	float acceleration = 2.0f; 
 	float leftForce = 0.0f;
 	float rightForce = 0.0f;
 
@@ -109,12 +124,12 @@ void ModuleGame::move()
 	}
 
 	if (IsKeyDown(KEY_A) ) {
-		leftForce -= acceleration * 0.5f; // Frena rueda izquierda
-		rightForce += acceleration * 0.5f; // Acelera rueda derecha
+		playerCar->body->wheels[0]->SetAngularVelocity(-1);
+		playerCar->body->wheels[1]->SetAngularVelocity(-1);
 	}
 	if (IsKeyDown(KEY_D) ) {
-		leftForce += acceleration * 0.5f; // Acelera rueda izquierda
-		rightForce -= acceleration * 0.5f; // Frena rueda derecha
+		playerCar->body->wheels[0]->SetAngularVelocity(1);
+		playerCar->body->wheels[1]->SetAngularVelocity(1);
 	}
 
 	App->physics->ApplyForceToCar(playerCar->body, leftForce, rightForce);
