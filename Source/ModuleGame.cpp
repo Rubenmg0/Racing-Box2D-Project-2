@@ -9,7 +9,6 @@
 class PhysicEntity
 {
 protected:
-
 	PhysicEntity(PhysBody* _body, Module* _listener)
 		: body(_body)
 		, listener(_listener)
@@ -167,6 +166,7 @@ bool ModuleGame::Start()
 bool ModuleGame::CleanUp()
 {
 	LOG("Unloading Intro scene");
+
 
 	return true;
 }

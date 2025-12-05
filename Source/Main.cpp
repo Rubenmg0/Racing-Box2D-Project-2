@@ -82,6 +82,11 @@ int main(int argc, char ** argv)
 	}
 
 	delete App;
+	App = nullptr;
+	_CrtDumpMemoryLeaks();
+
 	LOG("Exiting game '%s'...\n", TITLE);
+	if (!_CrtDumpMemoryLeaks())
+		LOG("No memory leaks detected!");
 	return main_return;
 }
