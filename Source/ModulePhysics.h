@@ -23,6 +23,9 @@ class PhysBody
 public:
 	PhysBody() : listener(NULL), body(NULL)
 	{
+		// NUEVO: Inicializamos las ruedas a NULL por seguridad
+		for (int i = 0; i < 4; ++i) // <--- AÑADIR ESTO
+			wheels[i] = NULL;       
 	}
 
 	//void GetPosition(int& x, int& y) const;
@@ -35,6 +38,8 @@ public:
 	int width, height;
 	b2Body* body;
 	Module* listener;
+	b2Body* wheels[4];
+
 };
 
 
@@ -51,7 +56,6 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	PhysBody* CreateCircle(int x, int y, int radius);
 	PhysBody* CreateCircle(int x, int y, int radius, b2Vec2 initialVelocity, float mass);
 	PhysBody* CreateRectangle(int x, int y, int width, int height);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height);
@@ -59,6 +63,7 @@ public:
 
 	PhysBody* CreateCar(int x, int y, int mass = 100);
 	b2Body* CreateWheels(int x, int y);
+	void ApplyForceToCar(PhysBody* car, float forceLeft, float forceRight);
 
 	void DeleteBody(PhysBody* body);
 

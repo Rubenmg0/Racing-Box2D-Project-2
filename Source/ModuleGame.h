@@ -22,8 +22,10 @@ public:
 	bool Start();
 	update_status Update();
 	bool CleanUp();
+	void move();
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
 
+	PhysicEntity* playerCar = nullptr;
 public:
 	std::vector<PhysicEntity*> entities;
 

@@ -34,12 +34,6 @@ public:
 class Circle : public PhysicEntity
 {
 public:
-	Circle(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateCircle(_x, _y, 25), _listener)
-		, texture(_texture)
-	{
-
-	}
 
 	Circle(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture, float mass, b2Vec2 initialVelocity, float radius)
 		: PhysicEntity(physics->CreateCircle(_x, _y, radius, initialVelocity, mass), _listener)
@@ -94,6 +88,37 @@ private:
 	Texture2D texture;
 
 };
+void ModuleGame::move()
+{
+	// Si no tenemos coche, no hacemos nada
+	if (playerCar == nullptr) return;
+
+	float acceleration = 0.2f; 
+	float leftForce = 0.0f;
+	float rightForce = 0.0f;
+
+	//Aceleración hacia delante
+	if (IsKeyDown(KEY_W)) {
+		leftForce = acceleration;
+		rightForce = acceleration;
+	}
+	//Aceleración hacia atrás
+	else if (IsKeyDown(KEY_S) ) {
+		leftForce = -acceleration;
+		rightForce = -acceleration;
+	}
+
+	if (IsKeyDown(KEY_A) ) {
+		leftForce -= acceleration * 0.5f; // Frena rueda izquierda
+		rightForce += acceleration * 0.5f; // Acelera rueda derecha
+	}
+	if (IsKeyDown(KEY_D) ) {
+		leftForce += acceleration * 0.5f; // Acelera rueda izquierda
+		rightForce -= acceleration * 0.5f; // Frena rueda derecha
+	}
+
+	App->physics->ApplyForceToCar(playerCar->body, leftForce, rightForce);
+}
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -116,7 +141,7 @@ bool ModuleGame::Start()
 	circle = LoadTexture("Assets/wheel.png");
 	box = LoadTexture("Assets/crate.png");
 
-	
+
 
 	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
 
@@ -141,15 +166,15 @@ update_status ModuleGame::Update()
 		ray.y = GetMouseY();
 	}
 
-	if (IsKeyPressed(KEY_ONE))
-	{
-		entities.emplace_back(new Circle(App->physics, GetMouseX(), GetMouseY(), this, circle));
-
-	}
 
 	if (IsKeyPressed(KEY_TWO))
 	{
-		entities.emplace_back(new Car(App->physics, GetMouseX(), GetMouseY(), this, box));
+		Car* newCar = new Car(App->physics, GetMouseX(), GetMouseY(), this, box);
+
+		entities.emplace_back(newCar);
+
+		playerCar = newCar;
+
 	}
 
 	float camSpeed = 5;
@@ -209,7 +234,7 @@ update_status ModuleGame::Update()
 		}
 	}
 
-
+	move();
 	return UPDATE_CONTINUE;
 }
 
