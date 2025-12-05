@@ -15,8 +15,8 @@ Application::Application()
 	renderer = new ModuleRender(this);
 	audio = new ModuleAudio(this, true);
 	physics = new ModulePhysics(this);
-	scene_intro = new ModuleGame(this);
 	map = new ModuleMap(this);
+	scene_intro = new ModuleGame(this);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order

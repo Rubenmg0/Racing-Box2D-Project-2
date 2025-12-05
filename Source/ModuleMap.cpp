@@ -1,3 +1,4 @@
+#include "Globals.h"
 #include "Application.h"
 #include "ModuleMap.h"
 #include "ModuleRender.h"
@@ -19,8 +20,8 @@ bool ModuleMap::Start()
     LOG("Loading Map");
     bool ret = true;
 
-    // Cargamos el mapa aquí (ajusta la ruta si es necesario)
-    Load("Assets/racing.tmx");
+    //Aqui se carga el mapa del Tiled
+    Load("Assets/map/racing.tmx");
 
     return ret;
 }
@@ -36,7 +37,7 @@ bool ModuleMap::Load(const char* file_name)
         return false;
     }
 
-    // 1. Cargar Propiedades Generales del Mapa
+    //Cargar las propiedades del mapa
     pugi::xml_node map = map_file.child("map");
 
     map_data.width = map.attribute("width").as_int();
@@ -44,7 +45,7 @@ bool ModuleMap::Load(const char* file_name)
     map_data.tilewidth = map.attribute("tilewidth").as_int();
     map_data.tileheight = map.attribute("tileheight").as_int();
 
-    // 2. Cargar Tilesets
+    //Cargar Tilesets
     for (pugi::xml_node tileset = map.child("tileset"); tileset; tileset = tileset.next_sibling("tileset"))
     {
         TileSet* set = new TileSet();
@@ -59,39 +60,38 @@ bool ModuleMap::Load(const char* file_name)
         set->tex_width = image.attribute("width").as_int();
         set->tex_height = image.attribute("height").as_int();
 
-        // Construir path de la imagen (asumiendo que está en Assets/)
+        //Construir path de la imagen
         std::string image_source = image.attribute("source").as_string();
-        std::string path = "Assets/" + image_source;
+        std::string path = "Assets/map/" + image_source;
 
         set->texture = LoadTexture(path.c_str());
 
         map_data.tilesets.push_back(set);
     }
 
-    // 3. Cargar Layers
+    //Cargar Layers
     for (pugi::xml_node layer = map.child("layer"); layer; layer = layer.next_sibling("layer"))
     {
         MapLayer* lay = new MapLayer();
         lay->name = layer.attribute("name").as_string();
         lay->width = layer.attribute("width").as_int();
         lay->height = layer.attribute("height").as_int();
-        lay->visible = layer.attribute("visible").as_bool(true); // Default true
+        lay->visible = layer.attribute("visible").as_bool(true);
 
-        // Leer la data (formato CSV)
         pugi::xml_node data = layer.child("data");
         std::string data_string = data.child_value();
 
-        // Parsear CSV
+        for (char& c : data_string)
+        {
+            if (c == ',' || c == '\r' || c == '\n') c = ' ';
+        }
+
         std::stringstream ss(data_string);
-        std::string value;
-        while (std::getline(ss, value, ',')) {
-            // Eliminar espacios o saltos de línea
-            try {
-                lay->data.push_back(std::stoi(value));
-            }
-            catch (...) {
-                // Manejo de errores de conversión si hay caracteres extraños
-            }
+        int gid;
+
+        while (ss >> gid)
+        {
+            lay->data.push_back(gid);
         }
 
         map_data.layers.push_back(lay);
@@ -110,38 +110,33 @@ update_status ModuleMap::Update()
 
 void ModuleMap::Draw()
 {
-    // Iterar sobre todas las capas
+    //Recorremos todas las capas
     for (const auto& layer : map_data.layers)
     {
         if (!layer->visible) continue;
 
-        // Iterar sobre cada tile de la capa
+        //Iteramos sobre cada tile de la capa
         for (int y = 0; y < map_data.height; ++y)
         {
             for (int x = 0; x < map_data.width; ++x)
             {
                 int index = (y * layer->width) + x;
 
-                // Protección contra lectura fuera de rango
                 if (index >= layer->data.size()) break;
 
                 int gid = layer->data[index];
 
-                // Si gid es 0, es un tile vacío
+                //Si gid es 0, es un tile vacío
                 if (gid > 0)
                 {
                     TileSet* tileset = nullptr;
 
-                    // Buscar a qué tileset pertenece este gid
+                    //Buscar a qué tileset pertenece este gid
                     for (auto& ts : map_data.tilesets)
                     {
                         if (gid >= ts->firstgid)
                         {
                             tileset = ts;
-                        }
-                        else
-                        {
-                            break; // Como suelen estar ordenados, paramos
                         }
                     }
 
@@ -150,7 +145,7 @@ void ModuleMap::Draw()
                         Rectangle rect = tileset->GetTileRect(gid);
                         Vector2 pos = MapToWorld(x, y);
 
-                        // Usamos el Draw de ModuleRender para soportar la cámara
+                        //Usamos el Draw de ModuleRender para la cámara
                         App->renderer->Draw(tileset->texture, (int)pos.x, (int)pos.y, &rect);
                     }
                 }

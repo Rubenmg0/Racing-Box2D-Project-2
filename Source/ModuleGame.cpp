@@ -4,6 +4,7 @@
 #include "ModuleGame.h"
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
+#include "ModuleMap.h"
 
 class PhysicEntity
 {
@@ -151,6 +152,21 @@ update_status ModuleGame::Update()
 		entities.emplace_back(new Car(App->physics, GetMouseX(), GetMouseY(), this, box));
 	}
 
+	float camSpeed = 5;
+
+	if (IsKeyDown(KEY_UP) && App->renderer->camera.y < 0)
+		App->renderer->camera.y += (int)ceil(camSpeed);
+
+	int mapHeightInPixels = App->map->map_data.height * App->map->map_data.tileheight;
+	if (IsKeyDown(KEY_DOWN) && App->renderer->camera.y > -(mapHeightInPixels - SCREEN_HEIGHT))
+		App->renderer->camera.y -= (int)ceil(camSpeed);
+
+	if (IsKeyDown(KEY_LEFT) && App->renderer->camera.x < 0)
+		App->renderer->camera.x += (int)ceil(camSpeed);
+
+	int mapWidthInPixels = App->map->map_data.width * App->map->map_data.tilewidth;
+	if (IsKeyDown(KEY_RIGHT) && App->renderer->camera.x > -(mapWidthInPixels - SCREEN_WIDTH))
+		App->renderer->camera.x -= (int)ceil(camSpeed);
 
 	// Prepare for raycast ------------------------------------------------------
 

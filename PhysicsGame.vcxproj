@@ -190,6 +190,8 @@
     <ClInclude Include="Source/p2Point.h" />
     <ClInclude Include="Source\ModuleGame.h" />
     <ClInclude Include="Source\ModuleMap.h" />
+    <ClInclude Include="Source\pugiconfig.hpp" />
+    <ClInclude Include="Source\pugixml.hpp" />
     <ClInclude Include="Source\Timer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +204,7 @@
     <ClCompile Include="Source/ModuleWindow.cpp" />
     <ClCompile Include="Source\ModuleGame.cpp" />
     <ClCompile Include="Source\ModuleMap.cpp" />
+    <ClCompile Include="Source\pugixml.cpp" />
     <ClCompile Include="Source\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
