@@ -181,6 +181,9 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.userData.pointer = reinterpret_cast<uintptr_t>(pbody);
 
+	body.angularDamping = 3.0f;
+	body.linearDamping = 0.3f;
+
 	b2Body* chassis = world->CreateBody(&body);
 
 	b2PolygonShape box;
@@ -210,7 +213,7 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 	b2Body* blWheel = CreateWheels(blWheelPos.x, blWheelPos.y);
 	b2Body* brWheel = CreateWheels(brWheelPos.x, brWheelPos.y);
 
-	//Control each wheel,  making them as a pbody
+	//Save each wheel
 	pbody->wheels[0] = flWheel;
 	pbody->wheels[1] = frWheel; 
 	pbody->wheels[2] = blWheel; 
@@ -226,25 +229,27 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 	float halfHeightMeters = PIXEL_TO_METERS(carHeigh / 2);
 
 	joint.enableLimit = true;
-	joint.lowerAngle = -0.523598776f; // -30 degrees in rads
-	joint.upperAngle = 0.523598776f;  //  30 degrees in rads
+	joint.lowerAngle = -45 * DEG2RAD; // -45 degrees in rads
+	joint.upperAngle = 45 * DEG2RAD;  //  45 degrees in rads
 
-	// Front Left (Izquierda Arriba si y crece hacia abajo, o Frente Izq)
-	// Posición relativa al centro del chasis: (-X, -Y)
+	joint.enableMotor = true;
+	joint.maxMotorTorque = 2.0f; // Max motor rotation speed
+
+	// Front Left
 	joint.localAnchorA.Set(-halfWidthMeters, -halfHeightMeters);
-	joint.bodyB = flWheel; // Asegúrate que flWheel es tu rueda frontal izquierda
-	world->CreateJoint(&joint); // No hace falta guardar el puntero si no lo vas a modificar luego
+	joint.bodyB = flWheel; 
+	pbody->motorJoints[0] = (b2RevoluteJoint*)world->CreateJoint(&joint);
 
 	// Front Right
-	// Posición relativa: (+X, -Y)
 	joint.localAnchorA.Set(halfWidthMeters, -halfHeightMeters);
 	joint.bodyB = frWheel;
-	world->CreateJoint(&joint);
+	pbody->motorJoints[1] = (b2RevoluteJoint*)world->CreateJoint(&joint);
 
 	//We block back wheels
 	joint.enableLimit = true;
 	joint.lowerAngle = 0;
 	joint.upperAngle = 0;
+	joint.enableMotor = false;
 
 	// Back Left
 	joint.localAnchorA.Set(-halfWidthMeters, halfHeightMeters);
@@ -264,8 +269,9 @@ b2Body* ModulePhysics::CreateWheels(int x, int y)
 	b2BodyDef body;
 	body.type = b2_dynamicBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+	body.angularDamping = 5.0f;
 
-	b2Body* b = world->CreateBody(&body);
+	b2Body* wheel = world->CreateBody(&body);
 
 	b2PolygonShape box;
 	box.SetAsBox(PIXEL_TO_METERS(carWidth / 8), PIXEL_TO_METERS(carHeigh / 8));
@@ -276,9 +282,9 @@ b2Body* ModulePhysics::CreateWheels(int x, int y)
 	fixture.friction = 0.9f;
 	fixture.filter.groupIndex = -1;
 
-	b->CreateFixture(&fixture);
+	wheel->CreateFixture(&fixture);
 
-	return b;
+	return wheel;
 }
 
 void ModulePhysics::DeleteBody(PhysBody* body)
@@ -414,26 +420,18 @@ bool PhysBody::Contains(int x, int y) const
 
 	return false;
 }
-void ModulePhysics::ApplyForceToCar(PhysBody* car, float forceLeft, float forceRight)
+
+void ModulePhysics::KillLateralVelocity(b2Body* body)
 {
-	if (car == nullptr) return;
+	// Get the right vector from the car's perspective
+	b2Vec2 right = body->GetWorldVector(b2Vec2(1, 0));
 
-	for (int i = 0; i < 4; ++i)
-	{
-		b2Body* wheel = car->wheels[i];
-		if (wheel == nullptr) continue;
+	// Get the sideways velocity
+	float lateralSpeed = b2Dot(body->GetLinearVelocity(), right);
 
-		b2Vec2 forwardVec = wheel->GetWorldVector(b2Vec2(0, -1));
-
-		float forceToApply = 0.0f;
-
-		if (i == 0)
-			forceToApply = forceLeft;
-		else if(i == 1)
-			forceToApply = forceRight;
-
-		wheel->ApplyForce(forceToApply * forwardVec, wheel->GetWorldCenter(), true);
-	}
+	// Remove the sideways speed component
+	b2Vec2 lateralVel = lateralSpeed * right;
+	body->SetLinearVelocity(body->GetLinearVelocity() - lateralVel);
 }
 
 int PhysBody::RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const

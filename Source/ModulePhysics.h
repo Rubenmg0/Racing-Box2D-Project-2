@@ -39,6 +39,7 @@ public:
 	b2Body* body;
 	Module* listener;
 	b2Body* wheels[4];
+	b2RevoluteJoint* motorJoints[2];
 
 };
 
@@ -63,7 +64,7 @@ public:
 
 	PhysBody* CreateCar(int x, int y, int mass = 100);
 	b2Body* CreateWheels(int x, int y);
-	void ApplyForceToCar(PhysBody* car, float forceLeft, float forceRight);
+	void KillLateralVelocity(b2Body* body);
 
 	void DeleteBody(PhysBody* body);
 
