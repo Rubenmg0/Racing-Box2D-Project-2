@@ -30,35 +30,6 @@ public:
 	Module* listener;
 };
 
-class Circle : public PhysicEntity
-{
-public:
-
-	Circle(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture, float mass, b2Vec2 initialVelocity, float radius)
-		: PhysicEntity(physics->CreateCircle(_x, _y, radius, initialVelocity, mass), _listener)
-		, texture(_texture)
-	{
-
-	}
-
-	void Update() override
-	{
-		int x, y;
-		body->GetPhysicPosition(x, y);
-		Vector2 position{ (float)x, (float)y };
-		float scale = 1.0f;
-		Rectangle source = { 0.0f, 0.0f, (float)texture.width, (float)texture.height };
-		Rectangle dest = { position.x, position.y, (float)texture.width * scale, (float)texture.height * scale };
-		Vector2 origin = { (float)texture.width / 2.0f, (float)texture.height / 2.0f };
-		float rotation = body->GetRotation() * RAD2DEG;
-		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
-	}
-
-private:
-	Texture2D texture;
-
-};
-
 class Car : public PhysicEntity
 {
 public:
@@ -71,19 +42,10 @@ public:
 
 	void Update() override
 	{
-		body->wheels[0]->SetAngularVelocity(0);
-		body->wheels[1]->SetAngularVelocity(0);
-		
-		float friction = 0.85f;
-		
-		if (!IsKeyPressedRepeat(KEY_SPACE))
-		{
-			b2Dot(body->body->GetLinearVelocity(),b2Vec2_zero); //Canel Lateral Velocity
-		}
-
-		body->wheels[0]->SetLinearVelocity({(float)body->wheels[0]->GetLinearVelocity().x * friction,(float)body->wheels[0]->GetLinearVelocity().y * friction});
-		body->wheels[1]->SetLinearVelocity({(float)body->wheels[1]->GetLinearVelocity().x * friction,(float)body->wheels[1]->GetLinearVelocity().y * friction });
-
+		Application().physics->KillLateralVelocity(body->wheels[0]);
+		Application().physics->KillLateralVelocity(body->wheels[1]);
+		Application().physics->KillLateralVelocity(body->wheels[2]);
+		Application().physics->KillLateralVelocity(body->wheels[3]);
 
 
 		int x, y;
@@ -104,34 +66,35 @@ private:
 };
 void ModuleGame::move()
 {
-	// Si no tenemos coche, no hacemos nada
+	// Check if playerCar exists
 	if (playerCar == nullptr) return;
 
 	float acceleration = 2.0f; 
-	float leftForce = 0.0f;
-	float rightForce = 0.0f;
+	float steerSpeed = 1.5f; //w (rad/s)
+	b2Vec2 forward = playerCar->body->wheels[0]->GetWorldVector(b2Vec2(0, -1));
 
-	//Aceleración hacia delante
-	if (IsKeyDown(KEY_W)) {
-		leftForce = acceleration;
-		rightForce = acceleration;
+	//Accelerate
+	if (IsKeyDown(KEY_W)) 
+	{
+		playerCar->body->body->ApplyForceToCenter(acceleration * forward, true);
 	}
-	//Aceleración hacia atrás
-	else if (IsKeyDown(KEY_S) ) {
-		leftForce = -acceleration;
-		rightForce = -acceleration;
-	}
-
-	if (IsKeyDown(KEY_A) ) {
-		playerCar->body->wheels[0]->SetAngularVelocity(-1);
-		playerCar->body->wheels[1]->SetAngularVelocity(-1);
-	}
-	if (IsKeyDown(KEY_D) ) {
-		playerCar->body->wheels[0]->SetAngularVelocity(1);
-		playerCar->body->wheels[1]->SetAngularVelocity(1);
+	//Slow Down
+	else if (IsKeyDown(KEY_S)) 
+	{
+		playerCar->body->body->ApplyForceToCenter(-acceleration * forward, true);
 	}
 
-	App->physics->ApplyForceToCar(playerCar->body, leftForce, rightForce);
+	float steer = 0.0f;
+	if (IsKeyDown(KEY_A)) 
+	{
+		steer = -steerSpeed;
+	}
+	if (IsKeyDown(KEY_D)) 
+	{
+		steer = steerSpeed;
+	}
+	playerCar->body->motorJoints[0]->SetMotorSpeed(steer);
+	playerCar->body->motorJoints[1]->SetMotorSpeed(steer);
 }
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -192,21 +155,64 @@ update_status ModuleGame::Update()
 
 	}
 
-	float camSpeed = 5;
 
-	if (IsKeyDown(KEY_UP) && App->renderer->camera.y < 0)
-		App->renderer->camera.y += (int)ceil(camSpeed);
+	// Center the camera on the player
+	if (playerCar)
+	{
+		float camSpeed = 5;
 
-	int mapHeightInPixels = App->map->map_data.height * App->map->map_data.tileheight;
-	if (IsKeyDown(KEY_DOWN) && App->renderer->camera.y > -(mapHeightInPixels - SCREEN_HEIGHT))
-		App->renderer->camera.y -= (int)ceil(camSpeed);
+		int x, y;
+		playerCar->body->GetPhysicPosition(x, y);
+		
+		int mapWidthInPixels = App->map->map_data.width * App->map->map_data.tilewidth;
+		float limitLeft = App->renderer->camera.width / 4;
+		float limitRight = mapWidthInPixels - App->renderer->camera.width * 3 / 4;
 
-	if (IsKeyDown(KEY_LEFT) && App->renderer->camera.x < 0)
-		App->renderer->camera.x += (int)ceil(camSpeed);
+		if (x - limitLeft > 0 && x < limitRight)
+		{
+			App->renderer->camera.x = -x + App->renderer->camera.width * 3 / 4;
+		}
+		else if (x - limitLeft <= 0)
+		{
+			App->renderer->camera.x = 0;
+		}
+		else if (mapWidthInPixels - x < App->renderer->camera.width)
+		{
+			App->renderer->camera.x = -mapWidthInPixels + App->renderer->camera.width;
+		}
 
-	int mapWidthInPixels = App->map->map_data.width * App->map->map_data.tilewidth;
-	if (IsKeyDown(KEY_RIGHT) && App->renderer->camera.x > -(mapWidthInPixels - SCREEN_WIDTH))
-		App->renderer->camera.x -= (int)ceil(camSpeed);
+		int mapHeightInPixels = App->map->map_data.height * App->map->map_data.tileheight;
+		float limitUp = App->renderer->camera.height / 4;
+		float limitDown = mapHeightInPixels - App->renderer->camera.height * 3 / 4;
+
+		if (y - limitUp > 0 && y < limitDown)
+		{
+			App->renderer->camera.y = -y + App->renderer->camera.height * 3 / 4;
+		}
+		else if (y - limitUp <= 0)
+		{
+			App->renderer->camera.y = 0;
+		}
+		else if (mapHeightInPixels - y < App->renderer->camera.height)
+		{
+			App->renderer->camera.y = -mapHeightInPixels + App->renderer->camera.height;
+		}
+
+	}
+
+	//if (IsKeyDown(KEY_UP) && App->renderer->camera.y < 0)
+	//	App->renderer->camera.y += (int)ceil(camSpeed);
+
+	//int mapHeightInPixels = App->map->map_data.height * App->map->map_data.tileheight;
+	//if (IsKeyDown(KEY_DOWN) && App->renderer->camera.y > -(mapHeightInPixels - SCREEN_HEIGHT))
+	//	App->renderer->camera.y -= (int)ceil(camSpeed);
+
+	//if (IsKeyDown(KEY_LEFT) && App->renderer->camera.x < 0)
+	//	App->renderer->camera.x += (int)ceil(camSpeed);
+
+	//int mapWidthInPixels = App->map->map_data.width * App->map->map_data.tilewidth;
+	//if (IsKeyDown(KEY_RIGHT) && App->renderer->camera.x > -(mapWidthInPixels - SCREEN_WIDTH))
+	//	App->renderer->camera.x -= (int)ceil(camSpeed);
 
 	// Prepare for raycast ------------------------------------------------------
 
