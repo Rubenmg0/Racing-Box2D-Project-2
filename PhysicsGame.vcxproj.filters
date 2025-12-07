@@ -34,6 +34,9 @@
     <ClCompile Include="Source\pugixml.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Source\UIButton.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source/p2Point.h">
@@ -73,6 +76,12 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Source\pugiconfig.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UIButton.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UIElement.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

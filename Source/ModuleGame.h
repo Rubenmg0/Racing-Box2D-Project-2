@@ -11,7 +11,7 @@
 
 class PhysBody;
 class PhysicEntity;
-
+class UIElement;
 
 class ModuleGame : public Module
 {
@@ -24,6 +24,7 @@ public:
 	bool CleanUp();
 	void move();
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
+	void OnUIMouseClickEvent(UIElement* element);
 
 	PhysicEntity* playerCar = nullptr;
 public:

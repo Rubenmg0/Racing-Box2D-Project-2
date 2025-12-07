@@ -2,11 +2,12 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
+#include "UIButton.h"
 #include <math.h>
 
 ModuleRender::ModuleRender(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-    background = DARKGREEN;
+	background = DARKGREEN;
 }
 
 // Destructor
@@ -31,23 +32,33 @@ update_status ModuleRender::PreUpdate()
 // Update: debug camera
 update_status ModuleRender::Update()
 {
-    ClearBackground(background);
+	ClearBackground(background);
 
-    // NOTE: This function setups render batching system for
-    // maximum performance, all consecutive Draw() calls are
-    // not processed until EndDrawing() is called
-    BeginDrawing();
+	// NOTE: This function setups render batching system for
+	// maximum performance, all consecutive Draw() calls are
+	// not processed until EndDrawing() is called
+	BeginDrawing();
 
+	for (UIElement* element : uiElements)
+	{
+		element->Update(1.0f / 60.0f);
+	}
 	return UPDATE_CONTINUE;
 }
 
 // PostUpdate present buffer to screen
 update_status ModuleRender::PostUpdate()
 {
-    // Draw everything in our batch!
-    DrawFPS(10, 10);
+	// Draw everything in our batch!
+	DrawFPS(10, 10);
+	for (UIElement* element : uiElements)
+	{
+		element->Draw();
+	}
 
-    EndDrawing();
+	DrawFPS(10, 10);
+
+	EndDrawing();
 
 	return UPDATE_CONTINUE;
 }
@@ -55,6 +66,11 @@ update_status ModuleRender::PostUpdate()
 // Called before quitting
 bool ModuleRender::CleanUp()
 {
+	for (UIElement* element : uiElements)
+	{
+		delete element;
+	}
+	uiElements.clear();
 	return true;
 }
 
@@ -63,35 +79,46 @@ void ModuleRender::SetBackgroundColor(Color color)
 	background = color;
 }
 
+UIElement* ModuleRender::CreateButton(int id, Rectangle bounds, const char* text, Module* observer)
+{
+	UIButton* newButton = new UIButton(id, bounds, text);
+
+	newButton->SetObserver(observer);
+
+	uiElements.push_back(newButton);
+
+	return newButton;
+}
+
 // Draw to screen
 bool ModuleRender::Draw(Texture2D texture, int x, int y, const Rectangle* section, double angle, int pivot_x, int pivot_y) const
 {
 	bool ret = true;
 
 	float scale = 1.0f;
-    Vector2 position = { (float)x, (float)y };
-    Rectangle rect = { 0.f, 0.f, (float)texture.width, (float)texture.height };
+	Vector2 position = { (float)x, (float)y };
+	Rectangle rect = { 0.f, 0.f, (float)texture.width, (float)texture.height };
 
-    if (section != NULL) rect = *section;
+	if (section != NULL) rect = *section;
 
-    position.x = (float)(x-pivot_x) * scale + camera.x;
-    position.y = (float)(y-pivot_y) * scale + camera.y;
+	position.x = (float)(x - pivot_x) * scale + camera.x;
+	position.y = (float)(y - pivot_y) * scale + camera.y;
 
 	rect.width *= scale;
 	rect.height *= scale;
 
-    DrawTextureRec(texture, rect, position, WHITE);
+	DrawTextureRec(texture, rect, position, WHITE);
 
 	return ret;
 }
 
-bool ModuleRender::DrawText(const char * text, int x, int y, Font font, int spacing, Color tint) const
+bool ModuleRender::DrawText(const char* text, int x, int y, Font font, int spacing, Color tint) const
 {
-    bool ret = true;
+	bool ret = true;
 
-    Vector2 position = { (float)x, (float)y };
+	Vector2 position = { (float)x, (float)y };
 
-    DrawTextEx(font, text, position, (float)font.baseSize, (float)spacing, tint);
+	DrawTextEx(font, text, position, (float)font.baseSize, (float)spacing, tint);
 
-    return ret;
+	return ret;
 }

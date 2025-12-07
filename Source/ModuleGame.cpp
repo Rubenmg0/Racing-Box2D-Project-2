@@ -6,6 +6,8 @@
 #include "ModulePhysics.h"
 #include "ModuleMap.h"
 
+#include "UIElement.h"
+
 class PhysicEntity
 {
 protected:
@@ -114,6 +116,7 @@ bool ModuleGame::Start()
 	bool ret = true;
 
 	App->renderer->camera.x = App->renderer->camera.y = 0;
+	App->renderer->CreateButton(1, { 50.0f, 50.0f, 100.0f, 40.0f }, "PRUEBA", this);
 
 	circle = LoadTexture("Assets/wheel.png");
 	box = LoadTexture("Assets/crate.png");
@@ -265,6 +268,9 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	{
 		return;
 	}
+}
 
-
+void ModuleGame::OnUIMouseClickEvent(UIElement* element)
+{
+	// Implement the action you want when you click the button
 }
