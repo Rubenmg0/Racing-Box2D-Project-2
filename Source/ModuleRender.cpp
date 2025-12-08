@@ -64,13 +64,18 @@ update_status ModuleRender::PostUpdate()
 }
 
 // Called before quitting
-bool ModuleRender::CleanUp()
+void ModuleRender::ClearUI()
 {
 	for (UIElement* element : uiElements)
 	{
 		delete element;
 	}
 	uiElements.clear();
+}
+
+bool ModuleRender::CleanUp()
+{
+	ClearUI();
 	return true;
 }
 

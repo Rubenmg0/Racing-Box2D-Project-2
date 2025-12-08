@@ -116,11 +116,9 @@ bool ModuleGame::Start()
 	bool ret = true;
 
 	App->renderer->camera.x = App->renderer->camera.y = 0;
-	App->renderer->CreateButton(1, { 50.0f, 50.0f, 100.0f, 40.0f }, "PRUEBA", this);
 
 	circle = LoadTexture("Assets/wheel.png");
 	box = LoadTexture("Assets/crate.png");
-
 
 
 	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);

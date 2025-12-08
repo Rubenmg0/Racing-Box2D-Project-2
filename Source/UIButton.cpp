@@ -6,7 +6,6 @@ UIButton::UIButton(int id, Rectangle bounds, const char* text) : UIElement(UIEle
 	this->bounds = bounds;
 	this->text = text;
 
-	canClick = true;
 	drawBasic = false;
 }
 
@@ -29,7 +28,7 @@ bool UIButton::Update(float dt)
 
 			if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
 			{
-				NotifyObserver(); // ¡Avisa a ModuleGame!
+				NotifyObserver();
 			}
 		}
 		else
@@ -43,37 +42,36 @@ bool UIButton::Update(float dt)
 
 bool UIButton::Draw()
 {
-	Color drawColor = color; 
+	//Button Colors
+	Color colorNormal = BLUE; 
+	Color colorFocused = SKYBLUE; 
+	Color colorPressed = DARKBLUE;  
+
+	Color drawColor = colorNormal;
 
 	switch (state)
 	{
-	case UIElementState::NORMAL:
-		drawColor = RED;
-		break;
-	case UIElementState::FOCUSED:
-		drawColor = MAROON; 
-		break;
-	case UIElementState::PRESSED:
-		drawColor = DARKGRAY;
-		break;
-	case UIElementState::DISABLED:
-		drawColor = LIGHTGRAY;
-		break;
+	case UIElementState::NORMAL:  drawColor = colorNormal; break;
+	case UIElementState::FOCUSED: drawColor = colorFocused; break;
+	case UIElementState::PRESSED: drawColor = colorPressed; break;
+	case UIElementState::DISABLED: drawColor = LIGHTGRAY; break;
 	}
 
-	DrawRectangleRec(bounds, drawColor);
+	//Rectamgle Rouned varibales
+	float roundness = 0.5f; 
+	int segments = 10;      
 
-	DrawRectangleLinesEx(bounds, 2, BLACK);
+	DrawRectangleRounded(bounds, roundness, segments, drawColor);
 
 	if (!text.empty())
 	{
-		int fontSize = 16;
+		int fontSize = 20;
 		int textWidth = MeasureText(text.c_str(), fontSize);
 
-		// Calcular posición para centrar exacto
 		int textX = (int)(bounds.x + (bounds.width - textWidth) / 2);
 		int textY = (int)(bounds.y + (bounds.height - fontSize) / 2);
 
+		DrawText(text.c_str(), textX + 2, textY + 2, fontSize, BLACK);
 		DrawText(text.c_str(), textX, textY, fontSize, WHITE);
 	}
 
