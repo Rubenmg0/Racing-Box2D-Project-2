@@ -188,11 +188,14 @@
     <ClInclude Include="Source/ModuleRender.h" />
     <ClInclude Include="Source/ModuleWindow.h" />
     <ClInclude Include="Source/p2Point.h" />
+    <ClInclude Include="Source\ModuleMenu.h" />
     <ClInclude Include="Source\ModuleGame.h" />
     <ClInclude Include="Source\ModuleMap.h" />
     <ClInclude Include="Source\pugiconfig.hpp" />
     <ClInclude Include="Source\pugixml.hpp" />
     <ClInclude Include="Source\Timer.h" />
+    <ClInclude Include="Source\UIButton.h" />
+    <ClInclude Include="Source\UIElement.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source/Application.cpp" />
@@ -204,8 +207,10 @@
     <ClCompile Include="Source/ModuleWindow.cpp" />
     <ClCompile Include="Source\ModuleGame.cpp" />
     <ClCompile Include="Source\ModuleMap.cpp" />
+    <ClCompile Include="Source\ModuleMenu.cpp" />
     <ClCompile Include="Source\pugixml.cpp" />
     <ClCompile Include="Source\Timer.cpp" />
+    <ClCompile Include="Source\UIButton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)raylib.vcxproj">

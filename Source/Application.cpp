@@ -6,6 +6,7 @@
 #include "ModulePhysics.h"
 #include "ModuleGame.h"
 #include "ModuleMap.h"
+#include "ModuleMenu.h"
 
 #include "Application.h"
 
@@ -18,6 +19,7 @@ Application::Application()
 	map = new ModuleMap(this);
 	scene_intro = new ModuleGame(this);
 
+	menu = new ModuleMenu(this, true);
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
 	// They will CleanUp() in reverse order
@@ -28,6 +30,7 @@ Application::Application()
 	AddModule(audio);
 	AddModule(map);
 
+	AddModule(menu);
 	// Scenes
 	AddModule(scene_intro);
 

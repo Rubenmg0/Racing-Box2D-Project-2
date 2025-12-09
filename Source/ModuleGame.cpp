@@ -6,6 +6,8 @@
 #include "ModulePhysics.h"
 #include "ModuleMap.h"
 
+#include "UIElement.h"
+
 class PhysicEntity
 {
 protected:
@@ -117,7 +119,6 @@ bool ModuleGame::Start()
 
 	circle = LoadTexture("Assets/wheel.png");
 	box = LoadTexture("Assets/crate.png");
-
 
 
 	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
@@ -265,6 +266,9 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	{
 		return;
 	}
+}
 
-
+void ModuleGame::OnUIMouseClickEvent(UIElement* element)
+{
+	// Implement the action you want when you click the button
 }
