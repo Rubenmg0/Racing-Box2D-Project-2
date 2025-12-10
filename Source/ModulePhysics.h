@@ -14,8 +14,8 @@
 #define METERS_TO_PIXELS(m) ((int) floor(PIXELS_PER_METER * m))
 #define PIXEL_TO_METERS(p)  ((float) METER_PER_PIXEL * p)
 
-#define carHeigh 100
-#define carWidth 50
+#define carHeigh 50
+#define carWidth 25
 
 // Small class to return to other modules to track position and rotation of physics bodies
 class PhysBody
@@ -65,6 +65,7 @@ public:
 	PhysBody* CreateCar(int x, int y, int mass = 100);
 	b2Body* CreateWheels(int x, int y);
 	void KillLateralVelocity(b2Body* body);
+	void MoveCar(PhysBody* car);
 
 	void DeleteBody(PhysBody* body);
 

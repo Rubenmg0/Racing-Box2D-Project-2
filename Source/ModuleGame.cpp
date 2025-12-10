@@ -66,38 +66,6 @@ private:
 	Texture2D texture;
 
 };
-void ModuleGame::move()
-{
-	// Check if playerCar exists
-	if (playerCar == nullptr) return;
-
-	float acceleration = 2.0f; 
-	float steerSpeed = 1.5f; //w (rad/s)
-	b2Vec2 forward = playerCar->body->wheels[0]->GetWorldVector(b2Vec2(0, -1));
-
-	//Accelerate
-	if (IsKeyDown(KEY_W)) 
-	{
-		playerCar->body->body->ApplyForceToCenter(acceleration * forward, true);
-	}
-	//Slow Down
-	else if (IsKeyDown(KEY_S)) 
-	{
-		playerCar->body->body->ApplyForceToCenter(-acceleration * forward, true);
-	}
-
-	float steer = 0.0f;
-	if (IsKeyDown(KEY_A)) 
-	{
-		steer = -steerSpeed;
-	}
-	if (IsKeyDown(KEY_D)) 
-	{
-		steer = steerSpeed;
-	}
-	playerCar->body->motorJoints[0]->SetMotorSpeed(steer);
-	playerCar->body->motorJoints[1]->SetMotorSpeed(steer);
-}
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -160,7 +128,7 @@ update_status ModuleGame::Update()
 	// Center the camera on the player
 	if (playerCar)
 	{
-		float camSpeed = 5;
+		App->physics->MoveCar(playerCar->body);
 
 		int x, y;
 		playerCar->body->GetPhysicPosition(x, y);
@@ -200,6 +168,7 @@ update_status ModuleGame::Update()
 		}
 
 	}
+
 
 	//if (IsKeyDown(KEY_UP) && App->renderer->camera.y < 0)
 	//	App->renderer->camera.y += (int)ceil(camSpeed);
@@ -256,7 +225,6 @@ update_status ModuleGame::Update()
 		}
 	}
 
-	move();
 	return UPDATE_CONTINUE;
 }
 

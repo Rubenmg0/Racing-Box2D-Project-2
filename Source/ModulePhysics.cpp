@@ -270,6 +270,8 @@ b2Body* ModulePhysics::CreateWheels(int x, int y)
 	body.type = b2_dynamicBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.angularDamping = 5.0f;
+	body.linearDamping = 0.3f;
+
 
 	b2Body* wheel = world->CreateBody(&body);
 
@@ -432,6 +434,57 @@ void ModulePhysics::KillLateralVelocity(b2Body* body)
 	// Remove the sideways speed component
 	b2Vec2 lateralVel = lateralSpeed * right;
 	body->SetLinearVelocity(body->GetLinearVelocity() - lateralVel);
+}
+
+void ModulePhysics::MoveCar(PhysBody* car)
+{
+	// Check if playerCar exists
+	if (car == nullptr) return;
+
+	float acceleration = 0.25f;
+	float steerSpeed = 1.5f; //w (rad/s)
+	b2Vec2 forward = car->wheels[0]->GetWorldVector(b2Vec2(0, -1));
+
+	//Turbo
+	if (IsKeyDown(KEY_SPACE))
+	{
+		acceleration *= 2;
+	}
+
+	//Accelerate
+	if (IsKeyDown(KEY_W))
+	{
+		car->body->ApplyForceToCenter(acceleration * forward, true);
+	}
+	//Slow Down
+	else if (IsKeyDown(KEY_S))
+	{
+		car->body->ApplyForceToCenter(-acceleration * forward, true);
+	}
+
+	float steer = 0.0f;
+	if (IsKeyDown(KEY_A))
+	{
+		steer = -steerSpeed;
+	}
+	else if (IsKeyDown(KEY_D))
+	{
+		steer = steerSpeed;
+	}
+	else if (car->motorJoints[0]->GetJointAngle() != 0)
+	{
+		if (car->motorJoints[0]->GetJointAngle() > 0)
+		{
+			steer = -1;
+		}
+		else
+		{
+			steer = 1;
+		}
+	}
+	car->motorJoints[0]->SetMotorSpeed(steer);
+	car->motorJoints[1]->SetMotorSpeed(steer);
+
 }
 
 int PhysBody::RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const
