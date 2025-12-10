@@ -35,6 +35,7 @@ public:
 
 	Texture2D circle;
 	Texture2D box;
+	Texture2D burgerCar;
 
 	vec2<int> ray;
 	bool ray_on;	

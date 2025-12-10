@@ -87,6 +87,7 @@ bool ModuleGame::Start()
 
 	circle = LoadTexture("Assets/wheel.png");
 	box = LoadTexture("Assets/crate.png");
+	burgerCar = LoadTexture("Assets/Cars/BurgerCar/burger_car.png");
 
 
 	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
@@ -116,7 +117,7 @@ update_status ModuleGame::Update()
 
 	if (IsKeyPressed(KEY_TWO))
 	{
-		Car* newCar = new Car(App->physics, GetMouseX(), GetMouseY(), this, box);
+		Car* newCar = new Car(App->physics, GetMouseX(), GetMouseY(), this, burgerCar);
 
 		entities.emplace_back(newCar);
 
@@ -133,6 +134,7 @@ update_status ModuleGame::Update()
 		int x, y;
 		playerCar->body->GetPhysicPosition(x, y);
 		
+		//Axis X (Horizontal)
 		int mapWidthInPixels = App->map->map_data.width * App->map->map_data.tilewidth;
 		float limitLeft = App->renderer->camera.width / 4;
 		float limitRight = mapWidthInPixels - App->renderer->camera.width * 3 / 4;
@@ -141,15 +143,16 @@ update_status ModuleGame::Update()
 		{
 			App->renderer->camera.x = -x + App->renderer->camera.width * 3 / 4;
 		}
-		else if (x - limitLeft <= 0)
+		if (x - limitLeft <= 0) //Camera limit left
 		{
 			App->renderer->camera.x = 0;
 		}
-		else if (mapWidthInPixels - x < App->renderer->camera.width)
+		if (mapWidthInPixels - x < App->renderer->camera.width)
 		{
 			App->renderer->camera.x = -mapWidthInPixels + App->renderer->camera.width;
 		}
 
+		//Axis Y (Vertical)
 		int mapHeightInPixels = App->map->map_data.height * App->map->map_data.tileheight;
 		float limitUp = App->renderer->camera.height / 4;
 		float limitDown = mapHeightInPixels - App->renderer->camera.height * 3 / 4;
@@ -158,11 +161,11 @@ update_status ModuleGame::Update()
 		{
 			App->renderer->camera.y = -y + App->renderer->camera.height * 3 / 4;
 		}
-		else if (y - limitUp <= 0)
+		if (y - limitUp <= 0) //Camera limit up
 		{
 			App->renderer->camera.y = 0;
 		}
-		else if (mapHeightInPixels - y < App->renderer->camera.height)
+		if (mapHeightInPixels - y < App->renderer->camera.height)
 		{
 			App->renderer->camera.y = -mapHeightInPixels + App->renderer->camera.height;
 		}

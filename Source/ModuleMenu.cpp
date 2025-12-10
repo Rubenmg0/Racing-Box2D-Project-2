@@ -15,7 +15,7 @@ bool ModuleMenu::Start()
 	LOG("Loading Menu Assets");
 	bool ret = true;
 
-	bgTexture = LoadTexture("Assets/menu_bg.png");
+	bgTexture = LoadTexture("Assets/Scenes/menu_bg.png");
 	// Button Size
 	int btnWidth = 200;
 	int btnHeight = 40;
