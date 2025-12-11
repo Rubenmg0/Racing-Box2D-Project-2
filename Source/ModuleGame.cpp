@@ -83,8 +83,6 @@ bool ModuleGame::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
-	App->renderer->camera.x = App->renderer->camera.y = 0;
-
 	circle = LoadTexture("Assets/wheel.png");
 	box = LoadTexture("Assets/crate.png");
 	burgerCar = LoadTexture("Assets/Cars/BurgerCar/burger_car.png");
@@ -131,61 +129,28 @@ update_status ModuleGame::Update()
 	{
 		App->physics->MoveCar(playerCar->body);
 
-		int x, y;
-		playerCar->body->GetPhysicPosition(x, y);
-		
-		//Axis X (Horizontal)
-		int mapWidthInPixels = App->map->map_data.width * App->map->map_data.tilewidth;
-		float limitLeft = App->renderer->camera.width / 4;
-		float limitRight = mapWidthInPixels - App->renderer->camera.width * 3 / 4;
+		int carX, carY;
+		playerCar->body->GetPhysicPosition(carX, carY);
 
-		if (x - limitLeft > 0 && x < limitRight)
-		{
-			App->renderer->camera.x = -x + App->renderer->camera.width * 3 / 4;
-		}
-		if (x - limitLeft <= 0) //Camera limit left
-		{
-			App->renderer->camera.x = 0;
-		}
-		if (mapWidthInPixels - x < App->renderer->camera.width)
-		{
-			App->renderer->camera.x = -mapWidthInPixels + App->renderer->camera.width;
-		}
+		int mapWidth = App->map->map_data.width * App->map->map_data.tilewidth - 150;
+		int mapHeight = App->map->map_data.height * App->map->map_data.tileheight;
 
-		//Axis Y (Vertical)
-		int mapHeightInPixels = App->map->map_data.height * App->map->map_data.tileheight;
-		float limitUp = App->renderer->camera.height / 4;
-		float limitDown = mapHeightInPixels - App->renderer->camera.height * 3 / 4;
+		float targetX = -(carX - SCREEN_WIDTH / 2.0f);
+		float targetY = -(carY - SCREEN_HEIGHT / 2.0f);
 
-		if (y - limitUp > 0 && y < limitDown)
-		{
-			App->renderer->camera.y = -y + App->renderer->camera.height * 3 / 4;
-		}
-		if (y - limitUp <= 0) //Camera limit up
-		{
-			App->renderer->camera.y = 0;
-		}
-		if (mapHeightInPixels - y < App->renderer->camera.height)
-		{
-			App->renderer->camera.y = -mapHeightInPixels + App->renderer->camera.height;
-		}
+		// -- EJE X --
+		if (targetX > 0) targetX = 0;
+		else if (targetX < SCREEN_WIDTH - mapWidth) targetX = SCREEN_WIDTH - mapWidth;
 
+		// -- EJE Y --
+		if (targetY > 0) targetY = 0;
+		else if (targetY < SCREEN_HEIGHT - mapHeight) targetY = SCREEN_HEIGHT - mapHeight;
+
+		/*App->renderer->camera.x = targetX * 1.5;
+		App->renderer->camera.y = targetY * 2.5;*/
+		App->renderer->camera.target.x = targetX * 1.5;
+		App->renderer->camera.target.y = targetY * 2.5;
 	}
-
-
-	//if (IsKeyDown(KEY_UP) && App->renderer->camera.y < 0)
-	//	App->renderer->camera.y += (int)ceil(camSpeed);
-
-	//int mapHeightInPixels = App->map->map_data.height * App->map->map_data.tileheight;
-	//if (IsKeyDown(KEY_DOWN) && App->renderer->camera.y > -(mapHeightInPixels - SCREEN_HEIGHT))
-	//	App->renderer->camera.y -= (int)ceil(camSpeed);
-
-	//if (IsKeyDown(KEY_LEFT) && App->renderer->camera.x < 0)
-	//	App->renderer->camera.x += (int)ceil(camSpeed);
-
-	//int mapWidthInPixels = App->map->map_data.width * App->map->map_data.tilewidth;
-	//if (IsKeyDown(KEY_RIGHT) && App->renderer->camera.x > -(mapWidthInPixels - SCREEN_WIDTH))
-	//	App->renderer->camera.x -= (int)ceil(camSpeed);
 
 	// Prepare for raycast ------------------------------------------------------
 

@@ -29,5 +29,10 @@ public:
 public:
 
 	Color background;
-    Rectangle camera;
+	Camera2D camera = {
+		camera.offset = { 200, 200 },
+		camera.target = { 0, 0 },
+		camera.rotation = 0.0f,
+		camera.zoom = 1.0f,
+	};
 };

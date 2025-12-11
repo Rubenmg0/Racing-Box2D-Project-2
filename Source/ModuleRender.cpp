@@ -33,10 +33,14 @@ update_status ModuleRender::PreUpdate()
 update_status ModuleRender::Update()
 {
 	ClearBackground(background);
+	
+	//camera.target = App->scene_intro->player->GetPosition();
+	camera.offset = { SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f };
+	camera.rotation = 0.0f;
+	camera.zoom = 1.f;
 
-	// NOTE: This function setups render batching system for
-	// maximum performance, all consecutive Draw() calls are
-	// not processed until EndDrawing() is called
+	EndMode2D();
+	BeginMode2D(camera);
 	BeginDrawing();
 
 	for (UIElement* element : uiElements)
@@ -106,8 +110,8 @@ bool ModuleRender::Draw(Texture2D texture, int x, int y, const Rectangle* sectio
 
 	if (section != NULL) rect = *section;
 
-	position.x = (float)(x - pivot_x) * scale + camera.x;
-	position.y = (float)(y - pivot_y) * scale + camera.y;
+	position.x = (float)(x - pivot_x) * scale + camera.target.x;
+	position.y = (float)(y - pivot_y) * scale + camera.target.y;
 
 	rect.width *= scale;
 	rect.height *= scale;

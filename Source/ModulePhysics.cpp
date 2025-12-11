@@ -442,7 +442,7 @@ void ModulePhysics::MoveCar(PhysBody* car)
 	if (car == nullptr) return;
 
 	float acceleration = 0.25f;
-	float steerSpeed = 1.5f; //w (rad/s)
+	float steerSpeed = 0.5f; //w (rad/s)
 	b2Vec2 forward = car->wheels[0]->GetWorldVector(b2Vec2(0, -1));
 
 	//Turbo
