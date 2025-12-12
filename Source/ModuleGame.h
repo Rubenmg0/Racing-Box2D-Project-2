@@ -3,7 +3,6 @@
 #include "Globals.h"
 #include "Module.h"
 #include "ModulePhysics.h"
-#include "Car.h"
 
 #include "p2Point.h"
 
@@ -31,8 +30,6 @@ public:
 
 public:
 	std::vector<PhysicEntity*> entities;
-
-	Player* player;
 
 	PhysBody* sensor;
 	bool sensed;
