@@ -35,9 +35,10 @@ public:
 class Car : public PhysicEntity
 {
 public:
-	Car(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+	Car(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture, Texture2D _wheeltexture)
 		: PhysicEntity(physics->CreateCar(_x, _y), _listener)
 		, texture(_texture)
+		, wheel(_wheeltexture)
 	{
 
 	}
@@ -52,9 +53,26 @@ public:
 
 		int x, y;
 		body->GetPhysicPosition(x, y);
+
 		DrawTexturePro(texture, Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
 			Rectangle{ (float)x, (float)y, (float)texture.width, (float)texture.height },
-			Vector2{ (float)texture.width / 2.0f, (float)texture.height / 2.0f }, body->GetRotation() * RAD2DEG, WHITE);
+			Vector2{ (float)texture.width / 2.0f, (float)texture.height / 2.0f }, body->GetRotation() * RAD2DEG, BLACK);
+
+		if (wheel.height != 0)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				b2Vec2 pos = body->wheels[i]->GetPosition();
+				pos.x = METERS_TO_PIXELS(pos.x);
+				pos.y = METERS_TO_PIXELS(pos.y);
+
+				DrawTexturePro(wheel, Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
+					Rectangle{ (float)( pos.x), (float)(pos.y), (float)texture.width/8, (float)texture.height },
+					Vector2{ (float)texture.width / 2.0f, (float)texture.height / 2.0f },90+ body->GetRotation() * RAD2DEG, WHITE);
+			}
+		}
+
+
 	}
 
 	int RayHit(vec2<int> ray, vec2<int> mouse, vec2<float>& normal) override
@@ -64,6 +82,7 @@ public:
 
 private:
 	Texture2D texture;
+	Texture2D wheel;
 	ModulePhysics* physics;
 };
 
@@ -86,9 +105,11 @@ bool ModuleGame::Start()
 	circle = LoadTexture("Assets/wheel.png");
 	box = LoadTexture("Assets/crate.png");
 	burgerCar = LoadTexture("Assets/Cars/BurgerCar/burger_car.png");
+	normalcar = LoadTexture("Assets/Cars/NormalCars/normal_car_yellow.png");
+	wheel = LoadTexture("Assets/Cars/NormalCars/wheel_animation_spritesheet.png");
 
 
-	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
+	//sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
 
 	return ret;
 }
@@ -115,8 +136,8 @@ update_status ModuleGame::Update()
 
 	if (IsKeyPressed(KEY_TWO))
 	{
-		Car* newCar = new Car(App->physics, GetMouseX(), GetMouseY(), this, burgerCar);
-
+		Car* newCar = new Car(App->physics, GetMouseX(), GetMouseY(), this, normalcar,wheel);
+		
 		entities.emplace_back(newCar);
 
 		playerCar = newCar;
@@ -127,29 +148,64 @@ update_status ModuleGame::Update()
 	// Center the camera on the player
 	if (playerCar)
 	{
+			float friction = 0.3f;
+
+			int carX, carY;
+			playerCar->body->GetPhysicPosition(carX, carY);
+
+			if (App->map->map_data.tilewidth > 0 && App->map->map_data.tileheight > 0)
+			{
+				int tileX = carX / App->map->map_data.tilewidth;
+				int tileY = carY / App->map->map_data.tileheight;
+
+				for (const auto& layer : App->map->map_data.layers)
+				{
+					if (layer->name == "Barreras")
+					{
+						
+							int index = (tileY * layer->width) + tileX;
+
+							if (layer->tiles[index] > 0)
+							{
+								friction = 5.0f;
+							}
+							
+						
+						break; 
+					}
+				}
+			}
+
+		
+
+		playerCar->body->body->SetLinearDamping(friction);
 		App->physics->MoveCar(playerCar->body);
 
-		int carX, carY;
-		playerCar->body->GetPhysicPosition(carX, carY);
+		//debug para detectar que va lo de la friccion
+		Color textColor = (friction > 1.0f) ? RED : GREEN;
+		DrawText(TextFormat("Friccion Actual: %.1f", friction), 20, 20, 30, textColor);
 
+<<<<<<< Updated upstream
+		playerCar->body->GetPhysicPosition(carX, carY);
 		int mapWidth = App->map->map_data.width * App->map->map_data.tilewidth - 150;
+=======
+		int mapWidth = App->map->map_data.width * App->map->map_data.tilewidth;
+>>>>>>> Stashed changes
 		int mapHeight = App->map->map_data.height * App->map->map_data.tileheight;
 
-		float targetX = -(carX - SCREEN_WIDTH / 2.0f);
-		float targetY = -(carY - SCREEN_HEIGHT / 2.0f);
+		float targetX = abs(carX - SCREEN_WIDTH / 2.0f);
+		float targetY = abs(carY - SCREEN_HEIGHT / 2.0f);
 
 		// -- EJE X --
 		if (targetX > 0) targetX = 0;
-		else if (targetX < SCREEN_WIDTH - mapWidth) targetX = SCREEN_WIDTH - mapWidth;
+		else if (targetX < SCREEN_WIDTH - mapWidth*2) targetX = SCREEN_WIDTH - mapWidth;
 
 		// -- EJE Y --
 		if (targetY > 0) targetY = 0;
-		else if (targetY < SCREEN_HEIGHT - mapHeight) targetY = SCREEN_HEIGHT - mapHeight;
+		else if (targetY < SCREEN_HEIGHT - mapHeight*2) targetY = SCREEN_HEIGHT - mapHeight;
 
-		/*App->renderer->camera.x = targetX * 1.5;
-		App->renderer->camera.y = targetY * 2.5;*/
-		App->renderer->camera.target.x = targetX * 1.5;
-		App->renderer->camera.target.y = targetY * 2.5;
+		App->renderer->camera.target.x = targetX;
+		App->renderer->camera.target.y = targetY;
 	}
 
 	// Prepare for raycast ------------------------------------------------------
