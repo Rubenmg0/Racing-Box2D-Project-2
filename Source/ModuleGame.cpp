@@ -97,7 +97,12 @@ bool ModuleGame::Start()
 bool ModuleGame::CleanUp()
 {
 	LOG("Unloading Intro scene");
-
+	for (auto& entity : entities)
+	{
+		delete entity;
+	}
+	entities.clear();
+	playerCar = nullptr;
 
 	return true;
 }
@@ -141,15 +146,12 @@ update_status ModuleGame::Update()
 				{
 					if (layer->name == "Barreras")
 					{
-						
 							int index = (tileY * layer->width) + tileX;
 
 							if (layer->tiles[index] > 0)
 							{
 								friction = 5.0f;
-							}
-							
-						
+							}						
 						break; 
 					}
 				}

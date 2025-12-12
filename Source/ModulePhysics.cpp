@@ -388,7 +388,15 @@ update_status ModulePhysics::PostUpdate()
 bool ModulePhysics::CleanUp()
 {
 	LOG("Destroying physics world");
-
+	b2Body* body = world->GetBodyList();
+	while (body != nullptr){
+		b2BodyUserData& data = body->GetUserData();
+		PhysBody* pBody = (PhysBody*)data.pointer;
+		if (pBody != nullptr){
+			delete pBody;
+		}
+		body = body->GetNext();
+	}
 	// Delete the whole physics world!
 	delete world;
 
