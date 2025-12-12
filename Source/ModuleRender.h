@@ -30,7 +30,7 @@ public:
 
 	Color background;
 	Camera2D camera = {
-		camera.offset = { 200, 200 },
+		camera.offset = { SCREEN_WIDTH/2, SCREEN_HEIGHT/2 },
 		camera.target = { 0, 0 },
 		camera.rotation = 0.0f,
 		camera.zoom = 1.0f,

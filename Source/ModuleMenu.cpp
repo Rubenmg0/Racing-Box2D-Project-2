@@ -105,7 +105,7 @@ void ModuleMenu::OnUIMouseClickEvent(UIElement* element)
 {
 	if (element->id == ID_BTN_PLAY)
 	{
-		currentScreen = GameScreen::CAR_SELECT;
+		currentScreen = GameScreen::GAME; //CAR_SELECT
 	}
 
 	else if (element->id == (ID_BTN_CAR1 || ID_BTN_CAR2)) 

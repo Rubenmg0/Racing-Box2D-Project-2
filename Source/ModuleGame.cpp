@@ -56,7 +56,7 @@ public:
 
 		DrawTexturePro(texture, Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
 			Rectangle{ (float)x, (float)y, (float)texture.width, (float)texture.height },
-			Vector2{ (float)texture.width / 2.0f, (float)texture.height / 2.0f }, body->GetRotation() * RAD2DEG, BLACK);
+			Vector2{ (float)texture.width / 2.0f, (float)texture.height / 2.0f }, body->GetRotation() * RAD2DEG, WHITE);
 
 		if (wheel.height != 0)
 		{
@@ -66,9 +66,9 @@ public:
 				pos.x = METERS_TO_PIXELS(pos.x);
 				pos.y = METERS_TO_PIXELS(pos.y);
 
-				DrawTexturePro(wheel, Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
-					Rectangle{ (float)( pos.x), (float)(pos.y), (float)texture.width/8, (float)texture.height },
-					Vector2{ (float)texture.width / 2.0f, (float)texture.height / 2.0f },90+ body->GetRotation() * RAD2DEG, WHITE);
+				DrawTexturePro(wheel, Rectangle{ 0, 0, (float)wheel.width/8, (float)wheel.height},
+					Rectangle{ (float)( pos.x+wheel.width/4), (float)(pos.y), (float)wheel.width/8, (float)wheel.height },
+					Vector2{ (float)wheel.width / 2.0f, (float)wheel.height / 2.0f }, body->GetRotation() + body->wheels[i]->GetAngle() * RAD2DEG, WHITE);
 			}
 		}
 
@@ -165,14 +165,18 @@ update_status ModuleGame::Update()
 
 				for (const auto& layer : App->map->map_data.layers)
 				{
-					if (layer->name == "Barreras")
+					if (layer->name == "Barrera")
 					{
 							int index = (tileY * layer->width) + tileX;
 
-							if (layer->tiles[index] > 0)
+							if (index >= 0) //Fail-Save: the player gets out of the map
 							{
-								friction = 5.0f;
-							}						
+								if (layer->tiles[index] > 0)
+								{
+									friction = 5.0f;
+								}	
+							}
+					
 						break; 
 					}
 				}
@@ -183,25 +187,35 @@ update_status ModuleGame::Update()
 		playerCar->body->body->SetLinearDamping(friction);
 		App->physics->MoveCar(playerCar->body);
 
-		//debug para detectar que va lo de la friccion
+		//Debug tool to see the friction
 		Color textColor = (friction > 1.0f) ? RED : GREEN;
-		DrawText(TextFormat("Friccion Actual: %.1f", friction), 20, 20, 30, textColor);
+		DrawText(TextFormat("Friction: %.1f", friction), 20, 20, 30, textColor);
 
 		playerCar->body->GetPhysicPosition(carX, carY);
 		int mapWidth = App->map->map_data.width * App->map->map_data.tilewidth;
 		int mapHeight = App->map->map_data.height * App->map->map_data.tileheight;
 
-		float targetX = abs(carX - SCREEN_WIDTH / 2.0f);
-		float targetY = abs(carY - SCREEN_HEIGHT / 2.0f);
+		float targetX = SCREEN_WIDTH / 2.0f - carX;
+		float targetY = SCREEN_HEIGHT/ 2.0f - carY;
 
-		// -- EJE X --
-		if (targetX > 0) targetX = 0;
-		else if (targetX < SCREEN_WIDTH - mapWidth*2) targetX = SCREEN_WIDTH - mapWidth;
-
-		// -- EJE Y --
-		if (targetY > 0) targetY = 0;
-		else if (targetY < SCREEN_HEIGHT - mapHeight*2) targetY = SCREEN_HEIGHT - mapHeight;
-
+		// -- X AXIS --
+		if (targetX > 0)
+		{
+			targetX = 0;
+		}
+		else if (targetX < -(mapWidth - SCREEN_WIDTH))
+		{
+			targetX =  - (mapWidth - SCREEN_WIDTH);
+		}
+		// -- Y AXIS --
+		if (targetY > 0)
+		{
+			targetY = 0;
+		}
+		else if (targetY < -(mapHeight - SCREEN_HEIGHT))
+		{
+			targetY = -(mapHeight - SCREEN_HEIGHT);
+		}
 		App->renderer->camera.target.x = targetX;
 		App->renderer->camera.target.y = targetY;
 	}
