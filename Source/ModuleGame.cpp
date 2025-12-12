@@ -187,12 +187,8 @@ update_status ModuleGame::Update()
 		Color textColor = (friction > 1.0f) ? RED : GREEN;
 		DrawText(TextFormat("Friccion Actual: %.1f", friction), 20, 20, 30, textColor);
 
-<<<<<<< Updated upstream
 		playerCar->body->GetPhysicPosition(carX, carY);
-		int mapWidth = App->map->map_data.width * App->map->map_data.tilewidth - 150;
-=======
 		int mapWidth = App->map->map_data.width * App->map->map_data.tilewidth;
->>>>>>> Stashed changes
 		int mapHeight = App->map->map_data.height * App->map->map_data.tileheight;
 
 		float targetX = abs(carX - SCREEN_WIDTH / 2.0f);
