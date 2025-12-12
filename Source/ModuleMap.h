@@ -27,7 +27,7 @@ struct MapLayer
     std::string name;
     int width;
     int height;
-    std::vector<int> data; // Array con los GIDs de los tiles
+    std::vector<uint32_t> tiles;
     bool visible = true;
 };
 

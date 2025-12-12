@@ -78,20 +78,8 @@ bool ModuleMap::Load(const char* file_name)
         lay->height = layer.attribute("height").as_int();
         lay->visible = layer.attribute("visible").as_bool(true);
 
-        pugi::xml_node data = layer.child("data");
-        std::string data_string = data.child_value();
-
-        for (char& c : data_string)
-        {
-            if (c == ',' || c == '\r' || c == '\n') c = ' ';
-        }
-
-        std::stringstream ss(data_string);
-        int gid;
-
-        while (ss >> gid)
-        {
-            lay->data.push_back(gid);
+        for (pugi::xml_node tileNode = layer.child("data").child("tile"); tileNode != NULL; tileNode = tileNode.next_sibling("tile")) {
+            lay->tiles.push_back(tileNode.attribute("gid").as_uint());
         }
 
         map_data.layers.push_back(lay);
@@ -122,9 +110,7 @@ void ModuleMap::Draw()
             {
                 int index = (y * layer->width) + x;
 
-                if (index >= layer->data.size()) break;
-
-                int gid = layer->data[index];
+                int gid = layer->tiles[index];
 
                 //Si gid es 0, es un tile vacío
                 if (gid > 0)

@@ -44,17 +44,17 @@ public:
 
 	void Update() override
 	{
-		Application().physics->KillLateralVelocity(body->wheels[0]);
-		Application().physics->KillLateralVelocity(body->wheels[1]);
-		Application().physics->KillLateralVelocity(body->wheels[2]);
-		Application().physics->KillLateralVelocity(body->wheels[3]);
+		physics->KillLateralVelocity(body->wheels[0]);
+		physics->KillLateralVelocity(body->wheels[1]);
+		physics->KillLateralVelocity(body->wheels[2]);
+		physics->KillLateralVelocity(body->wheels[3]);
 
 
 		int x, y;
 		body->GetPhysicPosition(x, y);
 		DrawTexturePro(texture, Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
 			Rectangle{ (float)x, (float)y, (float)texture.width, (float)texture.height },
-			Vector2{ (float)texture.width / 2.0f, (float)texture.height / 2.0f }, 90 + body->GetRotation() * RAD2DEG, WHITE);
+			Vector2{ (float)texture.width / 2.0f, (float)texture.height / 2.0f }, body->GetRotation() * RAD2DEG, WHITE);
 	}
 
 	int RayHit(vec2<int> ray, vec2<int> mouse, vec2<float>& normal) override
@@ -64,7 +64,7 @@ public:
 
 private:
 	Texture2D texture;
-
+	ModulePhysics* physics;
 };
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
