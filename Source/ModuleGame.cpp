@@ -127,11 +127,44 @@ update_status ModuleGame::Update()
 	// Center the camera on the player
 	if (playerCar)
 	{
+			float friction = 0.3f;
+
+			int carX, carY;
+			playerCar->body->GetPhysicPosition(carX, carY);
+
+			if (App->map->map_data.tilewidth > 0 && App->map->map_data.tileheight > 0)
+			{
+				int tileX = carX / App->map->map_data.tilewidth;
+				int tileY = carY / App->map->map_data.tileheight;
+
+				for (const auto& layer : App->map->map_data.layers)
+				{
+					if (layer->name == "Barreras")
+					{
+						
+							int index = (tileY * layer->width) + tileX;
+
+							if (layer->tiles[index] > 0)
+							{
+								friction = 5.0f;
+							}
+							
+						
+						break; 
+					}
+				}
+			}
+
+		
+
+		playerCar->body->body->SetLinearDamping(friction);
 		App->physics->MoveCar(playerCar->body);
 
-		int carX, carY;
-		playerCar->body->GetPhysicPosition(carX, carY);
+		//debug para detectar que va lo de la friccion
+		Color textColor = (friction > 1.0f) ? RED : GREEN;
+		DrawText(TextFormat("Friccion Actual: %.1f", friction), 20, 20, 30, textColor);
 
+		playerCar->body->GetPhysicPosition(carX, carY);
 		int mapWidth = App->map->map_data.width * App->map->map_data.tilewidth - 150;
 		int mapHeight = App->map->map_data.height * App->map->map_data.tileheight;
 
