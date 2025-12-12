@@ -1,5 +1,6 @@
 #include "Globals.h"
 #include "Application.h"
+#include "ModuleGame.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "UIButton.h"
@@ -34,7 +35,7 @@ update_status ModuleRender::Update()
 {
 	ClearBackground(background);
 	
-	//camera.target = App->scene_intro->player->GetPosition();
+	//camera.target = App->scene_intro->burgerCar.
 	camera.offset = { SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f };
 	camera.rotation = 0.0f;
 	camera.zoom = 1.f;
