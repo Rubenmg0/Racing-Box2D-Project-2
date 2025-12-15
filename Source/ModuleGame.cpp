@@ -153,7 +153,7 @@ update_status ModuleGame::Update()
 	// Center the camera on the player
 	if (playerCar)
 	{
-			float friction = 0.3f;
+			float friction = 5.0f;
 
 			int carX, carY;
 			playerCar->body->GetPhysicPosition(carX, carY);
@@ -165,7 +165,7 @@ update_status ModuleGame::Update()
 
 				for (const auto& layer : App->map->map_data.layers)
 				{
-					if (layer->name == "Barrera")
+					if (layer->name == "Circuito")
 					{
 							int index = (tileY * layer->width) + tileX;
 
@@ -173,7 +173,7 @@ update_status ModuleGame::Update()
 							{
 								if (layer->tiles[index] > 0)
 								{
-									friction = 5.0f;
+									friction = 0.75f;
 								}	
 							}
 					
@@ -216,8 +216,8 @@ update_status ModuleGame::Update()
 		{
 			targetY = -(mapHeight - SCREEN_HEIGHT);
 		}
-		App->renderer->camera.target.x = targetX;
-		App->renderer->camera.target.y = targetY;
+		App->renderer->camera.target.x = carX;
+		App->renderer->camera.target.y = carY;
 	}
 
 	// Prepare for raycast ------------------------------------------------------

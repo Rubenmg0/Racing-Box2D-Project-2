@@ -18,6 +18,11 @@ ModuleRender::~ModuleRender()
 // Called before render is available
 bool ModuleRender::Init()
 {
+	camera.target = { 0.0f, 0.0f };
+	camera.offset = { SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f };
+	camera.rotation = 0.0f;
+	camera.zoom = 1.0f;
+
 	LOG("Creating Renderer context");
 	bool ret = true;
 
@@ -33,17 +38,6 @@ update_status ModuleRender::PreUpdate()
 // Update: debug camera
 update_status ModuleRender::Update()
 {
-	ClearBackground(background);
-	
-	//camera.target = App->scene_intro->burgerCar.
-	camera.offset = { SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f };
-	camera.rotation = 0.0f;
-	camera.zoom = 1.f;
-
-	EndMode2D();
-	BeginMode2D(camera);
-	BeginDrawing();
-
 	for (UIElement* element : uiElements)
 	{
 		element->Update(1.0f / 60.0f);
@@ -54,8 +48,16 @@ update_status ModuleRender::Update()
 // PostUpdate present buffer to screen
 update_status ModuleRender::PostUpdate()
 {
+	BeginDrawing();
+	ClearBackground(background);
+
+	BeginMode2D(camera);
+		
+
+	EndMode2D();
+
 	// Draw everything in our batch!
-	DrawFPS(10, 10);
+
 	for (UIElement* element : uiElements)
 	{
 		element->Draw();
@@ -111,8 +113,8 @@ bool ModuleRender::Draw(Texture2D texture, int x, int y, const Rectangle* sectio
 
 	if (section != NULL) rect = *section;
 
-	position.x = (float)(x - pivot_x) * scale + camera.target.x;
-	position.y = (float)(y - pivot_y) * scale + camera.target.y;
+	position.x = (float)(x - pivot_x) * scale;
+	position.y = (float)(y - pivot_y) * scale;
 
 	rect.width *= scale;
 	rect.height *= scale;

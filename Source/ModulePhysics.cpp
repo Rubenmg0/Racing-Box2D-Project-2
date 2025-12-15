@@ -294,7 +294,6 @@ void ModulePhysics::DeleteBody(PhysBody* body)
 	world->DestroyBody(body->body);
 }
 
-// 
 update_status ModulePhysics::PostUpdate()
 {
 	if (IsKeyPressed(KEY_F1))
@@ -382,7 +381,6 @@ update_status ModulePhysics::PostUpdate()
 
 	return UPDATE_CONTINUE;
 }
-
 
 // Called before quitting
 bool ModulePhysics::CleanUp()
@@ -483,9 +481,9 @@ void ModulePhysics::MoveCar(PhysBody* car)
 	{
 		steer = -car->motorJoints[0]->GetJointAngle() * 3;
 	}
+
 	car->motorJoints[0]->SetMotorSpeed(steer);
 	car->motorJoints[1]->SetMotorSpeed(steer);
-
 }
 
 int PhysBody::RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const

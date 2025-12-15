@@ -4,8 +4,10 @@
 #include <vector>
 #include <string>
 
-// PugiXML para leer el archivo
+// PugiXML to read the file
 #include "pugixml.hpp"
+
+#include "box2d/box2d.h"
 
 struct TileSet
 {
@@ -31,6 +33,17 @@ struct MapLayer
     bool visible = true;
 };
 
+struct ObjectGroup
+{
+    struct Object
+    {
+        float id, x, y, width, height;
+        std::vector<b2Vec2> points;
+    };
+    std::vector<Object*> objects;
+};
+
+
 struct MapData
 {
     int width;
@@ -39,6 +52,7 @@ struct MapData
     int tileheight;
     Color background_color;
     std::vector<TileSet*> tilesets;
+    std::vector<ObjectGroup*> objectGroups;
     std::vector<MapLayer*> layers;
 };
 
