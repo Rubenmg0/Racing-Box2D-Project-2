@@ -23,6 +23,11 @@ bool ModuleMenu::Start()
 
 update_status ModuleMenu::Update()
 {
+	App->renderer->camera.zoom = 1.0f;
+	App->renderer->camera.target = { 0.0f, 0.0f };
+	App->renderer->camera.offset = { 0.0f, 0.0f };
+	App->renderer->camera.rotation = 0.0f;
+
 	switch (currentScreen)
 	{
 	case MENU:

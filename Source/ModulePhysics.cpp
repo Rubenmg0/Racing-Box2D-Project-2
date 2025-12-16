@@ -96,7 +96,7 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height)
 
 	b2FixtureDef fixture;
 	fixture.shape = &box;
-	fixture.density = 1.0f;
+	fixture.density = 0.0f;
 
 	b->CreateFixture(&fixture);
 
@@ -178,6 +178,7 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 	//Create Chasis
 	b2BodyDef body;
 	body.type = b2_dynamicBody;
+	body.bullet = true;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.userData.pointer = reinterpret_cast<uintptr_t>(pbody);
 

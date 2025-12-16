@@ -19,7 +19,7 @@ ModuleRender::~ModuleRender()
 bool ModuleRender::Init()
 {
 	camera.target = { 0.0f, 0.0f };
-	camera.offset = { SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f };
+	camera.offset = { 0, 0 };
 	camera.rotation = 0.0f;
 	camera.zoom = 1.0f;
 
@@ -32,6 +32,9 @@ bool ModuleRender::Init()
 // PreUpdate: clear buffer
 update_status ModuleRender::PreUpdate()
 {
+	BeginDrawing();
+	ClearBackground(background);
+	BeginMode2D(camera);
 	return UPDATE_CONTINUE;
 }
 
@@ -48,15 +51,7 @@ update_status ModuleRender::Update()
 // PostUpdate present buffer to screen
 update_status ModuleRender::PostUpdate()
 {
-	BeginDrawing();
-	ClearBackground(background);
-
-	BeginMode2D(camera);
-		
-
 	EndMode2D();
-
-	// Draw everything in our batch!
 
 	for (UIElement* element : uiElements)
 	{

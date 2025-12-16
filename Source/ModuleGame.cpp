@@ -138,24 +138,18 @@ update_status ModuleGame::Update()
 		ray.y = GetMouseY();
 	}
 
-
 	if (IsKeyPressed(KEY_TWO))
 	{
 		Car* newCar = new Car(App->physics, GetMouseX(), GetMouseY(), this, normalcar,wheel);
-		
 		entities.emplace_back(newCar);
-
 		playerCar = newCar;
-
 	}
 
-
-	// Center the camera on the player
 	if (playerCar)
 	{
 			float friction = 5.0f;
-
 			int carX, carY;
+
 			playerCar->body->GetPhysicPosition(carX, carY);
 
 			if (App->map->map_data.tilewidth > 0 && App->map->map_data.tileheight > 0)
@@ -169,20 +163,17 @@ update_status ModuleGame::Update()
 					{
 							int index = (tileY * layer->width) + tileX;
 
-							if (index >= 0) //Fail-Save: the player gets out of the map
+							if (index >= 0 && index < layer->width * layer->height) 
 							{
 								if (layer->tiles[index] > 0)
 								{
 									friction = 0.75f;
 								}	
 							}
-					
 						break; 
 					}
 				}
 			}
-
-		
 
 		playerCar->body->body->SetLinearDamping(friction);
 		App->physics->MoveCar(playerCar->body);
@@ -191,33 +182,45 @@ update_status ModuleGame::Update()
 		Color textColor = (friction > 1.0f) ? RED : GREEN;
 		DrawText(TextFormat("Friction: %.1f", friction), 20, 20, 30, textColor);
 
-		playerCar->body->GetPhysicPosition(carX, carY);
+		// Center the camera on the player
+
+		float currentZoom = App->renderer->camera.zoom = 2.0f;
+
+		float halfScreenWidth = SCREEN_WIDTH / 2.0f;
+		float halfScreenHeight = SCREEN_HEIGHT / 2.0f;
+
+		float visibleHalfWidth = halfScreenWidth / currentZoom;
+		float visibleHalfHeight = halfScreenHeight / currentZoom;
+
+		App->renderer->camera.offset = Vector2{ halfScreenWidth, halfScreenHeight };
+
 		int mapWidth = App->map->map_data.width * App->map->map_data.tilewidth;
 		int mapHeight = App->map->map_data.height * App->map->map_data.tileheight;
 
-		float targetX = SCREEN_WIDTH / 2.0f - carX;
-		float targetY = SCREEN_HEIGHT/ 2.0f - carY;
+		float targetX = (float)carX;
+		float targetY = (float)carY;
 
 		// -- X AXIS --
-		if (targetX > 0)
+		if (targetX < visibleHalfWidth)
 		{
-			targetX = 0;
+			targetX = visibleHalfWidth;
 		}
-		else if (targetX < -(mapWidth - SCREEN_WIDTH))
+		else if (targetX > mapWidth - visibleHalfWidth)
 		{
-			targetX =  - (mapWidth - SCREEN_WIDTH);
+			targetX = mapWidth - visibleHalfWidth;
 		}
+		
 		// -- Y AXIS --
-		if (targetY > 0)
+		if (targetY < visibleHalfHeight)
 		{
-			targetY = 0;
+			targetY = visibleHalfHeight;
 		}
-		else if (targetY < -(mapHeight - SCREEN_HEIGHT))
+		else if (targetY > mapHeight - visibleHalfHeight)
 		{
-			targetY = -(mapHeight - SCREEN_HEIGHT);
+			targetY = mapHeight - visibleHalfHeight;
 		}
-		App->renderer->camera.target.x = carX;
-		App->renderer->camera.target.y = carY;
+
+		App->renderer->camera.target = Vector2{ targetX, targetY };
 	}
 
 	// Prepare for raycast ------------------------------------------------------
@@ -231,7 +234,6 @@ update_status ModuleGame::Update()
 
 	// All draw functions ------------------------------------------------------
 
-
 	for (PhysicEntity* entity : entities)
 	{
 		entity->Update();
@@ -244,7 +246,6 @@ update_status ModuleGame::Update()
 			}
 		}
 	}
-
 
 	// ray -----------------
 	if (ray_on == true)
