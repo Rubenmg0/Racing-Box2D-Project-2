@@ -5,7 +5,7 @@
 
 struct UIElement;
 
-enum GameScreen {
+enum class GameScreen {
 	MENU,
 	CONTROLS,
 	CREDITS,
@@ -30,7 +30,6 @@ public:
 	void OnUIMouseClickEvent(UIElement* element);
 
 public:
-	Texture2D bgTexture; // Para la imagen de fondo
 	bool exitGame = false;
 
 	GameScreen currentScreen;

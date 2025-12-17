@@ -3,6 +3,7 @@
 #include "ModuleGame.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
+#include "ModuleMenu.h"
 #include "UIButton.h"
 #include <math.h>
 
@@ -18,13 +19,21 @@ ModuleRender::~ModuleRender()
 // Called before render is available
 bool ModuleRender::Init()
 {
-	camera.target = { 0.0f, 0.0f };
-	camera.offset = { 0, 0 };
-	camera.rotation = 0.0f;
-	camera.zoom = 1.0f;
-
 	LOG("Creating Renderer context");
 	bool ret = true;
+
+	circle = LoadTexture("Assets/wheel.png");
+	box = LoadTexture("Assets/crate.png");
+
+	//Cars
+	burgerCar = LoadTexture("Assets/Cars/BurgerCar/burger_car.png");
+	normalCar = LoadTexture("Assets/Cars/NormalCars/normal_car_yellow.png");
+	wheel = LoadTexture("Assets/Cars/NormalCars/wheel_animation_spritesheet.png");
+
+	//Scenes
+	menu = LoadTexture("Assets/Scenes/menu_bg.png");
+
+
 
 	return ret;
 }
@@ -33,8 +42,15 @@ bool ModuleRender::Init()
 update_status ModuleRender::PreUpdate()
 {
 	BeginDrawing();
-	ClearBackground(background);
 	BeginMode2D(camera);
+
+	switch (App->menu->currentScreen) {
+
+	case GameScreen::MENU:
+
+		DrawTexturePro(menu, Rectangle{ 0, 0, (float)menu.width, (float)menu.height }, Rectangle{ 0, 0, (float)SCREEN_WIDTH, (float)SCREEN_HEIGHT }, Vector2{ 0, 0 }, 0.0f, WHITE);
+		break;
+	}
 	return UPDATE_CONTINUE;
 }
 
@@ -58,6 +74,19 @@ update_status ModuleRender::PostUpdate()
 		element->Draw();
 	}
 
+	//Draw all the textures of every scene
+	switch (App->menu->currentScreen) {
+
+	case GameScreen::CONTROLS:
+
+
+		break;
+	case GameScreen::GAMEOVER:
+
+
+		break;
+	}
+	// Draw everything in our batch!
 	DrawFPS(10, 10);
 
 	EndDrawing();
@@ -78,6 +107,18 @@ void ModuleRender::ClearUI()
 bool ModuleRender::CleanUp()
 {
 	ClearUI();
+	UnloadTexture(circle);
+	UnloadTexture(box);
+
+	//Cars
+	UnloadTexture(burgerCar);
+	UnloadTexture(normalCar);
+	UnloadTexture(wheel);
+
+	//Scenes
+	UnloadTexture(menu);
+
+
 	return true;
 }
 

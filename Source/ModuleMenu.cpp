@@ -1,3 +1,4 @@
+#include "Globals.h"
 #include "ModuleMenu.h"
 #include "Application.h"
 #include "ModuleRender.h"
@@ -5,7 +6,7 @@
 #include "UIElement.h"
 #include "UIButton.h"
 
-ModuleMenu::ModuleMenu(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModuleMenu::ModuleMenu(Application* app, bool start_enabled) : Module(app, start_enabled), currentScreen(GameScreen::MENU)
 {
 }
 
@@ -15,8 +16,6 @@ bool ModuleMenu::Start()
 {
 	LOG("Loading Menu Assets");
 	bool ret = true;
-
-	bgTexture = LoadTexture("Assets/Scenes/menu_bg.png");
 
 	return ret;
 }
@@ -30,10 +29,12 @@ update_status ModuleMenu::Update()
 
 	switch (currentScreen)
 	{
-	case MENU:
+	case GameScreen::MENU:
+		this->Enable();
+
 		//PLAY Button
 		App->renderer->CreateButton(ID_BTN_PLAY, Rectangle{ (float)centerX, (float)startY, (float)btnWidth, (float)btnHeight }, "PLAY", this);
-
+		
 		//SETTINGS Button
 		App->renderer->CreateButton(ID_BTN_SETTINGS, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding), (float)btnWidth, (float)btnHeight }, "SETTINGS", this);
 
@@ -41,7 +42,7 @@ update_status ModuleMenu::Update()
 		App->renderer->CreateButton(ID_BTN_QUIT, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 2, (float)btnWidth, (float)btnHeight }, "QUIT", this);
 		
 		break;
-	case CONTROLS:
+	case GameScreen::CONTROLS:
 		//SOUND Button
 		App->renderer->CreateButton(ID_BTN_SOUND, Rectangle{ (float)centerX, (float)startY, (float)btnWidth, (float)btnHeight }, "SOUND", this);
 		
@@ -52,29 +53,29 @@ update_status ModuleMenu::Update()
 		App->renderer->CreateButton(ID_BTN_BACK, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 2, (float)btnWidth, (float)btnHeight }, "BACK", this);
 
 		break;
-	case CREDITS:
+	case GameScreen::CREDITS:
 
 
 		break;
-	case CAR_SELECT:
+	case GameScreen::CAR_SELECT:
 
 
 		//BACK Button
 		App->renderer->CreateButton(ID_BTN_BACK, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 2, (float)btnWidth, (float)btnHeight }, "BACK", this);
 
 		break;
-	case MAP_SELECT:
+	case GameScreen::MAP_SELECT:
 
 
 		//BACK Button
 		App->renderer->CreateButton(ID_BTN_BACK, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 2, (float)btnWidth, (float)btnHeight }, "BACK", this);
 
 		break;
-	case GAME:
+	case GameScreen::GAME:
 		this->Disable();
 
 		break;
-	case GAMEOVER:
+	case GameScreen::GAMEOVER:
 
 
 		break;
@@ -91,7 +92,6 @@ update_status ModuleMenu::Update()
 
 update_status ModuleMenu::PostUpdate()
 {
-	DrawTexturePro(bgTexture, Rectangle{ 0, 0, (float)bgTexture.width, (float)bgTexture.height }, Rectangle{ 0, 0, (float)SCREEN_WIDTH, (float)SCREEN_HEIGHT }, Vector2{ 0, 0 }, 0.0f, WHITE);
 
 	return UPDATE_CONTINUE;
 }
@@ -99,8 +99,6 @@ update_status ModuleMenu::PostUpdate()
 bool ModuleMenu::CleanUp()
 {
 	LOG("Unloading Menu Scene");
-	UnloadTexture(bgTexture);
-
 	App->renderer->ClearUI();
 
 	return true;

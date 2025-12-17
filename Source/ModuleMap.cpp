@@ -22,9 +22,6 @@ bool ModuleMap::Start()
     LOG("Loading Map");
     bool ret = true;
 
-    //Aqui se carga el mapa del Tiled
-    Load("Assets/map/CuteRacing.tmx");
-
     return ret;
 }
 

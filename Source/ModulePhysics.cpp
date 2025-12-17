@@ -188,11 +188,11 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 	b2Body* chassis = world->CreateBody(&body);
 
 	b2PolygonShape box;
-	box.SetAsBox(PIXEL_TO_METERS(carWidth/2), PIXEL_TO_METERS(carHeigh/2));
+	box.SetAsBox(PIXEL_TO_METERS(carWidth /2), PIXEL_TO_METERS(carHeigh/2));
 
 	b2FixtureDef fixture;
 	fixture.shape = &box;
-	fixture.density = (float)mass / (carHeigh * carHeigh);	
+	fixture.density = (float)mass / (carWidth * carHeigh);
 	fixture.isSensor = false;
 
 	chassis->CreateFixture(&fixture);
@@ -204,10 +204,10 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 
 
 	//Create Wheels
-	b2Vec2 flWheelPos = { (float)x - carWidth / 2, (float)y - carHeigh / 2 }; //Front Left
-	b2Vec2 frWheelPos = { (float)x + carWidth / 2, (float)y - carHeigh / 2 }; //Front Right
-	b2Vec2 blWheelPos = { (float)x - carWidth / 2, (float)y + carHeigh / 2 }; //Back Left
-	b2Vec2 brWheelPos = { (float)x + carWidth / 2, (float)y + carHeigh / 2 }; //Back Right
+	b2Vec2 flWheelPos = { (float)x + carHeigh / 2, (float)y - carWidth / 2 }; //Front Left
+	b2Vec2 frWheelPos = { (float)x + carHeigh / 2, (float)y + carWidth / 2 }; //Front Right
+	b2Vec2 blWheelPos = { (float)x - carHeigh / 2, (float)y - carWidth / 2 }; //Back Left
+	b2Vec2 brWheelPos = { (float)x - carHeigh / 2, (float)y + carWidth / 2 }; //Back Right
 
 	b2Body* flWheel = CreateWheels(flWheelPos.x, flWheelPos.y);
 	b2Body* frWheel = CreateWheels(frWheelPos.x, frWheelPos.y);
@@ -226,8 +226,8 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 
 	joint.collideConnected = false;
 
-	float halfWidthMeters = PIXEL_TO_METERS(carWidth / 2);
 	float halfHeightMeters = PIXEL_TO_METERS(carHeigh / 2);
+	float halfWidthMeters = PIXEL_TO_METERS(carWidth / 2);
 
 	joint.enableLimit = true;
 	joint.lowerAngle = -45 * DEG2RAD; // -45 degrees in rads
@@ -453,7 +453,7 @@ void ModulePhysics::MoveCar(PhysBody* car)
 	b2Vec2 forward = car->wheels[0]->GetWorldVector(b2Vec2(0, -1));
 
 	//Turbo
-	if (IsKeyDown(KEY_SPACE))
+	if (IsKeyDown(KEY_SPACE) && !IsKeyDown(KEY_S))
 	{
 		acceleration *= 10;
 	}

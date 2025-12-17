@@ -30,4 +30,15 @@ public:
 
 	Color background;
 	Camera2D camera;
+
+	Texture2D circle;
+	Texture2D box;
+
+	//Cars texture
+	Texture2D burgerCar;
+	Texture2D normalCar;
+	Texture2D wheel;
+
+	//Scenes textures
+	Texture2D menu;
 };

@@ -15,9 +15,32 @@ Timer::Timer()
 void Timer::Start()
 {
 	started_at = GetTime();
+	paused_at = 0;
+	timePaused = false;
 }
 
 double Timer::ReadSec() const
 {
-	return (GetTime() - started_at);
+	if (timePaused == true)
+	{
+		return paused_at;
+	}
+	if (timePaused == false)
+	{
+		return (GetTime() - started_at + paused_at);
+	}
+}
+
+void Timer::Stop()
+{
+	if (timePaused == false)
+	{
+		paused_at = ReadSec();
+	}
+	timePaused = true;
+}
+
+void Timer::ContinueTimer()
+{
+	timePaused = false;
 }

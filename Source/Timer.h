@@ -12,9 +12,14 @@ public:
 
 	void Start();
 	double ReadSec() const;
+	void Stop();
+	void ContinueTimer();
 
 private:
 
-    // Start time in seconds
-	double started_at;   
+	// Start time in seconds
+	double started_at;
+	double paused_at = 0;
+
+	bool timePaused;
 };
