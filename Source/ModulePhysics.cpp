@@ -449,7 +449,7 @@ void ModulePhysics::MoveCar(PhysBody* car)
 	if (car == nullptr) return;
 
 	float acceleration = 0.7f;
-	float steerSpeed = 0.7f; //w (rad/s)
+	float steerSpeed = 0.5f; //w (rad/s)
 	b2Vec2 forward = car->wheels[0]->GetWorldVector(b2Vec2(0, -1));
 
 	//Turbo
@@ -470,6 +470,9 @@ void ModulePhysics::MoveCar(PhysBody* car)
 	}
 
 	float steer = 0.0f;
+	car->motorJoints[0]->SetLimits(-45 * DEG2RAD, 45 * DEG2RAD);
+	car->motorJoints[1]->SetLimits(-45 * DEG2RAD, 45 * DEG2RAD);
+
 	if (IsKeyDown(KEY_A))
 	{
 		steer = -steerSpeed;
@@ -478,9 +481,19 @@ void ModulePhysics::MoveCar(PhysBody* car)
 	{
 		steer = steerSpeed;
 	}
-	else if (car->motorJoints[0]->GetJointAngle() != 0)
+	else if (car->motorJoints[0]->GetJointAngle() != 0 || car->motorJoints[1]->GetJointAngle() != 0)
 	{
-		steer = -car->motorJoints[0]->GetJointAngle() * 3;
+		steer = -car->motorJoints[0]->GetJointAngle();
+		if (car->motorJoints[0]->GetJointAngle() < 5 * DEG2RAD || car->motorJoints[1]->GetJointAngle() < 5 * DEG2RAD)
+		{
+			car->motorJoints[0]->SetLimits(0,0);
+			car->motorJoints[1]->SetLimits(0,0);
+		}
+		else
+		{
+			car->motorJoints[0]->SetLimits(car->motorJoints[0]->GetLowerLimit()/2, car->motorJoints[0]->GetUpperLimit()/2);
+			car->motorJoints[1]->SetLimits(car->motorJoints[1]->GetLowerLimit() / 2, car->motorJoints[1]->GetUpperLimit() / 2);
+		}
 	}
 
 	car->motorJoints[0]->SetMotorSpeed(steer);
