@@ -207,6 +207,14 @@ bool ModuleMap::CleanUp()
     }
     map_data.tilesets.clear();
 
+    for (auto& group : map_data.objectGroups) {
+        for (auto& obj : group->objects) {
+            delete obj;
+        }
+        delete group; 
+    }
+    map_data.objectGroups.clear();
+
     return true;
 }
 
