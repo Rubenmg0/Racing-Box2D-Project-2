@@ -4,6 +4,7 @@
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleMenu.h"
+#include "ModuleAudio.h"
 #include "UIButton.h"
 #include <math.h>
 
@@ -33,7 +34,15 @@ bool ModuleRender::Init()
 	//Scenes
 	menu = LoadTexture("Assets/Scenes/menu_bg.png");
 
+	//Text
+	timerChrono.LoadFont("Assets/Font/alagard.ttf", 48);
 
+	chrono_base = LoadTexture("Assets/Scenes/Base_Chrono.png");
+
+	//Load music and sfx (No inicia nada, falta poner alguna musica en la carpeta)
+	menuMusic = App->audio->LoadFx("Assets/Audio/menuMusic.wav");
+	gameMusic = App->audio->LoadFx("Assets/Audio/gameMusic.wav");
+	endMusic = App->audio->LoadFx("Assets/Audio/endMusic.wav");
 
 	return ret;
 }
@@ -81,8 +90,36 @@ update_status ModuleRender::PostUpdate()
 
 
 		break;
-	case GameScreen::GAMEOVER:
 
+	case GameScreen::GAME:
+	{
+		if (!resetTime) {
+			timer.Start();
+			App->audio->PlayFx(gameMusic);
+			resetTime = true;
+		}
+
+		Vector2 position = { 960.0f, -2.0f };
+		float rotation = 0.0f;
+		float scale = 0.47f;
+
+		DrawTextureEx(chrono_base, position, rotation, scale, WHITE);
+
+		double totalSeconds = timer.ReadSec();
+
+		int minutes = (int)totalSeconds / 60;
+		int seconds = (int)totalSeconds % 60;
+		int centiseconds = (int)((totalSeconds - (int)totalSeconds) * 100);
+
+		const char* formTime = TextFormat("%02d:%02d.%02d", minutes, seconds, centiseconds);
+
+		timerChrono.Draw(1025, 75, formTime, WHITE, 8);
+	}
+		break;
+	case GameScreen::GAMEOVER:
+		timer.Stop();
+		App->audio->StopFx(gameMusic);
+		App->audio->PlayFx(endMusic);
 
 		break;
 	}
@@ -117,6 +154,7 @@ bool ModuleRender::CleanUp()
 
 	//Scenes
 	UnloadTexture(menu);
+	UnloadTexture(chrono_base);
 
 
 	return true;

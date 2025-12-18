@@ -1,5 +1,7 @@
 #pragma once
 #include "Module.h"
+#include "Text.h"
+#include "Timer.h"
 #include "Globals.h"
 #include <vector>
 #include <limits.h>
@@ -41,4 +43,14 @@ public:
 
 	//Scenes textures
 	Texture2D menu;
+
+	Text timerChrono;
+	Timer timer;
+	Texture2D chrono_base;
+	bool resetTime = false;
+
+	//Music
+	uint32 menuMusic;
+	uint32 gameMusic;
+	uint32 endMusic;
 };

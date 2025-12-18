@@ -1,5 +1,6 @@
 #pragma once
 #include "Module.h"
+#include "Timer.h"
 #include "Globals.h"
 #include "raylib.h"
 
@@ -63,4 +64,6 @@ public:
 	const int ID_BTN_BACK = 9;
 	const int ID_BTN_QUIT = 10;
 	const int ID_BTN_CREDITS = 11;
+
+	Timer timer;
 };

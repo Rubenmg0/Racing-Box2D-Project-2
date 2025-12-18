@@ -193,6 +193,7 @@
     <ClInclude Include="Source\ModuleMap.h" />
     <ClInclude Include="Source\pugiconfig.hpp" />
     <ClInclude Include="Source\pugixml.hpp" />
+    <ClInclude Include="Source\Text.h" />
     <ClInclude Include="Source\Timer.h" />
     <ClInclude Include="Source\UIButton.h" />
     <ClInclude Include="Source\UIElement.h" />
@@ -209,6 +210,7 @@
     <ClCompile Include="Source\ModuleMap.cpp" />
     <ClCompile Include="Source\ModuleMenu.cpp" />
     <ClCompile Include="Source\pugixml.cpp" />
+    <ClCompile Include="Source\Text.cpp" />
     <ClCompile Include="Source\Timer.cpp" />
     <ClCompile Include="Source\UIButton.cpp" />
   </ItemGroup>
