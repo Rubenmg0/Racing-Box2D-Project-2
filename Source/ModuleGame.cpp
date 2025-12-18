@@ -211,7 +211,7 @@ update_status ModuleGame::Update()
 			}
 			else if (touchingGrass)
 			{
-				friction = 5.0f;
+				friction = 7.0f;
 			}
 
 			playerCar->body->body->SetLinearDamping(friction);

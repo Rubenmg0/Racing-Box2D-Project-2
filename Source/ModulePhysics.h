@@ -61,6 +61,7 @@ public:
 	PhysBody* CreateRectangle(int x, int y, int width, int height);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height);
 	PhysBody* CreateChain(int x, int y, const int* points, int size);
+	PhysBody* CreateStaticWall(int x, int y, int width, int height);
 
 	PhysBody* CreateCar(int x, int y, int mass = 100);
 	b2Body* CreateWheels(int x, int y);

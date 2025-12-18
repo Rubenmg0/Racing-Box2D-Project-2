@@ -88,7 +88,7 @@ bool ModuleMap::Load(const char* file_name)
 
         // Load Object Group
         ObjectGroup* objectgroup = new ObjectGroup();
-
+        objectgroup->name = objectGroupNode.attribute("name").as_string();
         for (pugi::xml_node objectNode = objectGroupNode.child("object"); objectNode != NULL; objectNode = objectNode.next_sibling("object")) {
             ObjectGroup::Object* o = new ObjectGroup::Object;
 
@@ -131,10 +131,17 @@ bool ModuleMap::Load(const char* file_name)
     // Creation of colliders and assign their type
     for (const auto& objectsGroups : map_data.objectGroups)
     {
-        for (const auto& obj : objectsGroups->objects)
+        if (objectsGroups->name == "Collision") 
         {
-            PhysBody* collider;
-            collider = App->physics->CreateRectangle(obj->x + obj->width / 2, obj->y + obj->height / 2, obj->width, obj->height);
+            for (const auto& obj : objectsGroups->objects)
+            {
+                App->physics->CreateStaticWall(
+                    obj->x + obj->width / 2,
+                    obj->y + obj->height / 2,
+                    obj->width,
+                    obj->height
+                );  
+            }
         }
     }
 

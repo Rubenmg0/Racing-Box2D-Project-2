@@ -535,3 +535,29 @@ void ModulePhysics::BeginContact(b2Contact* contact)
 	if (physB && physB->listener != NULL)
 		physB->listener->OnCollision(physB, physA);
 }
+PhysBody* ModulePhysics::CreateStaticWall(int x, int y, int width, int height)
+{
+	PhysBody* pbody = new PhysBody();
+	b2BodyDef body;
+	body.type = b2_staticBody;
+	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+	body.userData.pointer = reinterpret_cast<uintptr_t>(pbody);
+
+	b2Body* b = world->CreateBody(&body);
+
+	b2PolygonShape box;
+	box.SetAsBox(PIXEL_TO_METERS(width) * 0.5f, PIXEL_TO_METERS(height) * 0.5f);
+
+	b2FixtureDef fixture;
+	fixture.shape = &box;
+	fixture.density = 1.0f;
+	fixture.restitution = 2.2f; //modificar el rebote
+
+	b->CreateFixture(&fixture);
+
+	pbody->body = b;
+	pbody->width = width;
+	pbody->height = height;
+
+	return pbody;
+}

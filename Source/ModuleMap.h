@@ -35,6 +35,7 @@ struct MapLayer
 
 struct ObjectGroup
 {
+    std::string name;
     struct Object
     {
         float id, x, y, width, height;
