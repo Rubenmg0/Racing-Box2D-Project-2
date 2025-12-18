@@ -171,10 +171,13 @@ update_status ModuleGame::Update()
 
 		if (playerCar)
 		{
-			float friction = 5.0f;
+			float friction = 0.1f;
 			int carX, carY;
 
 			playerCar->body->GetPhysicPosition(carX, carY);
+
+			bool touchingCircuit = false;
+			bool touchingGrass = false;
 
 			if (App->map->map_data.tilewidth > 0 && App->map->map_data.tileheight > 0)
 			{
@@ -183,28 +186,36 @@ update_status ModuleGame::Update()
 
 				for (const auto& layer : App->map->map_data.layers)
 				{
-					if (layer->name == "Circuito")
-					{
-						int index = (tileY * layer->width) + tileX;
+					int index = (tileY * layer->width) + tileX;
 
-						if (index >= 0 && index < layer->width * layer->height)
+					if (index >= 0 && index < layer->width * layer->height)
+					{
+						if (layer->tiles[index] > 0)
 						{
-							if (layer->tiles[index] > 0)
+							if (layer->name == "Circuito")
 							{
-								friction = 0.75f;
+								touchingCircuit = true;
+							}
+							else if (layer->name == "Hierba")
+							{
+								touchingGrass = true;
 							}
 						}
-						break;
 					}
+
 				}
+			}
+			if (touchingCircuit)
+			{
+				friction = 0.1f;
+			}
+			else if (touchingGrass)
+			{
+				friction = 5.0f;
 			}
 
 			playerCar->body->body->SetLinearDamping(friction);
 			App->physics->MoveCar(playerCar->body);
-
-			//Debug tool to see the friction
-			Color textColor = (friction > 1.0f) ? RED : GREEN;
-			DrawText(TextFormat("Friction: %.1f", friction), 20, 20, 30, textColor);
 
 			// Center the camera on the player
 			float currentZoom = App->renderer->camera.zoom = 1.5f;
@@ -244,6 +255,8 @@ update_status ModuleGame::Update()
 			}
 
 			App->renderer->camera.target = Vector2{ targetX, targetY };
+
+
 		}
 
 		break;

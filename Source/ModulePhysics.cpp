@@ -448,8 +448,8 @@ void ModulePhysics::MoveCar(PhysBody* car)
 	// Check if playerCar exists
 	if (car == nullptr) return;
 
-	float acceleration = 0.15f;
-	float steerSpeed = 1.5f; //w (rad/s)
+	float acceleration = 0.7f;
+	float steerSpeed = 0.7f; //w (rad/s)
 	b2Vec2 forward = car->wheels[0]->GetWorldVector(b2Vec2(0, -1));
 
 	//Turbo
