@@ -5,6 +5,7 @@
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
 #include "ModuleMap.h"
+#include "ModuleMenu.h"
 
 #include "UIElement.h"
 
@@ -36,9 +37,7 @@ class Car : public PhysicEntity
 {
 public:
 	Car(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture, Texture2D _wheeltexture)
-		: PhysicEntity(physics->CreateCar(_x, _y), _listener)
-		, texture(_texture)
-		, wheel(_wheeltexture)
+		: PhysicEntity(physics->CreateCar(_x, _y), _listener), texture(_texture), wheel(_wheeltexture)
 	{
 
 	}
@@ -102,13 +101,6 @@ bool ModuleGame::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
-	circle = LoadTexture("Assets/wheel.png");
-	box = LoadTexture("Assets/crate.png");
-	burgerCar = LoadTexture("Assets/Cars/BurgerCar/burger_car.png");
-	normalcar = LoadTexture("Assets/Cars/NormalCars/normal_car_yellow.png");
-	wheel = LoadTexture("Assets/Cars/NormalCars/wheel_animation_spritesheet.png");
-
-
 	//sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
 
 	return ret;
@@ -131,31 +123,57 @@ bool ModuleGame::CleanUp()
 // Update: draw background
 update_status ModuleGame::Update()
 {
-	if (IsKeyPressed(KEY_SPACE))
+	switch (App->menu->currentScreen)
 	{
-		ray_on = !ray_on;
-		ray.x = GetMouseX();
-		ray.y = GetMouseY();
-	}
-
-
-	if (IsKeyPressed(KEY_TWO))
-	{
-		Car* newCar = new Car(App->physics, GetMouseX(), GetMouseY(), this, normalcar,wheel);
+	case GameScreen::MENU:
 		
-		entities.emplace_back(newCar);
 
-		playerCar = newCar;
+		break;
+	case GameScreen::CONTROLS:
+		
 
-	}
+		break;
+	case GameScreen::CREDITS:
 
 
-	// Center the camera on the player
-	if (playerCar)
-	{
-			float friction = 0.3f;
+		break;
+	case GameScreen::CAR_SELECT:
 
+
+
+		break;
+	case GameScreen::MAP_SELECT:
+
+
+
+		break;
+	case GameScreen::GAME:
+
+		//Aqui se carga el mapa del Tiled
+		if (!mapLoad) {
+		App->map->Load("Assets/map/CuteRacing.tmx");
+		mapLoad = true;
+		}
+
+
+		if (playerCar == nullptr) {
+			Car* newCar = new Car(App->physics, posInit.x, posInit.y, this, App->renderer->normalCar, App->renderer->wheel);
+			entities.emplace_back(newCar);
+			playerCar = newCar;
+
+			bodyCar = playerCar->body->body;
+			positionCar = bodyCar->GetPosition();
+
+			float angleRadians = 100.0f * (PI / 180.0f);
+
+			bodyCar->SetTransform(positionCar, angleRadians);
+		}
+
+		if (playerCar)
+		{
+			float friction = 5.0f;
 			int carX, carY;
+
 			playerCar->body->GetPhysicPosition(carX, carY);
 
 			if (App->map->map_data.tilewidth > 0 && App->map->map_data.tileheight > 0)
@@ -165,60 +183,88 @@ update_status ModuleGame::Update()
 
 				for (const auto& layer : App->map->map_data.layers)
 				{
-					if (layer->name == "Barrera")
+					if (layer->name == "Circuito")
 					{
-							int index = (tileY * layer->width) + tileX;
+						int index = (tileY * layer->width) + tileX;
 
-							if (index >= 0) //Fail-Save: the player gets out of the map
+						if (index >= 0 && index < layer->width * layer->height)
+						{
+							if (layer->tiles[index] > 0)
 							{
-								if (layer->tiles[index] > 0)
-								{
-									friction = 5.0f;
-								}	
+								friction = 0.75f;
 							}
-					
-						break; 
+						}
+						break;
 					}
 				}
 			}
 
-		
+			playerCar->body->body->SetLinearDamping(friction);
+			App->physics->MoveCar(playerCar->body);
 
-		playerCar->body->body->SetLinearDamping(friction);
-		App->physics->MoveCar(playerCar->body);
+			//Debug tool to see the friction
+			Color textColor = (friction > 1.0f) ? RED : GREEN;
+			DrawText(TextFormat("Friction: %.1f", friction), 20, 20, 30, textColor);
 
-		//Debug tool to see the friction
-		Color textColor = (friction > 1.0f) ? RED : GREEN;
-		DrawText(TextFormat("Friction: %.1f", friction), 20, 20, 30, textColor);
+			// Center the camera on the player
+			float currentZoom = App->renderer->camera.zoom = 1.5f;
 
-		playerCar->body->GetPhysicPosition(carX, carY);
-		int mapWidth = App->map->map_data.width * App->map->map_data.tilewidth;
-		int mapHeight = App->map->map_data.height * App->map->map_data.tileheight;
+			float halfScreenWidth = SCREEN_WIDTH / 2.0f;
+			float halfScreenHeight = SCREEN_HEIGHT / 2.0f;
 
-		float targetX = SCREEN_WIDTH / 2.0f - carX;
-		float targetY = SCREEN_HEIGHT/ 2.0f - carY;
+			float visibleHalfWidth = halfScreenWidth / currentZoom;
+			float visibleHalfHeight = halfScreenHeight / currentZoom;
 
-		// -- X AXIS --
-		if (targetX > 0)
-		{
-			targetX = 0;
+			App->renderer->camera.offset = Vector2{ halfScreenWidth, halfScreenHeight };
+
+			int mapWidth = App->map->map_data.width * App->map->map_data.tilewidth;
+			int mapHeight = App->map->map_data.height * App->map->map_data.tileheight;
+
+			float targetX = (float)carX;
+			float targetY = (float)carY;
+
+			// -- X AXIS --
+			if (targetX < visibleHalfWidth)
+			{
+				targetX = visibleHalfWidth;
+			}
+			else if (targetX > mapWidth - visibleHalfWidth)
+			{
+				targetX = mapWidth - visibleHalfWidth;
+			}
+
+			// -- Y AXIS --
+			if (targetY < visibleHalfHeight)
+			{
+				targetY = visibleHalfHeight;
+			}
+			else if (targetY > mapHeight - visibleHalfHeight)
+			{
+				targetY = mapHeight - visibleHalfHeight;
+			}
+
+			App->renderer->camera.target = Vector2{ targetX, targetY };
 		}
-		else if (targetX < -(mapWidth - SCREEN_WIDTH))
-		{
-			targetX =  - (mapWidth - SCREEN_WIDTH);
-		}
-		// -- Y AXIS --
-		if (targetY > 0)
-		{
-			targetY = 0;
-		}
-		else if (targetY < -(mapHeight - SCREEN_HEIGHT))
-		{
-			targetY = -(mapHeight - SCREEN_HEIGHT);
-		}
-		App->renderer->camera.target.x = targetX;
-		App->renderer->camera.target.y = targetY;
+
+		break;
+	case GameScreen::GAMEOVER:
+		delete playerCar;
+		playerCar = nullptr;
+
+		break;
+	default:
+		break;
 	}
+
+
+	if (IsKeyPressed(KEY_SPACE))
+	{
+		ray_on = !ray_on;
+		ray.x = GetMouseX();
+		ray.y = GetMouseY();
+	}
+
+	
 
 	// Prepare for raycast ------------------------------------------------------
 
@@ -230,7 +276,6 @@ update_status ModuleGame::Update()
 	vec2f normal(0.0f, 0.0f);
 
 	// All draw functions ------------------------------------------------------
-
 
 	for (PhysicEntity* entity : entities)
 	{
@@ -244,7 +289,6 @@ update_status ModuleGame::Update()
 			}
 		}
 	}
-
 
 	// ray -----------------
 	if (ray_on == true)

@@ -5,7 +5,7 @@
 
 struct UIElement;
 
-enum GameScreen {
+enum class GameScreen {
 	MENU,
 	CONTROLS,
 	CREDITS,
@@ -29,19 +29,21 @@ public:
 	// Callback para los botones
 	void OnUIMouseClickEvent(UIElement* element);
 
+	void ChangeScreen(GameScreen newScreen);
 public:
-	Texture2D bgTexture; // Para la imagen de fondo
 	bool exitGame = false;
 
 	GameScreen currentScreen;
+	bool pendingChange = false;
+	GameScreen nextScreenToLoad;
 
 	//Button Size
 	int btnWidth = 200;
 	int btnHeight = 40;
 
 	//Button Position
-	int centerX = SCREEN_WIDTH / 2 - btnWidth / 2;
-	int startY = SCREEN_HEIGHT / 2 - btnHeight * 2;
+	int centerX;
+	int startY;
 	int padding = 10;
 
 	//IDs para identificar los botones

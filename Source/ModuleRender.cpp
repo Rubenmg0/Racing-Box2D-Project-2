@@ -3,6 +3,7 @@
 #include "ModuleGame.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
+#include "ModuleMenu.h"
 #include "UIButton.h"
 #include <math.h>
 
@@ -21,29 +22,41 @@ bool ModuleRender::Init()
 	LOG("Creating Renderer context");
 	bool ret = true;
 
+	circle = LoadTexture("Assets/wheel.png");
+	box = LoadTexture("Assets/crate.png");
+
+	//Cars
+	burgerCar = LoadTexture("Assets/Cars/BurgerCar/burger_car.png");
+	normalCar = LoadTexture("Assets/Cars/NormalCars/normal_car_yellow.png");
+	wheel = LoadTexture("Assets/Cars/NormalCars/wheel_animation_spritesheet.png");
+
+	//Scenes
+	menu = LoadTexture("Assets/Scenes/menu_bg.png");
+
+
+
 	return ret;
 }
 
 // PreUpdate: clear buffer
 update_status ModuleRender::PreUpdate()
 {
+	BeginDrawing();
+	BeginMode2D(camera);
+
+	switch (App->menu->currentScreen) {
+
+	case GameScreen::MENU:
+
+		DrawTexturePro(menu, Rectangle{ 0, 0, (float)menu.width, (float)menu.height }, Rectangle{ 0, 0, (float)SCREEN_WIDTH, (float)SCREEN_HEIGHT }, Vector2{ 0, 0 }, 0.0f, WHITE);
+		break;
+	}
 	return UPDATE_CONTINUE;
 }
 
 // Update: debug camera
 update_status ModuleRender::Update()
 {
-	ClearBackground(background);
-	
-	//camera.target = App->scene_intro->burgerCar.
-	camera.offset = { SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f };
-	camera.rotation = 0.0f;
-	camera.zoom = 1.f;
-
-	EndMode2D();
-	BeginMode2D(camera);
-	BeginDrawing();
-
 	for (UIElement* element : uiElements)
 	{
 		element->Update(1.0f / 60.0f);
@@ -54,13 +67,26 @@ update_status ModuleRender::Update()
 // PostUpdate present buffer to screen
 update_status ModuleRender::PostUpdate()
 {
-	// Draw everything in our batch!
-	DrawFPS(10, 10);
+	EndMode2D();
+
 	for (UIElement* element : uiElements)
 	{
 		element->Draw();
 	}
 
+	//Draw all the textures of every scene
+	switch (App->menu->currentScreen) {
+
+	case GameScreen::CONTROLS:
+
+
+		break;
+	case GameScreen::GAMEOVER:
+
+
+		break;
+	}
+	// Draw everything in our batch!
 	DrawFPS(10, 10);
 
 	EndDrawing();
@@ -81,6 +107,18 @@ void ModuleRender::ClearUI()
 bool ModuleRender::CleanUp()
 {
 	ClearUI();
+	UnloadTexture(circle);
+	UnloadTexture(box);
+
+	//Cars
+	UnloadTexture(burgerCar);
+	UnloadTexture(normalCar);
+	UnloadTexture(wheel);
+
+	//Scenes
+	UnloadTexture(menu);
+
+
 	return true;
 }
 
@@ -111,8 +149,8 @@ bool ModuleRender::Draw(Texture2D texture, int x, int y, const Rectangle* sectio
 
 	if (section != NULL) rect = *section;
 
-	position.x = (float)(x - pivot_x) * scale + camera.target.x;
-	position.y = (float)(y - pivot_y) * scale + camera.target.y;
+	position.x = (float)(x - pivot_x) * scale;
+	position.y = (float)(y - pivot_y) * scale;
 
 	rect.width *= scale;
 	rect.height *= scale;

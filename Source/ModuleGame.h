@@ -30,15 +30,14 @@ public:
 
 public:
 	std::vector<PhysicEntity*> entities;
+	b2Body* bodyCar;
+	b2Vec2 positionCar;
+
+	b2Vec2 posInit = { 1800, 670 };
+	bool mapLoad = false;
 
 	PhysBody* sensor;
 	bool sensed;
-
-	Texture2D circle;
-	Texture2D box;
-	Texture2D burgerCar;
-	Texture2D normalcar;
-	Texture2D wheel;
 
 	vec2<int> ray;
 	bool ray_on;	

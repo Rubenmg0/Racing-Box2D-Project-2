@@ -29,10 +29,16 @@ public:
 public:
 
 	Color background;
-	Camera2D camera = {
-		camera.offset = { SCREEN_WIDTH/2, SCREEN_HEIGHT/2 },
-		camera.target = { 0, 0 },
-		camera.rotation = 0.0f,
-		camera.zoom = 1.0f,
-	};
+	Camera2D camera;
+
+	Texture2D circle;
+	Texture2D box;
+
+	//Cars texture
+	Texture2D burgerCar;
+	Texture2D normalCar;
+	Texture2D wheel;
+
+	//Scenes textures
+	Texture2D menu;
 };

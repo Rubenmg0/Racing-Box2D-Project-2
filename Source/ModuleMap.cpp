@@ -7,6 +7,8 @@
 #include <iostream>
 #include <sstream>
 
+#include "ModulePhysics.h"
+
 ModuleMap::ModuleMap(Application* app, bool start_enabled) : Module(app, start_enabled), map_loaded(false)
 {
 }
@@ -19,9 +21,6 @@ bool ModuleMap::Start()
 {
     LOG("Loading Map");
     bool ret = true;
-
-    //Aqui se carga el mapa del Tiled
-    Load("Assets/map/CuteRacing.tmx");
 
     return ret;
 }
@@ -37,7 +36,7 @@ bool ModuleMap::Load(const char* file_name)
         return false;
     }
 
-    //Cargar las propiedades del mapa
+    //Load Map Properties
     pugi::xml_node map = map_file.child("map");
 
     map_data.width = map.attribute("width").as_int();
@@ -45,7 +44,7 @@ bool ModuleMap::Load(const char* file_name)
     map_data.tilewidth = map.attribute("tilewidth").as_int();
     map_data.tileheight = map.attribute("tileheight").as_int();
 
-    //Cargar Tilesets
+    //Load Tilesets
     for (pugi::xml_node tileset = map.child("tileset"); tileset; tileset = tileset.next_sibling("tileset"))
     {
         TileSet* set = new TileSet();
@@ -60,7 +59,7 @@ bool ModuleMap::Load(const char* file_name)
         set->tex_width = image.attribute("width").as_int();
         set->tex_height = image.attribute("height").as_int();
 
-        //Construir path de la imagen
+        //Build image path 
         std::string image_source = image.attribute("source").as_string();
         std::string path = "Assets/map/" + image_source;
 
@@ -69,7 +68,7 @@ bool ModuleMap::Load(const char* file_name)
         map_data.tilesets.push_back(set);
     }
 
-    //Cargar Layers
+    //Load Layers
     for (pugi::xml_node layer = map.child("layer"); layer; layer = layer.next_sibling("layer"))
     {
         MapLayer* lay = new MapLayer();
@@ -85,6 +84,61 @@ bool ModuleMap::Load(const char* file_name)
         map_data.layers.push_back(lay);
     }
 
+    for (pugi::xml_node objectGroupNode = map_file.child("map").child("objectgroup"); objectGroupNode != NULL; objectGroupNode = objectGroupNode.next_sibling("objectgroup")) {
+
+        // Load Object Group
+        ObjectGroup* objectgroup = new ObjectGroup();
+
+        for (pugi::xml_node objectNode = objectGroupNode.child("object"); objectNode != NULL; objectNode = objectNode.next_sibling("object")) {
+            ObjectGroup::Object* o = new ObjectGroup::Object;
+
+            // Save all Object attributes
+            o->id = objectNode.attribute("id").as_int();
+            o->x = objectNode.attribute("x").as_float();
+            o->y = objectNode.attribute("y").as_float();
+            o->width = objectNode.attribute("width").as_float();
+            o->height = objectNode.attribute("height").as_float();
+
+            if (objectNode.child("polygon").attribute("points") != NULL)
+            {
+                std::string pointString = objectNode.child("polygon").attribute("points").as_string();
+                size_t start = 0;
+
+                while (start < pointString.length())
+                {
+                    size_t end = pointString.find(' ', start);
+                    if (end == std::string::npos) { end = pointString.length(); }
+
+                    std::string pair = pointString.substr(start, end - start);
+                    size_t comma = pair.find(',');
+
+                    if (comma != std::string::npos)
+                    {
+                        b2Vec2 pointPos = { stoi(pair.substr(0, comma)) + o->x,  stoi(pair.substr(comma + 1)) + o->y };
+                        o->points.push_back(pointPos);
+                    }
+
+                    start = end + 1;
+                }
+            }
+            objectgroup->objects.push_back(o);
+        }
+
+        //Add the objects to the map
+        map_data.objectGroups.push_back(objectgroup);
+    }
+
+    // Creation of colliders and assign their type
+    for (const auto& objectsGroups : map_data.objectGroups)
+    {
+        for (const auto& obj : objectsGroups->objects)
+        {
+            PhysBody* collider;
+            collider = App->physics->CreateRectangle(obj->x + obj->width / 2, obj->y + obj->height / 2, obj->width, obj->height);
+        }
+    }
+
+
     map_loaded = true;
     LOG("Map loaded successfully");
     return true;
@@ -98,12 +152,12 @@ update_status ModuleMap::Update()
 
 void ModuleMap::Draw()
 {
-    //Recorremos todas las capas
+    //Go through all layers
     for (const auto& layer : map_data.layers)
     {
         if (!layer->visible) continue;
 
-        //Iteramos sobre cada tile de la capa
+        //Iterate through every tile in the layer
         for (int y = 0; y < map_data.height; ++y)
         {
             for (int x = 0; x < map_data.width; ++x)
@@ -112,12 +166,12 @@ void ModuleMap::Draw()
 
                 int gid = layer->tiles[index];
 
-                //Si gid es 0, es un tile vacío
+                // gid of 0 means it's empty
                 if (gid > 0)
                 {
                     TileSet* tileset = nullptr;
 
-                    //Buscar a qué tileset pertenece este gid
+                    //Search the tileset that corresponds to the gid
                     for (auto& ts : map_data.tilesets)
                     {
                         if (gid >= ts->firstgid)
@@ -131,7 +185,7 @@ void ModuleMap::Draw()
                         Rectangle rect = tileset->GetTileRect(gid);
                         Vector2 pos = MapToWorld(x, y);
 
-                        //Usamos el Draw de ModuleRender para la cámara
+                        //Use Draw from ModuleRender because of the camera
                         App->renderer->Draw(tileset->texture, (int)pos.x, (int)pos.y, &rect);
                     }
                 }
@@ -152,6 +206,14 @@ bool ModuleMap::CleanUp()
         delete tileset;
     }
     map_data.tilesets.clear();
+
+    for (auto& group : map_data.objectGroups) {
+        for (auto& obj : group->objects) {
+            delete obj;
+        }
+        delete group; 
+    }
+    map_data.objectGroups.clear();
 
     return true;
 }

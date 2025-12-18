@@ -96,7 +96,7 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height)
 
 	b2FixtureDef fixture;
 	fixture.shape = &box;
-	fixture.density = 1.0f;
+	fixture.density = 0.0f;
 
 	b->CreateFixture(&fixture);
 
@@ -178,6 +178,7 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 	//Create Chasis
 	b2BodyDef body;
 	body.type = b2_dynamicBody;
+	body.bullet = true;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.userData.pointer = reinterpret_cast<uintptr_t>(pbody);
 
@@ -187,11 +188,11 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 	b2Body* chassis = world->CreateBody(&body);
 
 	b2PolygonShape box;
-	box.SetAsBox(PIXEL_TO_METERS(carWidth/2), PIXEL_TO_METERS(carHeigh/2));
+	box.SetAsBox(PIXEL_TO_METERS(carWidth /2), PIXEL_TO_METERS(carHeigh/2));
 
 	b2FixtureDef fixture;
 	fixture.shape = &box;
-	fixture.density = (float)mass / (carHeigh * carHeigh);	
+	fixture.density = (float)mass / (carWidth * carHeigh);
 	fixture.isSensor = false;
 
 	chassis->CreateFixture(&fixture);
@@ -203,10 +204,10 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 
 
 	//Create Wheels
-	b2Vec2 flWheelPos = { (float)x - carWidth / 2, (float)y - carHeigh / 2 }; //Front Left
-	b2Vec2 frWheelPos = { (float)x + carWidth / 2, (float)y - carHeigh / 2 }; //Front Right
-	b2Vec2 blWheelPos = { (float)x - carWidth / 2, (float)y + carHeigh / 2 }; //Back Left
-	b2Vec2 brWheelPos = { (float)x + carWidth / 2, (float)y + carHeigh / 2 }; //Back Right
+	b2Vec2 flWheelPos = { (float)x + carHeigh / 2, (float)y - carWidth / 2 }; //Front Left
+	b2Vec2 frWheelPos = { (float)x + carHeigh / 2, (float)y + carWidth / 2 }; //Front Right
+	b2Vec2 blWheelPos = { (float)x - carHeigh / 2, (float)y - carWidth / 2 }; //Back Left
+	b2Vec2 brWheelPos = { (float)x - carHeigh / 2, (float)y + carWidth / 2 }; //Back Right
 
 	b2Body* flWheel = CreateWheels(flWheelPos.x, flWheelPos.y);
 	b2Body* frWheel = CreateWheels(frWheelPos.x, frWheelPos.y);
@@ -225,8 +226,8 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 
 	joint.collideConnected = false;
 
-	float halfWidthMeters = PIXEL_TO_METERS(carWidth / 2);
 	float halfHeightMeters = PIXEL_TO_METERS(carHeigh / 2);
+	float halfWidthMeters = PIXEL_TO_METERS(carWidth / 2);
 
 	joint.enableLimit = true;
 	joint.lowerAngle = -45 * DEG2RAD; // -45 degrees in rads
@@ -294,7 +295,6 @@ void ModulePhysics::DeleteBody(PhysBody* body)
 	world->DestroyBody(body->body);
 }
 
-// 
 update_status ModulePhysics::PostUpdate()
 {
 	if (IsKeyPressed(KEY_F1))
@@ -383,7 +383,6 @@ update_status ModulePhysics::PostUpdate()
 	return UPDATE_CONTINUE;
 }
 
-
 // Called before quitting
 bool ModulePhysics::CleanUp()
 {
@@ -454,7 +453,7 @@ void ModulePhysics::MoveCar(PhysBody* car)
 	b2Vec2 forward = car->wheels[0]->GetWorldVector(b2Vec2(0, -1));
 
 	//Turbo
-	if (IsKeyDown(KEY_SPACE))
+	if (IsKeyDown(KEY_SPACE) && !IsKeyDown(KEY_S))
 	{
 		acceleration *= 10;
 	}
@@ -483,9 +482,9 @@ void ModulePhysics::MoveCar(PhysBody* car)
 	{
 		steer = -car->motorJoints[0]->GetJointAngle() * 3;
 	}
+
 	car->motorJoints[0]->SetMotorSpeed(steer);
 	car->motorJoints[1]->SetMotorSpeed(steer);
-
 }
 
 int PhysBody::RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const
