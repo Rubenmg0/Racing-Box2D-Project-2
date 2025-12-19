@@ -34,13 +34,16 @@
     <ClCompile Include="Source\pugixml.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Source\UIButton.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="Source\ModuleMenu.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Source\UIButton.cpp">
+      <Filter>Sources\Interface</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Text.cpp">
+      <Filter>Sources\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Car.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -84,16 +87,22 @@
     <ClInclude Include="Source\pugiconfig.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Source\UIButton.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\UIElement.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="Source\ModuleMenu.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Source\UIButton.h">
+      <Filter>Headers\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UIElement.h">
+      <Filter>Headers\Interface</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Text.h">
+      <Filter>Headers\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PhysicEntity.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Car.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -106,6 +115,12 @@
     </Filter>
     <Filter Include="Headers\Containers">
       <UniqueIdentifier>{39bd4360-6afc-44b3-8ba5-578b26392b24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Interface">
+      <UniqueIdentifier>{cfd92b0b-e8ea-4c48-819a-2ef708269446}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Interface">
+      <UniqueIdentifier>{8c0ef2a4-eec9-41c7-b6d9-c49ab6921aaa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,39 @@
+#include "Car.hpp"
+
+
+void Car::Update() 
+{
+	physics->KillLateralVelocity(body->wheels[0]);
+	physics->KillLateralVelocity(body->wheels[1]);
+	physics->KillLateralVelocity(body->wheels[2]);
+	physics->KillLateralVelocity(body->wheels[3]);
+}
+
+void Car::Draw() 
+{
+	int x, y;
+	body->GetPhysicPosition(x, y);
+
+	DrawTexturePro(texture, Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
+		Rectangle{ (float)x, (float)y, (float)texture.width, (float)texture.height },
+		Vector2{ (float)texture.width / 2.0f, (float)texture.height / 2.0f }, body->GetRotation() * RAD2DEG, WHITE);
+
+	if (wheel.height != 0)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			b2Vec2 pos = body->wheels[i]->GetPosition();
+			pos.x = METERS_TO_PIXELS(pos.x);
+			pos.y = METERS_TO_PIXELS(pos.y);
+
+			DrawTexturePro(wheel, Rectangle{ 0, 0, (float)wheel.width / 8, (float)wheel.height },
+				Rectangle{ (float)(pos.x + wheel.width / 4), (float)(pos.y), (float)wheel.width / 8, (float)wheel.height },
+				Vector2{ (float)wheel.width / 2.0f, (float)wheel.height / 2.0f }, body->GetRotation() + body->wheels[i]->GetAngle() * RAD2DEG, WHITE);
+		}
+	}
+}
+
+int Car::RayHit(vec2<int> ray, vec2<int> mouse, vec2<float>& normal) 
+{
+	return body->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);;
+}

@@ -7,83 +7,7 @@
 #include "ModuleMap.h"
 #include "ModuleMenu.h"
 
-#include "UIElement.h"
-
-class PhysicEntity
-{
-protected:
-	PhysicEntity(PhysBody* _body, Module* _listener)
-		: body(_body)
-		, listener(_listener)
-	{
-		body->listener = listener;
-	}
-
-public:
-	virtual ~PhysicEntity() = default;
-	virtual void Update() = 0;
-
-	virtual int RayHit(vec2<int> ray, vec2<int> mouse, vec2<float>& normal)
-	{
-		return 0;
-	}
-
-public:
-	PhysBody* body;
-	Module* listener;
-};
-
-class Car : public PhysicEntity
-{
-public:
-	Car(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture, Texture2D _wheeltexture)
-		: PhysicEntity(physics->CreateCar(_x, _y), _listener), texture(_texture), wheel(_wheeltexture)
-	{
-
-	}
-
-	void Update() override
-	{
-		physics->KillLateralVelocity(body->wheels[0]);
-		physics->KillLateralVelocity(body->wheels[1]);
-		physics->KillLateralVelocity(body->wheels[2]);
-		physics->KillLateralVelocity(body->wheels[3]);
-
-
-		int x, y;
-		body->GetPhysicPosition(x, y);
-
-		DrawTexturePro(texture, Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
-			Rectangle{ (float)x, (float)y, (float)texture.width, (float)texture.height },
-			Vector2{ (float)texture.width / 2.0f, (float)texture.height / 2.0f }, body->GetRotation() * RAD2DEG, WHITE);
-
-		if (wheel.height != 0)
-		{
-			for (int i = 0; i < 4; i++)
-			{
-				b2Vec2 pos = body->wheels[i]->GetPosition();
-				pos.x = METERS_TO_PIXELS(pos.x);
-				pos.y = METERS_TO_PIXELS(pos.y);
-
-				DrawTexturePro(wheel, Rectangle{ 0, 0, (float)wheel.width/8, (float)wheel.height},
-					Rectangle{ (float)( pos.x+wheel.width/4), (float)(pos.y), (float)wheel.width/8, (float)wheel.height },
-					Vector2{ (float)wheel.width / 2.0f, (float)wheel.height / 2.0f }, body->GetRotation() + body->wheels[i]->GetAngle() * RAD2DEG, WHITE);
-			}
-		}
-
-
-	}
-
-	int RayHit(vec2<int> ray, vec2<int> mouse, vec2<float>& normal) override
-	{
-		return body->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);;
-	}
-
-private:
-	Texture2D texture;
-	Texture2D wheel;
-	ModulePhysics* physics;
-};
+#include "Car.hpp"
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -293,6 +217,7 @@ update_status ModuleGame::Update()
 	for (PhysicEntity* entity : entities)
 	{
 		entity->Update();
+		entity->Draw();
 		if (ray_on)
 		{
 			int hit = entity->RayHit(ray, mouse, normal);

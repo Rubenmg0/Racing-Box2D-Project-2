@@ -450,7 +450,6 @@ void ModulePhysics::MoveCar(PhysBody* car)
 
 	float acceleration = 0.7f;
 	float steerSpeed = 0.5f; //w (rad/s)
-	b2Vec2 forward = car->wheels[0]->GetWorldVector(b2Vec2(0, -1));
 
 	//Turbo
 	if (IsKeyDown(KEY_SPACE) && !IsKeyDown(KEY_S))
@@ -461,12 +460,20 @@ void ModulePhysics::MoveCar(PhysBody* car)
 	//Accelerate
 	if (IsKeyDown(KEY_W))
 	{
-		car->body->ApplyForceToCenter(acceleration * forward, true);
+		b2Vec2 forward = car->body->GetWorldVector(b2Vec2(0, -1));
+		for (int i = 0; i < 4; i++)
+		{
+			car->wheels[i]->ApplyForceToCenter(acceleration * forward, true);
+		}
 	}
 	//Slow Down
 	else if (IsKeyDown(KEY_S))
 	{
-		car->body->ApplyForceToCenter(-acceleration * forward, true);
+		b2Vec2 backward = -car->body->GetWorldVector(b2Vec2(0, -1));
+		for (int i = 0; i < 4; i++)
+		{
+			car->wheels[i]->ApplyForceToCenter(acceleration * backward, true);
+		}
 	}
 
 	float steer = 0.0f;

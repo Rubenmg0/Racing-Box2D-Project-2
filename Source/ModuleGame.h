@@ -9,10 +9,10 @@
 #include "raylib.h"
 #include <vector>
 
+#include "PhysicEntity.h"
+#include "UIElement.h"
 
 class PhysBody;
-class PhysicEntity;
-class UIElement;
 
 class ModuleGame : public Module
 {
