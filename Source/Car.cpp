@@ -23,12 +23,12 @@ void Car::Draw()
 		for (int i = 0; i < 4; i++)
 		{
 			b2Vec2 pos = body->wheels[i]->GetPosition();
-			pos.x = METERS_TO_PIXELS(pos.x);
-			pos.y = METERS_TO_PIXELS(pos.y);
+			int wx = METERS_TO_PIXELS(pos.x);
+			int wy = METERS_TO_PIXELS(pos.y);
 
-			DrawTexturePro(wheel, Rectangle{ 0, 0, (float)wheel.width / 8, (float)wheel.height },
-				Rectangle{ (float)(pos.x + wheel.width / 4), (float)(pos.y), (float)wheel.width / 8, (float)wheel.height },
-				Vector2{ (float)wheel.width / 2.0f, (float)wheel.height / 2.0f }, body->GetRotation() + body->wheels[i]->GetAngle() * RAD2DEG, WHITE);
+			DrawTexturePro(wheel, Rectangle{ 0, 0, (float)wheel.width , (float)wheel.height },
+				Rectangle{ (float)wx, (float)wy, (float)wheel.width, (float)wheel.height },
+				Vector2{ (float)wheel.width / 2.0f, (float)wheel.height / 2.0f }, 90+ body->wheels[i]->GetAngle() * RAD2DEG, WHITE);
 		}
 	}
 }

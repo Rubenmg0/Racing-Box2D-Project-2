@@ -131,16 +131,25 @@ bool ModuleMap::Load(const char* file_name)
     // Creation of colliders and assign their type
     for (const auto& objectsGroups : map_data.objectGroups)
     {
-        if (objectsGroups->name == "Collision") 
+        for (const auto& obj : objectsGroups->objects)
         {
-            for (const auto& obj : objectsGroups->objects)
+            if (objectsGroups->name == "Collision")
             {
                 App->physics->CreateStaticWall(
                     obj->x + obj->width / 2,
                     obj->y + obj->height / 2,
                     obj->width,
                     obj->height
-                );  
+                );
+            }
+            else if (objectsGroups->name == "CheckPoints")
+            {
+                App->physics->CreateRectangleSensor(
+                    obj->x + obj->width / 2,
+                    obj->y + obj->height / 2,
+                    obj->width,
+                    obj->height
+                );
             }
         }
     }
