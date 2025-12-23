@@ -17,15 +17,15 @@
 #define carHeigh 50
 #define carWidth 25
 
+enum class BodyType { UNKNOWN, CAR, WALL, CHECKPOINT }; // Añadir esto
+
 // Small class to return to other modules to track position and rotation of physics bodies
 class PhysBody
 {
 public:
-	PhysBody() : listener(NULL), body(NULL)
+	PhysBody() : listener(NULL), body(NULL), type(BodyType::UNKNOWN), checkpointID(-1) // Inicializar
 	{
-		// NUEVO: Inicializamos las ruedas a NULL por seguridad
-		for (int i = 0; i < 4; ++i) // <--- AÑADIR ESTO
-			wheels[i] = NULL;       
+		for (int i = 0; i < 4; ++i) wheels[i] = NULL;
 	}
 
 	//void GetPosition(int& x, int& y) const;
@@ -35,6 +35,10 @@ public:
 	int RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const;
 
 public:
+
+	BodyType type;      //Body type
+	int checkpointID;   //Checkpoint ID
+
 	int width, height;
 	b2Body* body;
 	Module* listener;

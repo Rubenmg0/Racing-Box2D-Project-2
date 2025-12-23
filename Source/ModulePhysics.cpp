@@ -201,6 +201,7 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 	pbody->body = chassis;
 	pbody->width = carWidth;
 	pbody->height = carHeigh;
+	pbody->type = BodyType::CAR;
 
 
 	//Create Wheels

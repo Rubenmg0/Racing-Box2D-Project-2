@@ -40,6 +40,7 @@ struct ObjectGroup
     {
         float id, x, y, width, height;
         std::vector<b2Vec2> points;
+        int order = 0;
     };
     std::vector<Object*> objects;
 };

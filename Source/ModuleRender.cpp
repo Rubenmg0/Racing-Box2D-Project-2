@@ -111,9 +111,23 @@ update_status ModuleRender::PostUpdate()
 		int seconds = (int)totalSeconds % 60;
 		int centiseconds = (int)((totalSeconds - (int)totalSeconds) * 100);
 
+		//Chrono
 		const char* formTime = TextFormat("%02d:%02d.%02d", minutes, seconds, centiseconds);
 
 		timerChrono.Draw(1025, 75, formTime, WHITE, 8);
+
+		//Laps
+		const char* lapText = TextFormat("LAP %i/%i", App->scene_intro->completedLaps + 1, App->scene_intro->totalLaps);
+
+		timerChrono.Draw(100, 65, lapText, YELLOW, 8);
+
+		//Checkpoints
+		int currentCP = App->scene_intro->nextCheckpointRequired - 1;
+		if (currentCP < 0) currentCP = 0;
+
+		const char* cpText = TextFormat("Checkpoints: %i/%i", currentCP, App->scene_intro->totalCheckpoints - 1);
+
+		timerChrono.Draw(100, 110, cpText, ORANGE, 20);
 	}
 		break;
 	case GameScreen::GAMEOVER:

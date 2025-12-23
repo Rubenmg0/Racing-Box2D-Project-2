@@ -2455,11 +2455,35 @@
   <object id="29" x="1793.33" y="1793.33" width="256" height="254.667"/>
  </objectgroup>
  <objectgroup id="10" name="CheckPoints">
-  <object id="30" x="5120" y="512" width="26" height="256"/>
-  <object id="31" x="6656" y="3840" width="768" height="36"/>
-  <object id="33" x="2048" y="3584" width="52" height="768"/>
-  <object id="34" x="4608" y="2560" width="52" height="768"/>
-  <object id="35" x="1888.5" y="512" width="62.5" height="256"/>
-  <object id="36" x="780.061" y="1744" width="52" height="512"/>
+  <object id="30" x="5120" y="512" width="58" height="256">
+   <properties>
+    <property name="order" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="31" x="6656" y="3840" width="768" height="74">
+   <properties>
+    <property name="order" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="33" x="2036" y="3584" width="64" height="768">
+   <properties>
+    <property name="order" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="34" x="4608" y="2560" width="68" height="768">
+   <properties>
+    <property name="order" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="35" x="1888.5" y="512" width="62.5" height="256">
+   <properties>
+    <property name="order" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="36" x="780.061" y="1792.12" width="68" height="512">
+   <properties>
+    <property name="order" type="int" value="5"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

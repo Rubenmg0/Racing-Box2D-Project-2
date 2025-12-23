@@ -1,11 +1,13 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleMap.h"
+#include "ModuleGame.h"
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
 
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 #include "ModulePhysics.h"
 
@@ -99,6 +101,19 @@ bool ModuleMap::Load(const char* file_name)
             o->width = objectNode.attribute("width").as_float();
             o->height = objectNode.attribute("height").as_float();
 
+            pugi::xml_node properties = objectNode.child("properties");
+            if (properties)
+            {
+                for (pugi::xml_node prop = properties.child("property"); prop; prop = prop.next_sibling("property"))
+                {
+                    // Buscamos una propiedad que se llame "order" en Tiled
+                    if (std::string(prop.attribute("name").as_string()) == "order")
+                    {
+                        o->order = prop.attribute("value").as_int();
+                    }
+                }
+            }
+
             if (objectNode.child("polygon").attribute("points") != NULL)
             {
                 std::string pointString = objectNode.child("polygon").attribute("points").as_string();
@@ -128,31 +143,33 @@ bool ModuleMap::Load(const char* file_name)
         map_data.objectGroups.push_back(objectgroup);
     }
 
-    // Creation of colliders and assign their type
-    for (const auto& objectsGroups : map_data.objectGroups)
-    {
-        for (const auto& obj : objectsGroups->objects)
+    int cpCount = 0; //Counter for assigning IDs
+
+    //Creation of colliders and assign their type
+    for (const auto& objectsGroups : map_data.objectGroups) {
+
+        if (objectsGroups->name == "CheckPoints")
         {
-            if (objectsGroups->name == "Collision")
-            {
-                App->physics->CreateStaticWall(
-                    obj->x + obj->width / 2,
-                    obj->y + obj->height / 2,
-                    obj->width,
-                    obj->height
-                );
+            std::sort(objectsGroups->objects.begin(), objectsGroups->objects.end(), [](ObjectGroup::Object* a, ObjectGroup::Object* b) {
+                    return a->order < b->order;
+                });
+        }
+
+        for (const auto& obj : objectsGroups->objects) {
+            if (objectsGroups->name == "Collision") {
+                PhysBody* pb = App->physics->CreateStaticWall(obj->x + obj->width / 2, obj->y + obj->height / 2, obj->width, obj->height);
+                pb->type = BodyType::WALL;
             }
-            else if (objectsGroups->name == "CheckPoints")
-            {
-                App->physics->CreateRectangleSensor(
-                    obj->x + obj->width / 2,
-                    obj->y + obj->height / 2,
-                    obj->width,
-                    obj->height
-                );
+            else if (objectsGroups->name == "CheckPoints") {
+                PhysBody* pb = App->physics->CreateRectangleSensor(obj->x + obj->width / 2, obj->y + obj->height / 2, obj->width, obj->height);
+                pb->type = BodyType::CHECKPOINT;
+                pb->checkpointID = cpCount++;
+                pb->listener = (Module*)App->scene_intro;
             }
         }
     }
+    //Save the total number of checkpoints in ModuleGame to know when a lap ends.
+    App->scene_intro->totalCheckpoints = cpCount;
 
 
     map_loaded = true;

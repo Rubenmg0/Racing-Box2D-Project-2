@@ -248,9 +248,40 @@ update_status ModuleGame::Update()
 
 void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
-	if (!bodyA || !bodyB)
+	PhysBody* checkpoint = nullptr;
+
+	if (bodyA->type == BodyType::CHECKPOINT) checkpoint = bodyA;
+	else if (bodyB->type == BodyType::CHECKPOINT) checkpoint = bodyB;
+
+	if (checkpoint != nullptr)
 	{
-		return;
+		//If you cross the finish line
+		if (checkpoint->checkpointID == 0)
+		{
+			//Start of the race
+			if (nextCheckpointRequired == 0)
+			{
+				nextCheckpointRequired = 1;
+			}
+			//If you have already passed through all the checkpoints
+			else if (nextCheckpointRequired == totalCheckpoints)
+			{
+				completedLaps++;
+
+				//If you have completed all the laps
+				if (completedLaps >= totalLaps) {
+					App->menu->currentScreen = GameScreen::GAMEOVER;
+				}
+
+				//If not, reset checkpoints
+				nextCheckpointRequired = 1;
+			}
+		}
+		//If you cross a checkpoint
+		else if (checkpoint->checkpointID == nextCheckpointRequired)
+		{
+			nextCheckpointRequired++;
+		}
 	}
 }
 

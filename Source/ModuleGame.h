@@ -39,6 +39,11 @@ public:
 	PhysBody* sensor;
 	bool sensed;
 
+	int totalCheckpoints = 0;
+	int nextCheckpointRequired = 0; //Next checkpoint to take
+	int completedLaps = 0;
+	int totalLaps = 3;
+
 	vec2<int> ray;
 	bool ray_on;	
 };
