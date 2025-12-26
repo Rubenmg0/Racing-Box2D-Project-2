@@ -182,7 +182,25 @@ update_status ModuleGame::Update()
 
 
 		}
+		EndMode2D();
+		{
+			float miniMapSize = 200.0f;
+			float margen = 20.0f;
 
+			Rectangle miniMapArea = {
+				(float)SCREEN_WIDTH - miniMapSize - margen,
+				(float)SCREEN_HEIGHT - miniMapSize - margen,
+				miniMapSize,
+				miniMapSize
+			};
+
+			if (playerCar != nullptr && playerCar->body != nullptr) {
+				int x,y;
+				playerCar->body->GetPhysicPosition(x, y);
+				App->map->DrawMinimap(miniMapArea, Vector2{ (float)x, (float)y });
+			}
+		}
+		BeginMode2D(App->renderer->camera);
 		break;
 	case GameScreen::GAMEOVER:
 		delete playerCar;

@@ -63,7 +63,7 @@ class ModuleMap : public Module
 public:
     ModuleMap(Application* app, bool start_enabled = true);
     ~ModuleMap();
-
+    void DrawMinimap(Rectangle area, Vector2 playerPos);
     bool Start();
     update_status Update();
     bool CleanUp();

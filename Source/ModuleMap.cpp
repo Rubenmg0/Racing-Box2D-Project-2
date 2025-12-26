@@ -271,3 +271,52 @@ Rectangle TileSet::GetTileRect(int gid) const
         (float)tileheight
     };
 }
+
+void ModuleMap::DrawMinimap(Rectangle area, Vector2 playerPos)
+{
+    float mapWidth = (float)(map_data.width * map_data.tilewidth);
+    float mapHeight = (float)(map_data.height * map_data.tileheight);
+    float scaleX = area.width / mapWidth;
+    float scaleY = area.height / mapHeight;
+
+    for (const auto& layer : map_data.layers)
+    {
+        if (layer->name == "Circuito" || layer->visible)
+        {
+            for (int y = 0; y < map_data.height; ++y)
+            {
+                for (int x = 0; x < map_data.width; ++x)
+                {
+                    int index = (y * layer->width) + x;
+                    int gid = layer->tiles[index];
+
+                        TileSet* tileset = nullptr;
+                        for (auto& ts : map_data.tilesets) {
+                            if (gid >= ts->firstgid) {
+                                tileset = ts;
+                            }
+                        }
+
+                        if (tileset != nullptr)
+                        {
+                            Rectangle origin = tileset->GetTileRect(gid);
+                            Rectangle position;
+                            position.x = area.x + (x * map_data.tilewidth * scaleX);
+                            position.y = area.y + (y * map_data.tileheight * scaleY);
+                            position.width = ceil(map_data.tilewidth * scaleX);
+                            position.height = ceil(map_data.tileheight * scaleY);
+
+                            DrawTexturePro(tileset->texture, origin, position, Vector2{ 0,0 }, 0.0f, WHITE);
+                        }
+                    
+                }
+            }
+        }
+    }
+
+    float playerMiniX = area.x + (playerPos.x * scaleX);
+    float playerMiniY = area.y + (playerPos.y * scaleY);
+    DrawCircle((int)playerMiniX, (int)playerMiniY, 4.0f, RED);
+    DrawCircle((int)playerMiniX, (int)playerMiniY, 2.0f, YELLOW);    
+    DrawRectangleLinesEx(area, 3.0f, WHITE);
+}
