@@ -166,6 +166,9 @@ bool ModuleMap::Load(const char* file_name)
                 pb->checkpointID = cpCount++;
                 pb->listener = (Module*)App->scene_intro;
             }
+            else if (objectsGroups->name == "IA") {
+                App->scene_intro->IA_Route = obj->points;
+            }
         }
     }
     //Save the total number of checkpoints in ModuleGame to know when a lap ends.

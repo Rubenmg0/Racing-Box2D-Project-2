@@ -8,6 +8,7 @@
 #include "ModuleMenu.h"
 
 #include "Car.hpp"
+#include "IA.h"
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -74,23 +75,37 @@ update_status ModuleGame::Update()
 	case GameScreen::GAME:
 
 		//Aqui se carga el mapa del Tiled
-		if (!mapLoad) {
-		App->map->Load("Assets/map/CuteRacing.tmx");
-		mapLoad = true;
-		}
+		if (!mapLoad) 
+		{
+			App->map->Load("Assets/map/CuteRacing.tmx");
+			mapLoad = true;
 
+			if (playerCar == nullptr) {
+				Car* newCar = new Car(App->physics, posInit.x, posInit.y, this, App->renderer->normalCar, App->renderer->wheel);
+				entities.emplace_back(newCar);
+				playerCar = newCar;
 
-		if (playerCar == nullptr) {
-			Car* newCar = new Car(App->physics, posInit.x, posInit.y, this, App->renderer->normalCar, App->renderer->wheel);
-			entities.emplace_back(newCar);
-			playerCar = newCar;
+				bodyCar = playerCar->body->body;
+				positionCar = bodyCar->GetPosition();
 
-			bodyCar = playerCar->body->body;
-			positionCar = bodyCar->GetPosition();
+				float angleRadians = 100.0f * (PI / 180.0f);
 
-			float angleRadians = 100.0f * (PI / 180.0f);
+				bodyCar->SetTransform(positionCar, angleRadians);
+			}
 
-			bodyCar->SetTransform(positionCar, angleRadians);
+			for (int i = 0; i < 4; i++)
+			{
+				float inX = posInit.x, inY = posInit.y;
+				
+				inX -= 100 * i;
+				if (i % 2 == 0)
+				{
+					inY -= 100 * i/2;
+				}
+
+				//IACar* newIA = new IACar(App->physics, inX, inY, this, App->renderer->normalCar, App->renderer->wheel); //TODO
+				//entities.emplace_back(newIA);
+			}
 		}
 
 		if (playerCar)

@@ -27,6 +27,7 @@ public:
 	void OnUIMouseClickEvent(UIElement* element);
 
 	PhysicEntity* playerCar = nullptr;
+	std::vector<b2Vec2> IA_Route;
 
 public:
 	std::vector<PhysicEntity*> entities;

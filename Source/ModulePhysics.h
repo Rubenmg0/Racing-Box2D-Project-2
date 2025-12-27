@@ -17,7 +17,7 @@
 #define carHeigh 50
 #define carWidth 25
 
-enum class BodyType { UNKNOWN, CAR, WALL, CHECKPOINT }; // Añadir esto
+enum class BodyType { UNKNOWN, CAR, WALL, CHECKPOINT };
 
 // Small class to return to other modules to track position and rotation of physics bodies
 class PhysBody
