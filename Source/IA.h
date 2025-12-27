@@ -10,7 +10,7 @@ class IACar : public PhysicEntity
 {
 public:
 	IACar(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture, Texture2D _wheeltexture)
-		: PhysicEntity(physics->CreateCar(_x, _y), _listener), texture(_texture), wheel(_wheeltexture) {
+		: PhysicEntity(physics->CreateCar(_x, _y), _listener), texture(_texture), wheel(_wheeltexture), physics(physics) {
 	}
 
 	void Update() override;

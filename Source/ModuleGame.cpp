@@ -93,18 +93,17 @@ update_status ModuleGame::Update()
 				bodyCar->SetTransform(positionCar, angleRadians);
 			}
 
-			for (int i = 0; i < 4; i++)
+			for (int i = 1; i < 4; i++)
 			{
-				float inX = posInit.x, inY = posInit.y;
-				
-				inX -= 100 * i;
-				if (i % 2 == 0)
-				{
-					inY -= 100 * i/2;
-				}
+				float inX = posInit.x - (150.0f * i); 
+				float inY = posInit.y - (75.0f * (i % 2)); // Alternate up/down
 
-				//IACar* newIA = new IACar(App->physics, inX, inY, this, App->renderer->normalCar, App->renderer->wheel); //TODO
-				//entities.emplace_back(newIA);
+				IACar* newIA = new IACar(App->physics, (int)inX, (int)inY, this, App->renderer->normalCar, App->renderer->wheel);
+
+				entities.emplace_back(newIA);
+
+				float angleRadians = 100.0f * (PI / 180.0f);
+				newIA->body->body->SetTransform(newIA->body->body->GetPosition(), angleRadians);
 			}
 		}
 
@@ -281,6 +280,11 @@ update_status ModuleGame::Update()
 
 void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
+	//Security check. If any are null, we ignore the collision.
+	if (bodyA == nullptr || bodyB == nullptr) {
+		return;
+	}
+
 	PhysBody* checkpoint = nullptr;
 
 	if (bodyA->type == BodyType::CHECKPOINT) checkpoint = bodyA;
