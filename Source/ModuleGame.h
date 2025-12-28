@@ -42,6 +42,8 @@ public:
 
 	int totalCheckpoints = 0;
 	int nextCheckpointRequired = 0; //Next checkpoint to take
+	float checkpointFeedbackTimer = 0.0f;
+
 	int completedLaps = 0;
 	int totalLaps = 3;
 

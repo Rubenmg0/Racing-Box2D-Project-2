@@ -10,7 +10,6 @@
 
 ModuleRender::ModuleRender(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	background = DARKGREEN;
 }
 
 // Destructor
@@ -122,18 +121,21 @@ update_status ModuleRender::PostUpdate()
 		timerChrono.Draw(100, 65, lapText, YELLOW, 8);
 
 		//Checkpoints
-		int currentCP = App->scene_intro->nextCheckpointRequired - 1;
-		if (currentCP < 0) currentCP = 0;
+		if (App->physics->IsDebug() || App->scene_intro->checkpointFeedbackTimer > 0.0f)
+		{
+			int currentCP = App->scene_intro->nextCheckpointRequired - 1;
+			if (currentCP < 0) currentCP = 0;
 
-		const char* cpText = TextFormat("Checkpoints: %i/%i", currentCP, App->scene_intro->totalCheckpoints - 1);
+			const char* cpText = TextFormat("Checkpoints: %i/%i", currentCP, App->scene_intro->totalCheckpoints - 1);
 
-		timerChrono.Draw(100, 110, cpText, ORANGE, 20);
+			Color textColor = App->physics->IsDebug() ? ORANGE : GREEN;
+
+			timerChrono.Draw(100, 110, cpText, textColor, 20);
+		}
 	}
-		break;
+	break;
 	case GameScreen::GAMEOVER:
 		timer.Stop();
-		App->audio->StopFx(gameMusic);
-		App->audio->PlayFx(endMusic);
 
 		break;
 	}
