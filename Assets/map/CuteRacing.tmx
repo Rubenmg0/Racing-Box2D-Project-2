@@ -12,8 +12,8 @@
  <tileset firstgid="15" name="grass-export" tilewidth="256" tileheight="256" tilecount="16" columns="4">
   <image source="CuteRoad/Resize_Grass.png" width="1024" height="1024"/>
  </tileset>
- <tileset firstgid="31" name="FinalLine" tilewidth="256" tileheight="256" tilecount="1" columns="1">
-  <image source="CuteRoad/FinalLine.png" width="256" height="256"/>
+ <tileset firstgid="31" name="FinalLine" tilewidth="256" tileheight="256" tilecount="2" columns="1">
+  <image source="CuteRoad/FinalLine-export.png" width="256" height="256"/>
  </tileset>
  <layer id="5" name="Hierba" width="30" height="20">
   <data>
@@ -683,7 +683,7 @@
    <tile/>
    <tile/>
    <tile gid="1"/>
-   <tile gid="8"/>
+   <tile gid="2"/>
    <tile gid="2"/>
    <tile gid="2"/>
    <tile gid="2"/>
@@ -795,9 +795,9 @@
    <tile/>
    <tile/>
    <tile gid="7"/>
-   <tile gid="8"/>
-   <tile gid="8"/>
-   <tile gid="8"/>
+   <tile gid="2"/>
+   <tile gid="2"/>
+   <tile gid="2"/>
    <tile gid="3"/>
    <tile/>
    <tile/>
@@ -828,7 +828,7 @@
    <tile/>
    <tile/>
    <tile/>
-   <tile gid="4"/>
+   <tile gid="6"/>
    <tile/>
    <tile/>
    <tile/>
@@ -858,7 +858,7 @@
    <tile/>
    <tile/>
    <tile/>
-   <tile gid="4"/>
+   <tile gid="6"/>
    <tile/>
    <tile/>
    <tile/>
@@ -979,36 +979,6 @@
    <tile gid="8"/>
    <tile gid="8"/>
    <tile gid="3"/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile gid="4"/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile gid="4"/>
    <tile/>
    <tile/>
    <tile/>
@@ -1073,12 +1043,42 @@
    <tile/>
    <tile/>
    <tile/>
+   <tile gid="4"/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile gid="6"/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
    <tile gid="7"/>
    <tile gid="8"/>
-   <tile gid="2"/>
-   <tile gid="2"/>
-   <tile gid="2"/>
-   <tile gid="2"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
    <tile gid="2"/>
    <tile gid="2"/>
    <tile gid="2"/>
