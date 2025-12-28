@@ -491,27 +491,33 @@ void ModulePhysics::KillLateralVelocity(b2Body* body)
 	body->SetLinearVelocity(body->GetLinearVelocity() - lateralVel);
 }
 
-void ModulePhysics::MoveCar(PhysBody* car)
+void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 {
 	// Check if playerCar exists
 	if (car == nullptr) return;
 
-	float acceleration = 0.7f;
-	float steerSpeed = 0.5f; //w (rad/s)
+	float baseAcceleration = 0.3f;
+	float maxSpeed = 10.0f * powerMultiplier;
 
-	//Turbo
+	float currentAcceleration = baseAcceleration * powerMultiplier;
+
+	b2Vec2 velocity = car->body->GetLinearVelocity();
+	float currentSpeed = velocity.Length();
+
+	// Turbo
 	if (IsKeyDown(KEY_SPACE) && !IsKeyDown(KEY_S))
 	{
-		acceleration *= 10;
+		currentAcceleration *= 2.0f;
+		maxSpeed *= 1.5f;
 	}
 
 	//Accelerate
-	if (IsKeyDown(KEY_W))
+	if (IsKeyDown(KEY_W) && currentSpeed < maxSpeed)
 	{
 		b2Vec2 forward = car->body->GetWorldVector(b2Vec2(0, -1));
 		for (int i = 0; i < 4; i++)
 		{
-			car->wheels[i]->ApplyForceToCenter(acceleration * forward, true);
+			car->wheels[i]->ApplyForceToCenter(currentAcceleration * forward, true);
 		}
 	}
 	//Slow Down
@@ -520,13 +526,22 @@ void ModulePhysics::MoveCar(PhysBody* car)
 		b2Vec2 backward = -car->body->GetWorldVector(b2Vec2(0, -1));
 		for (int i = 0; i < 4; i++)
 		{
-			car->wheels[i]->ApplyForceToCenter(acceleration * backward, true);
+			car->wheels[i]->ApplyForceToCenter(currentAcceleration * backward, true);
 		}
 	}
 
+	float steerSpeed = 0.5f;
+	if (currentSpeed > 10.0f)
+	{
+		steerSpeed = 0.25f;
+	}
+
 	float steer = 0.0f;
-	car->motorJoints[0]->SetLimits(-45 * DEG2RAD, 45 * DEG2RAD);
-	car->motorJoints[1]->SetLimits(-45 * DEG2RAD, 45 * DEG2RAD);
+
+	// Limits
+	float maxSteerAngle = 30 * DEG2RAD;
+	car->motorJoints[0]->SetLimits(-maxSteerAngle, maxSteerAngle);
+	car->motorJoints[1]->SetLimits(-maxSteerAngle, maxSteerAngle);
 
 	if (IsKeyDown(KEY_A))
 	{
@@ -539,21 +554,17 @@ void ModulePhysics::MoveCar(PhysBody* car)
 	else if (car->motorJoints[0]->GetJointAngle() != 0 || car->motorJoints[1]->GetJointAngle() != 0)
 	{
 		steer = -car->motorJoints[0]->GetJointAngle();
-		if (car->motorJoints[0]->GetJointAngle() < 5 * DEG2RAD || car->motorJoints[1]->GetJointAngle() < 5 * DEG2RAD)
+		if (abs(car->motorJoints[0]->GetJointAngle()) < 5 * DEG2RAD)
 		{
-			car->motorJoints[0]->SetLimits(0,0);
-			car->motorJoints[1]->SetLimits(0,0);
-		}
-		else
-		{
-			car->motorJoints[0]->SetLimits(car->motorJoints[0]->GetLowerLimit()/2, car->motorJoints[0]->GetUpperLimit()/2);
-			car->motorJoints[1]->SetLimits(car->motorJoints[1]->GetLowerLimit() / 2, car->motorJoints[1]->GetUpperLimit() / 2);
+			car->motorJoints[0]->SetLimits(0, 0);
+			car->motorJoints[1]->SetLimits(0, 0);
 		}
 	}
 
 	car->motorJoints[0]->SetMotorSpeed(steer);
 	car->motorJoints[1]->SetMotorSpeed(steer);
 }
+
 
 void ModulePhysics::MoveAI(PhysBody* car, int horitzontal, bool forward)
 {
@@ -737,4 +748,8 @@ PhysBody* ModulePhysics::CreateStaticWall(int x, int y, int width, int height)
 b2World* ModulePhysics::GetPhysWorld()
 {
 	return world;
+}
+bool ModulePhysics::IsDebug() const
+{
+	return debug;
 }

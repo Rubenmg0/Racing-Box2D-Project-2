@@ -70,10 +70,11 @@ public:
 	b2Body* CreateWheels(int x, int y);
 	void KillLateralVelocity(b2Body* body);
 
-	void MoveCar(PhysBody* car);
+	void MoveCar(PhysBody* car, float powerMultiplier = 1.0f);
 	void MoveAI(PhysBody* car, int horitzontal, bool forward);
 
 	void DeleteBody(PhysBody* body);
+	bool IsDebug() const;
 
 	// b2ContactListener ---
 	void BeginContact(b2Contact* contact);

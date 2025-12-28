@@ -111,7 +111,8 @@ update_status ModuleGame::Update()
 
 		if (playerCar)
 		{
-			float friction = 0.1f;
+			float friction = 0.5f;
+			float powerMultiplier = 1.0f;
 			int carX, carY;
 
 			playerCar->body->GetPhysicPosition(carX, carY);
@@ -147,15 +148,17 @@ update_status ModuleGame::Update()
 			}
 			if (touchingCircuit)
 			{
-				friction = 0.1f;
+				friction = 12.0f;
+				powerMultiplier = 1.0f;
 			}
 			else if (touchingGrass)
 			{
 				friction = 7.0f;
+				powerMultiplier = 0.3f;
 			}
 
 			playerCar->body->body->SetLinearDamping(friction);
-			App->physics->MoveCar(playerCar->body);
+			App->physics->MoveCar(playerCar->body, powerMultiplier);
 
 			// Center the camera on the player
 			float currentZoom = App->renderer->camera.zoom = 1.5f;
