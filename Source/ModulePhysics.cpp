@@ -555,6 +555,65 @@ void ModulePhysics::MoveCar(PhysBody* car)
 	car->motorJoints[1]->SetMotorSpeed(steer);
 }
 
+void ModulePhysics::MoveAI(PhysBody* car, int horitzontal, bool forward)
+{
+	// Check if playerCar exists
+	if (car == nullptr) return;
+
+	float acceleration = 0.7f;
+	float steerSpeed = 0.5f; //w (rad/s)
+
+	//Accelerate
+	if (forward)
+	{
+		b2Vec2 forward = car->body->GetWorldVector(b2Vec2(0, -1));
+		for (int i = 0; i < 4; i++)
+		{
+			car->wheels[i]->ApplyForceToCenter(acceleration * forward, true);
+		}
+	}
+	//Slow Down
+	else if (!forward)
+	{
+		b2Vec2 backward = -car->body->GetWorldVector(b2Vec2(0, -1));
+		for (int i = 0; i < 4; i++)
+		{
+			car->wheels[i]->ApplyForceToCenter(acceleration * backward, true);
+		}
+	}
+
+	float steer = 0.0f;
+	car->motorJoints[0]->SetLimits(-45 * DEG2RAD, 45 * DEG2RAD);
+	car->motorJoints[1]->SetLimits(-45 * DEG2RAD, 45 * DEG2RAD);
+
+	if (horitzontal == -1)
+	{
+		steer = -steerSpeed;
+	}
+	else if (horitzontal == 1)
+	{
+		steer = steerSpeed;
+	}
+	else if (horitzontal == 0 && car->motorJoints[0]->GetJointAngle() != 0 || car->motorJoints[1]->GetJointAngle() != 0)
+	{
+		steer = -car->motorJoints[0]->GetJointAngle();
+		if (car->motorJoints[0]->GetJointAngle() < 5 * DEG2RAD || car->motorJoints[1]->GetJointAngle() < 5 * DEG2RAD)
+		{
+			car->motorJoints[0]->SetLimits(0, 0);
+			car->motorJoints[1]->SetLimits(0, 0);
+		}
+		else
+		{
+			car->motorJoints[0]->SetLimits(car->motorJoints[0]->GetLowerLimit() / 2, car->motorJoints[0]->GetUpperLimit() / 2);
+			car->motorJoints[1]->SetLimits(car->motorJoints[1]->GetLowerLimit() / 2, car->motorJoints[1]->GetUpperLimit() / 2);
+		}
+	}
+
+	car->motorJoints[0]->SetMotorSpeed(steer);
+	car->motorJoints[1]->SetMotorSpeed(steer);
+}
+
+
 int PhysBody::RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const
 {
 	int ret = -1;
@@ -589,6 +648,49 @@ int PhysBody::RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& no
 	return ret;
 }
 
+class RayCastCallbackClosest : public b2RayCastCallback
+{
+public:
+	RayCastCallbackClosest(b2Body* bodyToIgnore) : ignore(bodyToIgnore) {	}
+
+	bool hit = false;
+	float fraction = 1.0f;
+	b2Vec2 normal;
+	b2Body* ignore = nullptr;
+
+	float ReportFixture(b2Fixture* fixture,	const b2Vec2& point, const b2Vec2& normalIn,float fractionIn) override
+	{
+		// Ignore
+		if (fixture->GetBody() == ignore)
+			return -1.0f;
+
+		hit = true;
+		fraction = fractionIn;
+		normal = normalIn;
+
+		return fractionIn;
+	}
+};
+
+int PhysBody::RayCastWorld(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y, Application* app) const
+{
+	b2Vec2 p1(PIXEL_TO_METERS(x1), PIXEL_TO_METERS(y1));
+	b2Vec2 p2(PIXEL_TO_METERS(x2), PIXEL_TO_METERS(y2));
+
+	RayCastCallbackClosest callback(body);
+
+	app->physics->GetPhysWorld()->RayCast(&callback, p1, p2);
+
+	if (!callback.hit)
+		return -1;
+
+	normal_x = callback.normal.x;
+	normal_y = callback.normal.y;
+
+	float dist = (p2 - p1).Length();
+	return (int)(callback.fraction * dist);
+}
+
 void ModulePhysics::BeginContact(b2Contact* contact)
 {
 	b2BodyUserData dataA = contact->GetFixtureA()->GetBody()->GetUserData();
@@ -603,6 +705,7 @@ void ModulePhysics::BeginContact(b2Contact* contact)
 	if (physB && physB->listener != NULL)
 		physB->listener->OnCollision(physB, physA);
 }
+
 PhysBody* ModulePhysics::CreateStaticWall(int x, int y, int width, int height)
 {
 	PhysBody* pbody = new PhysBody();
@@ -628,4 +731,10 @@ PhysBody* ModulePhysics::CreateStaticWall(int x, int y, int width, int height)
 	pbody->height = height;
 
 	return pbody;
+}
+
+
+b2World* ModulePhysics::GetPhysWorld()
+{
+	return world;
 }

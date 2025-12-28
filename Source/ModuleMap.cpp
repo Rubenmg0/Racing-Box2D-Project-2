@@ -316,7 +316,15 @@ void ModuleMap::DrawMinimap(Rectangle area, Vector2 playerPos)
             }
         }
     }
-
+    for (int i = 0; i < App->scene_intro->entities.size(); i++)
+    {
+        int x, y;
+        App->scene_intro->entities[i]->body->GetPhysicPosition(x, y);
+        float miniX = area.x + (x * scaleX);
+        float miniY = area.y + (y * scaleY);
+        DrawCircle((int)miniX, (int)miniY, 4.0f, BLUE);
+        DrawCircle((int)miniX, (int)miniY, 2.0f, GREEN);
+    }
     float playerMiniX = area.x + (playerPos.x * scaleX);
     float playerMiniY = area.y + (playerPos.y * scaleY);
     DrawCircle((int)playerMiniX, (int)playerMiniY, 4.0f, RED);

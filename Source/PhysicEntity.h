@@ -10,6 +10,7 @@ protected:
 		, listener(_listener)
 	{
 		body->listener = listener;
+		app = _listener->App;
 	}
 
 public:
@@ -23,6 +24,7 @@ public:
 	}
 
 public:
+	Application* app;
 	PhysBody* body;
 	Module* listener;
 };

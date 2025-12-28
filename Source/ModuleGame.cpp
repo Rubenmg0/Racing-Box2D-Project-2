@@ -79,6 +79,8 @@ update_status ModuleGame::Update()
 		{
 			App->map->Load("Assets/map/CuteRacing.tmx");
 			mapLoad = true;
+			
+			std::reverse(IA_Route.begin(), IA_Route.end());
 
 			if (playerCar == nullptr) {
 				Car* newCar = new Car(App->physics, posInit.x, posInit.y, this, App->renderer->normalCar, App->renderer->wheel);

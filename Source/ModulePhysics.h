@@ -33,9 +33,8 @@ public:
 	float GetRotation() const;
 	bool Contains(int x, int y) const;
 	int RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const;
-
+	int RayCastWorld(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y, Application* app) const;
 public:
-
 	BodyType type;      //Body type
 	int checkpointID;   //Checkpoint ID
 
@@ -70,7 +69,9 @@ public:
 	PhysBody* CreateCar(int x, int y, int mass = 100);
 	b2Body* CreateWheels(int x, int y);
 	void KillLateralVelocity(b2Body* body);
+
 	void MoveCar(PhysBody* car);
+	void MoveAI(PhysBody* car, int horitzontal, bool forward);
 
 	void DeleteBody(PhysBody* body);
 
@@ -80,6 +81,7 @@ public:
 	void SayGoodbye(b2Joint* joint) override {};
 	void SayGoodbye(b2Fixture* fixture) override {};
 
+	b2World* GetPhysWorld();
 private:
 
 	bool debug;
