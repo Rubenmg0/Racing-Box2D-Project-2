@@ -196,13 +196,16 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 	b2Body* chassis = world->CreateBody(&body);
 
 	b2PolygonShape box;
-	box.SetAsBox(PIXEL_TO_METERS(carWidth /2), PIXEL_TO_METERS(carHeigh/2));
+	float bumperWidth = carWidth + 10;
+	float bumperHeight = carHeigh + 25;
+
+	box.SetAsBox(PIXEL_TO_METERS(bumperWidth / 2), PIXEL_TO_METERS(bumperHeight / 2));
 
 	b2FixtureDef fixture;
 	fixture.shape = &box;
 	fixture.density = (float)mass / (carWidth * carHeigh);
 	fixture.isSensor = false;
-
+	//fixture.restitution = 9.0f;
 	chassis->CreateFixture(&fixture);
 
 	//Physic Body variables
@@ -291,7 +294,7 @@ b2Body* ModulePhysics::CreateWheels(int x, int y)
 	b2FixtureDef fixture;
 	fixture.shape = &box;
 	fixture.density = 1.0f;
-	fixture.friction = 0.9f;
+	fixture.friction = 0.0f;
 	fixture.filter.groupIndex = -1;
 
 	wheel->CreateFixture(&fixture);
@@ -488,7 +491,8 @@ void ModulePhysics::KillLateralVelocity(b2Body* body)
 
 	// Remove the sideways speed component
 	b2Vec2 lateralVel = lateralSpeed * right;
-	body->SetLinearVelocity(body->GetLinearVelocity() - lateralVel);
+	float frictionFactor = 1.0f;
+	body->SetLinearVelocity(body->GetLinearVelocity() - (frictionFactor * lateralVel));
 }
 
 void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
@@ -496,8 +500,16 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 	// Check if playerCar exists
 	if (car == nullptr) return;
 
-	float baseAcceleration = 0.3f;
-	float maxSpeed = 10.0f * powerMultiplier;
+	if (!car->isColliding)
+	{
+		KillLateralVelocity(car->body);
+		for (int i = 0; i < 4; i++) {
+			KillLateralVelocity(car->wheels[i]);
+		}
+	}
+
+	float baseAcceleration = 0.85f;
+	float maxSpeed = 14.0f * powerMultiplier;
 
 	float currentAcceleration = baseAcceleration * powerMultiplier;
 
@@ -507,8 +519,8 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 	// Turbo
 	if (IsKeyDown(KEY_SPACE) && !IsKeyDown(KEY_S))
 	{
-		currentAcceleration *= 2.0f;
-		maxSpeed *= 1.5f;
+		currentAcceleration *= 1.3f;
+		maxSpeed *= 15.0f;
 	}
 
 	//Accelerate
@@ -530,10 +542,10 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 		}
 	}
 
-	float steerSpeed = 0.5f;
-	if (currentSpeed > 10.0f)
+	float steerSpeed = 0.6f;
+	if (currentSpeed > 6.0f)
 	{
-		steerSpeed = 0.25f;
+		steerSpeed= steerSpeed/3;
 	}
 
 	float steer = 0.0f;
@@ -553,11 +565,20 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 	}
 	else if (car->motorJoints[0]->GetJointAngle() != 0 || car->motorJoints[1]->GetJointAngle() != 0)
 	{
-		steer = -car->motorJoints[0]->GetJointAngle();
-		if (abs(car->motorJoints[0]->GetJointAngle()) < 5 * DEG2RAD)
+		float currentAngle = car->motorJoints[0]->GetJointAngle();
+
+		if (abs(currentAngle) < 5 * DEG2RAD)
 		{
+			steer = 0;
 			car->motorJoints[0]->SetLimits(0, 0);
 			car->motorJoints[1]->SetLimits(0, 0);
+		}
+		else
+		{
+			float returnSpeed = 2.5f;
+
+			if (currentAngle > 0) steer = -returnSpeed;
+			else steer = returnSpeed;
 		}
 	}
 
@@ -568,34 +589,50 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 
 void ModulePhysics::MoveAI(PhysBody* car, int horitzontal, bool forward)
 {
-	// Check if playerCar exists
 	if (car == nullptr) return;
 
-	float acceleration = 0.7f;
-	float steerSpeed = 0.5f; //w (rad/s)
-
-	//Accelerate
-	if (forward)
+	if (!car->isColliding)
 	{
-		b2Vec2 forward = car->body->GetWorldVector(b2Vec2(0, -1));
-		for (int i = 0; i < 4; i++)
-		{
-			car->wheels[i]->ApplyForceToCenter(acceleration * forward, true);
+		KillLateralVelocity(car->body);
+		for (int i = 0; i < 4; i++) {
+			KillLateralVelocity(car->wheels[i]);
 		}
 	}
-	//Slow Down
-	else if (!forward)
+
+	float baseAcceleration = 0.85f;
+	float maxSpeed = 14.0f;
+
+	b2Vec2 velocity = car->body->GetLinearVelocity();
+	float currentSpeed = velocity.Length();
+
+	if (forward && currentSpeed < maxSpeed)
 	{
-		b2Vec2 backward = -car->body->GetWorldVector(b2Vec2(0, -1));
+		b2Vec2 forwardVec = car->body->GetWorldVector(b2Vec2(0, -1));
 		for (int i = 0; i < 4; i++)
 		{
-			car->wheels[i]->ApplyForceToCenter(acceleration * backward, true);
+			car->wheels[i]->ApplyForceToCenter(baseAcceleration * forwardVec, true);
 		}
+	}
+	else if (!forward)
+	{
+		b2Vec2 backwardVec = -car->body->GetWorldVector(b2Vec2(0, -1));
+		for (int i = 0; i < 4; i++)
+		{
+			car->wheels[i]->ApplyForceToCenter(baseAcceleration * backwardVec, true);
+		}
+	}
+
+	float steerSpeed = 0.6f;
+	if (currentSpeed > 6.0f)
+	{
+		steerSpeed = steerSpeed / 3;
 	}
 
 	float steer = 0.0f;
-	car->motorJoints[0]->SetLimits(-45 * DEG2RAD, 45 * DEG2RAD);
-	car->motorJoints[1]->SetLimits(-45 * DEG2RAD, 45 * DEG2RAD);
+	float maxSteerAngle = 30 * DEG2RAD;
+
+	car->motorJoints[0]->SetLimits(-maxSteerAngle, maxSteerAngle);
+	car->motorJoints[1]->SetLimits(-maxSteerAngle, maxSteerAngle);
 
 	if (horitzontal == -1)
 	{
@@ -605,18 +642,22 @@ void ModulePhysics::MoveAI(PhysBody* car, int horitzontal, bool forward)
 	{
 		steer = steerSpeed;
 	}
-	else if (horitzontal == 0 && car->motorJoints[0]->GetJointAngle() != 0 || car->motorJoints[1]->GetJointAngle() != 0)
+	else if (horitzontal == 0)
 	{
-		steer = -car->motorJoints[0]->GetJointAngle();
-		if (car->motorJoints[0]->GetJointAngle() < 5 * DEG2RAD || car->motorJoints[1]->GetJointAngle() < 5 * DEG2RAD)
+		float currentAngle = car->motorJoints[0]->GetJointAngle();
+
+		if (abs(currentAngle) < 5 * DEG2RAD)
 		{
+			steer = 0;
 			car->motorJoints[0]->SetLimits(0, 0);
 			car->motorJoints[1]->SetLimits(0, 0);
 		}
 		else
 		{
-			car->motorJoints[0]->SetLimits(car->motorJoints[0]->GetLowerLimit() / 2, car->motorJoints[0]->GetUpperLimit() / 2);
-			car->motorJoints[1]->SetLimits(car->motorJoints[1]->GetLowerLimit() / 2, car->motorJoints[1]->GetUpperLimit() / 2);
+			float returnSpeed = 3.0f;
+
+			if (currentAngle > 0) steer = -returnSpeed;
+			else steer = returnSpeed;
 		}
 	}
 
@@ -710,11 +751,39 @@ void ModulePhysics::BeginContact(b2Contact* contact)
 	PhysBody* physA = (PhysBody*)dataA.pointer;
 	PhysBody* physB = (PhysBody*)dataB.pointer;
 
+	if (physA && physB)
+	{
+		if (physA->type == BodyType::CAR && physB->type == BodyType::WALL)
+			physA->isColliding = true;
+
+		if (physB->type == BodyType::CAR && physA->type == BodyType::WALL)
+			physB->isColliding = true;
+	}
+
 	if (physA && physA->listener != NULL)
 		physA->listener->OnCollision(physA, physB);
 
 	if (physB && physB->listener != NULL)
 		physB->listener->OnCollision(physB, physA);
+}
+
+void ModulePhysics::EndContact(b2Contact* contact)
+{
+	b2BodyUserData dataA = contact->GetFixtureA()->GetBody()->GetUserData();
+	b2BodyUserData dataB = contact->GetFixtureB()->GetBody()->GetUserData();
+
+	PhysBody* physA = (PhysBody*)dataA.pointer;
+	PhysBody* physB = (PhysBody*)dataB.pointer;
+
+	if (physA && physB)
+	{
+		// Si el coche se separa de la pared, reactivamos el agarre
+		if (physA->type == BodyType::CAR && physB->type == BodyType::WALL)
+			physA->isColliding = false;
+
+		if (physB->type == BodyType::CAR && physA->type == BodyType::WALL)
+			physB->isColliding = false;
+	}
 }
 
 PhysBody* ModulePhysics::CreateStaticWall(int x, int y, int width, int height)
@@ -733,7 +802,7 @@ PhysBody* ModulePhysics::CreateStaticWall(int x, int y, int width, int height)
 	b2FixtureDef fixture;
 	fixture.shape = &box;
 	fixture.density = 1.0f;
-	fixture.restitution = 2.2f; //modificar el rebote
+	//fixture.restitution = 9.0; //modificar el rebote
 
 	b->CreateFixture(&fixture);
 

@@ -77,7 +77,7 @@ update_status ModuleGame::Update()
 		//Aqui se carga el mapa del Tiled
 		if (!mapLoad) 
 		{
-			App->map->Load("Assets/map/CuteRacing_Level2.tmx");
+			App->map->Load("Assets/map/CuteRacing.tmx");
 			mapLoad = true;
 			
 			std::reverse(IA_Route.begin(), IA_Route.end());
@@ -231,7 +231,7 @@ update_status ModuleGame::Update()
 	}
 
 
-	if (IsKeyPressed(KEY_SPACE))
+	if (IsKeyPressed(KEY_F))
 	{
 		ray_on = !ray_on;
 		ray.x = GetMouseX();

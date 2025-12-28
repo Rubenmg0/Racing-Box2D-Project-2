@@ -23,7 +23,7 @@ enum class BodyType { UNKNOWN, CAR, WALL, CHECKPOINT };
 class PhysBody
 {
 public:
-	PhysBody() : listener(NULL), body(NULL), type(BodyType::UNKNOWN), checkpointID(-1) // Inicializar
+	PhysBody() : listener(NULL), body(NULL), type(BodyType::UNKNOWN), checkpointID(-1), isColliding(false)// Inicializar
 	{
 		for (int i = 0; i < 4; ++i) wheels[i] = NULL;
 	}
@@ -37,6 +37,7 @@ public:
 public:
 	BodyType type;      //Body type
 	int checkpointID;   //Checkpoint ID
+	bool isColliding;
 
 	int width, height;
 	b2Body* body;
@@ -77,8 +78,8 @@ public:
 	bool IsDebug() const;
 
 	// b2ContactListener ---
-	void BeginContact(b2Contact* contact);
-
+	void BeginContact(b2Contact* contact) override;
+	void EndContact(b2Contact* contact) override;
 	void SayGoodbye(b2Joint* joint) override {};
 	void SayGoodbye(b2Fixture* fixture) override {};
 
