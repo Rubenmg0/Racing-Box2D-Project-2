@@ -196,8 +196,8 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 	b2Body* chassis = world->CreateBody(&body);
 
 	b2PolygonShape box;
-	float bumperWidth = carWidth + 10;
-	float bumperHeight = carHeigh + 25;
+	float bumperWidth = carWidth + 8;
+	float bumperHeight = carHeigh + 14;
 
 	box.SetAsBox(PIXEL_TO_METERS(bumperWidth / 2), PIXEL_TO_METERS(bumperHeight / 2));
 
@@ -205,7 +205,7 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 	fixture.shape = &box;
 	fixture.density = (float)mass / (carWidth * carHeigh);
 	fixture.isSensor = false;
-	//fixture.restitution = 9.0f;
+	fixture.restitution = 7.0f;
 	chassis->CreateFixture(&fixture);
 
 	//Physic Body variables
@@ -214,12 +214,13 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 	pbody->height = carHeigh;
 	pbody->type = BodyType::CAR;
 
+	float wheelOffset = (carHeigh / 2) - 5.5f;
 
 	//Create Wheels
-	b2Vec2 flWheelPos = { (float)x + carHeigh / 2, (float)y - carWidth / 2 }; //Front Left
-	b2Vec2 frWheelPos = { (float)x + carHeigh / 2, (float)y + carWidth / 2 }; //Front Right
-	b2Vec2 blWheelPos = { (float)x - carHeigh / 2, (float)y - carWidth / 2 }; //Back Left
-	b2Vec2 brWheelPos = { (float)x - carHeigh / 2, (float)y + carWidth / 2 }; //Back Right
+	b2Vec2 flWheelPos = { (float)x + wheelOffset, (float)y - carWidth / 2 }; // Front Left
+	b2Vec2 frWheelPos = { (float)x + wheelOffset, (float)y + carWidth / 2 }; // Front Right
+	b2Vec2 blWheelPos = { (float)x - wheelOffset, (float)y - carWidth / 2 }; // Back Left
+	b2Vec2 brWheelPos = { (float)x - wheelOffset, (float)y + carWidth / 2 }; // Back Right
 
 	b2Body* flWheel = CreateWheels(flWheelPos.x, flWheelPos.y);
 	b2Body* frWheel = CreateWheels(frWheelPos.x, frWheelPos.y);
@@ -238,7 +239,7 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 
 	joint.collideConnected = false;
 
-	float halfHeightMeters = PIXEL_TO_METERS(carHeigh / 2);
+	float wheelOffsetMeters = PIXEL_TO_METERS(wheelOffset);
 	float halfWidthMeters = PIXEL_TO_METERS(carWidth / 2);
 
 	joint.enableLimit = true;
@@ -249,12 +250,12 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 	joint.maxMotorTorque = 2.0f; // Max motor rotation speed
 
 	// Front Left
-	joint.localAnchorA.Set(-halfWidthMeters, -halfHeightMeters);
+	joint.localAnchorA.Set(-halfWidthMeters, -wheelOffsetMeters);
 	joint.bodyB = flWheel; 
 	pbody->motorJoints[0] = (b2RevoluteJoint*)world->CreateJoint(&joint);
 
 	// Front Right
-	joint.localAnchorA.Set(halfWidthMeters, -halfHeightMeters);
+	joint.localAnchorA.Set(halfWidthMeters, -wheelOffsetMeters);
 	joint.bodyB = frWheel;
 	pbody->motorJoints[1] = (b2RevoluteJoint*)world->CreateJoint(&joint);
 
@@ -265,12 +266,12 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 	joint.enableMotor = false;
 
 	// Back Left
-	joint.localAnchorA.Set(-halfWidthMeters, halfHeightMeters);
+	joint.localAnchorA.Set(-halfWidthMeters, wheelOffsetMeters);
 	joint.bodyB = blWheel;
 	world->CreateJoint(&joint);
 
 	// Back Right
-	joint.localAnchorA.Set(halfWidthMeters, halfHeightMeters);
+	joint.localAnchorA.Set(halfWidthMeters, wheelOffsetMeters);
 	joint.bodyB = brWheel;
 	world->CreateJoint(&joint);
 
@@ -519,7 +520,7 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 	// Turbo
 	if (IsKeyDown(KEY_SPACE) && !IsKeyDown(KEY_S))
 	{
-		currentAcceleration *= 1.3f;
+		currentAcceleration *= 1.5f;
 		maxSpeed *= 15.0f;
 	}
 

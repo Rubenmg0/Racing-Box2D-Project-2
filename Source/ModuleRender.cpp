@@ -94,7 +94,7 @@ update_status ModuleRender::PostUpdate()
 	{
 		if (!resetTime) {
 			timer.Start();
-			App->audio->PlayFx(gameMusic);
+			//App->audio->PlayFx(gameMusic);
 			resetTime = true;
 		}
 

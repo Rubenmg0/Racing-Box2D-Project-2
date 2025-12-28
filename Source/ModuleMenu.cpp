@@ -42,6 +42,13 @@ void ModuleMenu::ChangeScreen(GameScreen newScreen)
 		App->renderer->CreateButton(ID_BTN_QUIT, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 2, (float)btnWidth, (float)btnHeight }, "QUIT", this);
 		break;
 
+	case GameScreen::MAP_SELECT:
+		App->renderer->CreateButton(ID_BTN_MAP1, Rectangle{ (float)centerX, (float)startY, (float)btnWidth, (float)btnHeight }, "CIRCUIT 1", this);
+		App->renderer->CreateButton(ID_BTN_MAP2, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding), (float)btnWidth, (float)btnHeight }, "CIRCUIT 2", this);
+
+		App->renderer->CreateButton(ID_BTN_BACK, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 2, (float)btnWidth, (float)btnHeight }, "BACK", this);
+		break;
+
 	case GameScreen::CONTROLS:
 		App->renderer->CreateButton(ID_BTN_SOUND, Rectangle{ (float)centerX, (float)startY, (float)btnWidth, (float)btnHeight }, "SOUND", this);
 		App->renderer->CreateButton(ID_BTN_MUSIC, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding), (float)btnWidth, (float)btnHeight }, "MUSIC", this);
@@ -49,10 +56,6 @@ void ModuleMenu::ChangeScreen(GameScreen newScreen)
 		break;
 
 	case GameScreen::CAR_SELECT:
-		App->renderer->CreateButton(ID_BTN_BACK, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 2, (float)btnWidth, (float)btnHeight }, "BACK", this);
-		break;
-
-	case GameScreen::MAP_SELECT:
 		App->renderer->CreateButton(ID_BTN_BACK, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 2, (float)btnWidth, (float)btnHeight }, "BACK", this);
 		break;
 
@@ -99,12 +102,24 @@ void ModuleMenu::OnUIMouseClickEvent(UIElement* element)
 	if (element->id == ID_BTN_PLAY)
 	{
 		pendingChange = true;
-		nextScreenToLoad = GameScreen::GAME;
+		nextScreenToLoad = GameScreen::MAP_SELECT;
 	}
 	else if (element->id == ID_BTN_SETTINGS)
 	{
 		pendingChange = true;
 		nextScreenToLoad = GameScreen::CONTROLS;
+	}
+	else if (element->id == ID_BTN_MAP1)
+	{
+		App->scene_intro->mapPath = "Assets/map/CuteRacing.tmx";
+		pendingChange = true;
+		nextScreenToLoad = GameScreen::GAME;
+	}
+	else if (element->id == ID_BTN_MAP2)
+	{
+		App->scene_intro->mapPath = "Assets/map/CuteRacing_Level2.tmx";
+		pendingChange = true;
+		nextScreenToLoad = GameScreen::GAME;
 	}
 	else if (element->id == ID_BTN_BACK)
 	{
@@ -112,9 +127,13 @@ void ModuleMenu::OnUIMouseClickEvent(UIElement* element)
 
 		if (currentScreen == GameScreen::MAP_SELECT)
 		{
-			nextScreenToLoad = GameScreen::CAR_SELECT;
+			nextScreenToLoad = GameScreen::MENU;
 		}
-		else 
+		else if (currentScreen == GameScreen::CAR_SELECT)
+		{
+			nextScreenToLoad = GameScreen::MAP_SELECT; 
+		}
+		else
 		{
 			nextScreenToLoad = GameScreen::MENU;
 		}

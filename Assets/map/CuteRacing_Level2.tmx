@@ -432,8 +432,8 @@
    <tile gid="12"/>
    <tile gid="11"/>
    <tile gid="12"/>
-   <tile/>
-   <tile/>
+   <tile gid="11"/>
+   <tile gid="12"/>
    <tile gid="11"/>
    <tile/>
    <tile/>
@@ -1228,15 +1228,15 @@
    <tile/>
   </data>
  </layer>
- <objectgroup id="6" name="Collision" visible="0">
+ <objectgroup id="6" name="Collision">
   <object id="2" x="1.45455" y="256" width="5116.85" height="256"/>
   <object id="5" x="1022.67" y="768" width="1285.33" height="257.333"/>
   <object id="7" x="1796" y="1028" width="1274.67" height="248"/>
   <object id="8" x="2048" y="1278.67" width="258.667" height="1536.33"/>
-  <object id="9" x="2304" y="1280" width="1280" height="256"/>
+  <object id="9" x="2304" y="1280" width="2052" height="256"/>
   <object id="10" x="3325.33" y="512" width="770.667" height="254"/>
   <object id="11" x="3838.67" y="766.667" width="258.667" height="256"/>
-  <object id="12" x="4096.67" y="1279.34" width="258.667" height="1283.33"/>
+  <object id="12" x="4096.67" y="1537.34" width="258.667" height="1025.33"/>
   <object id="13" x="4862.67" y="511.335" width="258.667" height="3070.33"/>
   <object id="14" x="257.576" y="3329.33" width="4606.42" height="252"/>
   <object id="15" x="1286.18" y="2558.85" width="763" height="256"/>
@@ -1248,7 +1248,7 @@
   <object id="21" x="258.667" y="1538.67" width="252" height="251.663"/>
  </objectgroup>
  <objectgroup id="7" name="CheckPoints">
-  <object id="28" x="2653.78" y="518.364" width="62.5" height="256">
+  <object id="28" x="2653.78" y="518.364" width="62.5" height="508">
    <properties>
     <property name="order" type="int" value="0"/>
    </properties>
@@ -1269,7 +1269,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="8" name="IA">
+ <objectgroup id="8" name="IA" visible="0">
   <object id="32" x="656" y="660">
    <polygon points="0,0 2552,-8 2556,244 3056,252 3068,500 4092,504 4080,2320 3044,2308 3052,1232 2044,1260 2032,2552 -272,2528 -260,1760 1008,1772 1016,752 216,748 232,484 -4,496"/>
   </object>

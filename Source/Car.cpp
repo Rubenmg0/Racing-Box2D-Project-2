@@ -2,33 +2,31 @@
 
 
 void Car::Update() 
-{
-	physics->KillLateralVelocity(body->wheels[0]);
-	physics->KillLateralVelocity(body->wheels[1]);
-	physics->KillLateralVelocity(body->wheels[2]);
-	physics->KillLateralVelocity(body->wheels[3]);
-}
+{}
 
 void Car::Draw() 
 {
 	int x, y;
 	body->GetPhysicPosition(x, y);
+	float car_scaleX = 1.3f;
+	float car_scaleY = 1.6f;
 
 	DrawTexturePro(texture, Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
-		Rectangle{ (float)x, (float)y, (float)texture.width, (float)texture.height },
-		Vector2{ (float)texture.width / 2.0f, (float)texture.height / 2.0f }, body->GetRotation() * RAD2DEG, WHITE);
+		Rectangle{ (float)x, (float)y, (float)texture.width * car_scaleX, (float)texture.height * car_scaleY },
+		Vector2{ (float)texture.width * car_scaleX / 2.0f, (float)texture.height * car_scaleY / 2.0f }, body->GetRotation() * RAD2DEG, WHITE);
 
 	if (wheel.height != 0)
 	{
 		for (int i = 0; i < 4; i++)
 		{
 			b2Vec2 pos = body->wheels[i]->GetPosition();
-			int wx = METERS_TO_PIXELS(pos.x);
+			int wx = METERS_TO_PIXELS(pos.x) ;
 			int wy = METERS_TO_PIXELS(pos.y);
+			float wheel_scale = 0.6f;
 
 			DrawTexturePro(wheel, Rectangle{ 0, 0, (float)wheel.width , (float)wheel.height },
-				Rectangle{ (float)wx, (float)wy, (float)wheel.width, (float)wheel.height },
-				Vector2{ (float)wheel.width / 2.0f, (float)wheel.height / 2.0f }, 90+ body->wheels[i]->GetAngle() * RAD2DEG, WHITE);
+				Rectangle{ (float)wx , (float)wy, (float)wheel.width * wheel_scale, (float)wheel.height * wheel_scale },
+				Vector2{ (float)wheel.width * wheel_scale / 2.0f, (float)wheel.height * wheel_scale / 2.0f }, 90+ body->wheels[i]->GetAngle() * RAD2DEG, WHITE);
 		}
 	}
 }

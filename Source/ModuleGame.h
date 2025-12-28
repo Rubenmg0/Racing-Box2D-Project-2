@@ -8,6 +8,7 @@
 
 #include "raylib.h"
 #include <vector>
+#include <string>
 
 #include "PhysicEntity.h"
 #include "UIElement.h"
@@ -26,6 +27,7 @@ public:
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
 	void OnUIMouseClickEvent(UIElement* element);
 
+	std::string mapPath = "Assets/map/CuteRacing.tmx";
 	PhysicEntity* playerCar = nullptr;
 	std::vector<b2Vec2> IA_Route;
 

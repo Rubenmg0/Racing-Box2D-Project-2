@@ -25,9 +25,6 @@ bool ModuleGame::Start()
 {
 	LOG("Loading Intro assets");
 	bool ret = true;
-
-	//sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
-
 	return ret;
 }
 
@@ -48,6 +45,12 @@ bool ModuleGame::CleanUp()
 // Update: draw background
 update_status ModuleGame::Update()
 {
+
+	if (checkpointFeedbackTimer > 0.0f)
+	{
+		checkpointFeedbackTimer -= GetFrameTime();
+	}
+
 	switch (App->menu->currentScreen)
 	{
 	case GameScreen::MENU:
@@ -77,7 +80,7 @@ update_status ModuleGame::Update()
 		//Aqui se carga el mapa del Tiled
 		if (!mapLoad) 
 		{
-			App->map->Load("Assets/map/CuteRacing.tmx");
+			App->map->Load(mapPath.c_str());
 			mapLoad = true;
 			
 			std::reverse(IA_Route.begin(), IA_Route.end());
@@ -230,16 +233,6 @@ update_status ModuleGame::Update()
 		break;
 	}
 
-
-	if (IsKeyPressed(KEY_F))
-	{
-		ray_on = !ray_on;
-		ray.x = GetMouseX();
-		ray.y = GetMouseY();
-	}
-
-	
-
 	// Prepare for raycast ------------------------------------------------------
 
 	vec2i mouse;
@@ -323,6 +316,7 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		else if (checkpoint->checkpointID == nextCheckpointRequired)
 		{
 			nextCheckpointRequired++;
+			checkpointFeedbackTimer = 2.0f;
 		}
 	}
 }
