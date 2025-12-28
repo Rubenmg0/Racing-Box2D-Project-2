@@ -50,7 +50,7 @@ public:
 
 
 // Module --------------------------------------
-class ModulePhysics : public Module, public b2ContactListener
+class ModulePhysics : public Module, public b2ContactListener, public b2DestructionListener
 {
 public:
 	ModulePhysics(Application* app, bool start_enabled = true);
@@ -77,10 +77,16 @@ public:
 	// b2ContactListener ---
 	void BeginContact(b2Contact* contact);
 
+	void SayGoodbye(b2Joint* joint) override {};
+	void SayGoodbye(b2Fixture* fixture) override {};
+
 private:
 
 	bool debug;
 	b2World* world;
 	b2MouseJoint* mouse_joint;
+	b2MouseJoint* mouse_joint_car;
+	b2Body* mouseSelect;
+	b2Body* mouseSelect_car;
 	b2Body* ground;
 };
