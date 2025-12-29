@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="left-up" width="20" height="15" tilewidth="256" tileheight="256" infinite="0" nextlayerid="9" nextobjectid="33">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="20" height="15" tilewidth="256" tileheight="256" infinite="0" nextlayerid="9" nextobjectid="33">
  <tileset firstgid="1" name="CuteMap" tilewidth="256" tileheight="256" tilecount="9" columns="3">
   <image source="CuteRoad/CuteMap.png" width="768" height="768"/>
  </tileset>
@@ -1286,7 +1286,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="8" name="IA" visible="0">
+ <objectgroup id="8" name="IA">
   <object id="32" x="656" y="660">
    <polygon points="0,0 2552,-8 2556,244 3056,252 3068,500 4092,504 4080,2320 3044,2308 3052,1232 2044,1260 2032,2552 -272,2528 -260,1760 1008,1772 1016,752 216,748 232,484 -4,496"/>
   </object>

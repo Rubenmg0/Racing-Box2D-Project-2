@@ -14,10 +14,8 @@ void IACar::Update()
 		return;
 	}
 
-	float TOL = 0.05f;
-
 	//Positions
-	int x,y; body->GetPhysicPosition(x,y);
+	int x, y; body->GetPhysicPosition(x, y); x += 100; y += 100; // Temporal Correction
 	b2Vec2 targetPos = app->scene_intro->IA_Route[currentPoint + 1];
 
 	//Direction
@@ -59,22 +57,24 @@ void IACar::Update()
 	// WALL AVOIDANCE
 	if (hitWall)
 	{
-		forward = 0; // decelerate
+		forward = 0; // Decelerate
 
 		// Turn away from wall using normal (cross product 2D)
 		b2Vec2 forwardVec = b2Vec2(cosf(currentRotation + b2_pi / 2.0f), sinf(currentRotation + b2_pi / 2.0f));
 		float side = forwardVec.x * normal.y - forwardVec.y * normal.x;
-		horitzontal = (side > 0) ? 1 : -1;
+		horitzontal = (side > 0) ? -1 : 1;
 	}
 	else
 	{
+		float TOL = 1.0f;
+
 		if (angleDif > TOL)
 		{
-			horitzontal = -1;
+			horitzontal = 1;
 		}
 		else if (angleDif < -TOL)
 		{
-			horitzontal = 1;
+			horitzontal = -1;
 		}
 	}
 
@@ -88,7 +88,7 @@ void IACar::Update()
 
 	float distance = dir.Length();
 
-	if (distance < 5.0f)
+	if (distance < 4.0f * 256.0f)
 	{
 		currentPoint++;
 	}
