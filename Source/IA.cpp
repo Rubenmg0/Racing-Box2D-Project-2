@@ -7,6 +7,13 @@
 
 void IACar::Update()
 {
+	if (app->scene_intro->raceStarted == false)
+	{
+		body->body->SetLinearVelocity(b2Vec2(0, 0));
+		body->body->SetAngularVelocity(0);
+		return;
+	}
+
 	float TOL = 0.05f;
 
 	//Positions

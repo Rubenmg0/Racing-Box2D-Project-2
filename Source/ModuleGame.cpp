@@ -54,11 +54,11 @@ update_status ModuleGame::Update()
 	switch (App->menu->currentScreen)
 	{
 	case GameScreen::MENU:
-		
+
 
 		break;
 	case GameScreen::CONTROLS:
-		
+
 
 		break;
 	case GameScreen::CREDITS:
@@ -78,11 +78,17 @@ update_status ModuleGame::Update()
 	case GameScreen::GAME:
 
 		//Aqui se carga el mapa del Tiled
-		if (!mapLoad) 
+		if (!mapLoad)
 		{
 			App->map->Load(mapPath.c_str());
 			mapLoad = true;
-			
+
+			semaphoreTileset = App->map->GetTileset("semaforo");
+
+			if (semaphoreTileset == nullptr) {
+				LOG("Error: No se encontró el tileset 'semaforo' en el mapa Tiled.");
+			}
+
 			std::reverse(IA_Route.begin(), IA_Route.end());
 
 			if (playerCar == nullptr) {
@@ -100,7 +106,7 @@ update_status ModuleGame::Update()
 
 			for (int i = 1; i < 4; i++)
 			{
-				float inX = posInit.x - (150.0f * i); 
+				float inX = posInit.x - (150.0f * i);
 				float inY = posInit.y - (75.0f * (i % 2)); // Alternate up/down
 
 				IACar* newIA = new IACar(App->physics, (int)inX, (int)inY, this, App->renderer->normalCar, App->renderer->wheel);
@@ -161,7 +167,15 @@ update_status ModuleGame::Update()
 			}
 
 			playerCar->body->body->SetLinearDamping(friction);
-			App->physics->MoveCar(playerCar->body, powerMultiplier);
+			if (raceStarted)
+			{
+				App->physics->MoveCar(playerCar->body, powerMultiplier);
+			}
+			else
+			{
+				playerCar->body->body->SetLinearVelocity(b2Vec2(0, 0));
+				playerCar->body->body->SetAngularVelocity(0);
+			}
 
 			// Center the camera on the player
 			float currentZoom = App->renderer->camera.zoom = 1.5f;
@@ -206,6 +220,26 @@ update_status ModuleGame::Update()
 		}
 		EndMode2D();
 		{
+			int totalFrames = 10;
+			float timePerFrame = 0.2f;
+			if (semaphoreTileset != nullptr && semaphoreState < totalFrames)
+			{
+				semaphoreTimer += GetFrameTime();
+				if (semaphoreTimer >= timePerFrame)
+				{
+					semaphoreState++;
+					semaphoreTimer = 0.0f;
+					if (semaphoreState == 9)
+					{
+						raceStarted = true;
+					}
+				}
+				if (semaphoreState < totalFrames)
+				{
+					// Llamamos a la nueva función pasando la textura y las medidas fijas
+					App->renderer->DrawSemaphore(semaphoreTileset->texture, semaphoreState, 96, 176, 3.0f);
+				}
+			}
 			float miniMapSize = 200.0f;
 			float margen = 20.0f;
 
@@ -217,7 +251,7 @@ update_status ModuleGame::Update()
 			};
 
 			if (playerCar != nullptr && playerCar->body != nullptr) {
-				int x,y;
+				int x, y;
 				playerCar->body->GetPhysicPosition(x, y);
 				App->map->DrawMinimap(miniMapArea, Vector2{ (float)x, (float)y });
 			}

@@ -213,6 +213,24 @@ bool ModuleRender::Draw(Texture2D texture, int x, int y, const Rectangle* sectio
 
 	return ret;
 }
+bool ModuleRender::DrawSemaphore(Texture2D texture, int state, int frameWidth, int frameHeight, float scale)
+{
+	Rectangle sourceRec = { (float)(frameWidth * state), 0.0f, (float)frameWidth,(float)frameHeight };
+
+	float destWidth = frameWidth * scale;
+	float destHeight = frameHeight * scale;
+
+	float destX = (SCREEN_WIDTH - destWidth) / 2.0f;
+	float destY = (SCREEN_HEIGHT - destHeight) / 2.0f;
+
+	Rectangle destRec = { destX, destY, destWidth, destHeight };
+
+	DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Color{ 0, 0, 0, 200 });
+
+	DrawTexturePro(texture, sourceRec, destRec, Vector2{ 0, 0 }, 0.0f, WHITE);
+	return true;
+}
+
 
 bool ModuleRender::DrawText(const char* text, int x, int y, Font font, int spacing, Color tint) const
 {

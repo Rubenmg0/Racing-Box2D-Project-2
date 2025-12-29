@@ -14,6 +14,7 @@
 #include "UIElement.h"
 
 class PhysBody;
+struct TileSet;
 
 class ModuleGame : public Module
 {
@@ -50,5 +51,11 @@ public:
 	int totalLaps = 3;
 
 	vec2<int> ray;
-	bool ray_on;	
+	bool ray_on;
+
+	TileSet* semaphoreTileset = 0;
+	//semaphore
+	int semaphoreState = 0;
+	float semaphoreTimer = 0.0f;
+	bool raceStarted = false;
 };

@@ -259,6 +259,18 @@ Vector2 ModuleMap::MapToWorld(int x, int y) const
     return Vector2{ (float)(x * map_data.tilewidth), (float)(y * map_data.tileheight) };
 }
 
+TileSet* ModuleMap::GetTileset(const char* name)
+{
+    for (auto& tileset : map_data.tilesets)
+    {
+        if (tileset->name == name)
+        {
+            return tileset;
+        }
+    }
+    return nullptr;
+}
+
 Rectangle TileSet::GetTileRect(int gid) const
 {
     int local_id = gid - firstgid;
