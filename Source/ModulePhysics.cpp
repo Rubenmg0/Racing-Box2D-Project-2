@@ -588,7 +588,7 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 }
 
 
-void ModulePhysics::MoveAI(PhysBody* car, int horitzontal, bool forward)
+void ModulePhysics::MoveAI(PhysBody* car, int horitzontal, int forward)
 {
 	if (car == nullptr) return;
 
@@ -600,13 +600,13 @@ void ModulePhysics::MoveAI(PhysBody* car, int horitzontal, bool forward)
 		}
 	}
 
-	float baseAcceleration = 0.85f;
-	float maxSpeed = 14.0f;
+	float baseAcceleration = 0.50f;
+	float maxSpeed = 10.0f;
 
 	b2Vec2 velocity = car->body->GetLinearVelocity();
 	float currentSpeed = velocity.Length();
 
-	if (forward && currentSpeed < maxSpeed)
+	if (forward == 1 && currentSpeed < maxSpeed)
 	{
 		b2Vec2 forwardVec = car->body->GetWorldVector(b2Vec2(0, -1));
 		for (int i = 0; i < 4; i++)
@@ -614,7 +614,7 @@ void ModulePhysics::MoveAI(PhysBody* car, int horitzontal, bool forward)
 			car->wheels[i]->ApplyForceToCenter(baseAcceleration * forwardVec, true);
 		}
 	}
-	else if (!forward)
+	else if (forward == -1)
 	{
 		b2Vec2 backwardVec = -car->body->GetWorldVector(b2Vec2(0, -1));
 		for (int i = 0; i < 4; i++)

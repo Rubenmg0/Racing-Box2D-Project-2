@@ -47,27 +47,27 @@ void IACar::Update()
 	b2Vec2 rayEnd = b2Vec2(x + forwardVec.x * rayLength, y + forwardVec.y * rayLength);
 
 	vec2<float> normal;
-	bool hitWall = ( RayHit(vec2<int>(METERS_TO_PIXELS(x), METERS_TO_PIXELS(y)), vec2<int>(METERS_TO_PIXELS(rayEnd.x), METERS_TO_PIXELS(rayEnd.y)),	normal) > 0);
+	bool hitWall = (RayHit(vec2<int>(METERS_TO_PIXELS(x), METERS_TO_PIXELS(y)), vec2<int>(METERS_TO_PIXELS(rayEnd.x), METERS_TO_PIXELS(rayEnd.y)), normal) > 0);
 
 	// WALL AVOIDANCE
 	if (hitWall)
 	{
-		forward = false; // decelerate
+		forward = 0; // decelerate
 
 		// Turn away from wall using normal (cross product 2D)
 		b2Vec2 forwardVec = b2Vec2(cosf(currentRotation + b2_pi / 2.0f), sinf(currentRotation + b2_pi / 2.0f));
 		float side = forwardVec.x * normal.y - forwardVec.y * normal.x;
-		horitzontal = (side > 0) ? -1 : 1;
+		horitzontal = (side > 0) ? 1 : -1;
 	}
 	else
 	{
 		if (angleDif > TOL)
 		{
-			horitzontal = 1;
+			horitzontal = -1;
 		}
 		else if (angleDif < -TOL)
 		{
-			horitzontal = -1;
+			horitzontal = 1;
 		}
 	}
 
@@ -81,7 +81,7 @@ void IACar::Update()
 
 	float distance = dir.Length();
 
-	if (distance < 1.5f)
+	if (distance < 5.0f)
 	{
 		currentPoint++;
 	}

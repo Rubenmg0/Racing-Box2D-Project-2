@@ -72,7 +72,7 @@ public:
 	void KillLateralVelocity(b2Body* body);
 
 	void MoveCar(PhysBody* car, float powerMultiplier = 1.0f);
-	void MoveAI(PhysBody* car, int horitzontal, bool forward);
+	void MoveAI(PhysBody* car, int horitzontal, int forward);
 
 	void DeleteBody(PhysBody* body);
 	bool IsDebug() const;
