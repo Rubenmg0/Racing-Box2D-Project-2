@@ -19,6 +19,7 @@ ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app,
 // Destructor
 ModulePhysics::~ModulePhysics()
 {
+	
 }
 
 bool ModulePhysics::Start()
@@ -37,7 +38,10 @@ bool ModulePhysics::Start()
 	mouse_joint_car = nullptr;
 	mouseSelect = nullptr;
 	mouseSelect_car = nullptr;
-
+	turboSound = LoadSound("Assets/Audio/Car/bonus.wav");
+	moveSound = LoadSound("Assets/Audio/Car/CarSpeedUp.wav");
+	brakeSound = LoadSound("Assets/Audio/Car/nissan-maxima-handbrake-turn.wav");
+	
 	return true;
 }
 
@@ -509,6 +513,12 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 	{
 		currentAcceleration *= 1.3f;
 		maxSpeed *= 15.0f;
+		if (IsSoundPlaying(turboSound) == false) {
+		
+		PlaySound(turboSound);
+		
+		}
+	
 	}
 
 	//Accelerate
@@ -519,6 +529,11 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 		{
 			car->wheels[i]->ApplyForceToCenter(currentAcceleration * forward, true);
 		}
+		if (IsSoundPlaying(moveSound) == false) {
+		
+		PlaySound(moveSound);
+		
+		}
 	}
 	//Slow Down
 	else if (IsKeyDown(KEY_S))
@@ -528,6 +543,20 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 		{
 			car->wheels[i]->ApplyForceToCenter(currentAcceleration * backward, true);
 		}
+		if (IsSoundPlaying(moveSound) == false) {
+
+			PlaySound(moveSound);
+
+		}
+	}
+	else {
+	
+		if (IsSoundPlaying(moveSound) == false) {
+
+			StopSound(moveSound);
+
+		}
+	
 	}
 
 	float steerSpeed = 1.3f;
@@ -546,6 +575,13 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 		car->motorJoints[1]->SetLimits(-maxSteerAngle, maxSteerAngle);
 
 		steer = -steerSpeed;
+		if (IsSoundPlaying(moveSound)) {
+			StopSound(moveSound);
+			
+		}
+		if(IsSoundPlaying(brakeSound) == false) {
+			PlaySound(brakeSound);
+		}
 	}
 	else if (IsKeyDown(KEY_D))
 	{
@@ -553,6 +589,9 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 		car->motorJoints[1]->SetLimits(-maxSteerAngle, maxSteerAngle);
 
 		steer = steerSpeed;
+		if (IsSoundPlaying(brakeSound) == false) {
+			PlaySound(brakeSound);
+		}
 	}
 	else
 	{

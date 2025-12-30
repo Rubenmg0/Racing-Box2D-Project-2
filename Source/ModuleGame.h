@@ -3,7 +3,7 @@
 #include "Globals.h"
 #include "Module.h"
 #include "ModulePhysics.h"
-
+#include "Animation.h"
 #include "p2Point.h"
 
 #include "raylib.h"
@@ -57,4 +57,11 @@ public:
 	int semaphoreState = 0;
 	float semaphoreTimer = 0.0f;
 	bool raceStarted = false;
+
+	AnimationSet semaforo;
+	//Audio
+
+	Sound crash;
+
+	Music backgroundMusic;
 };

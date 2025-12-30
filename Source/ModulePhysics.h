@@ -93,4 +93,9 @@ private:
 	b2Body* mouseSelect;
 	b2Body* mouseSelect_car;
 	b2Body* ground;
+
+	//Sound
+	Sound turboSound;
+	Sound moveSound;
+	Sound brakeSound;
 };

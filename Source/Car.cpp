@@ -2,7 +2,10 @@
 
 
 void Car::Update() 
-{}
+{
+
+
+}
 
 void Car::Draw() 
 {

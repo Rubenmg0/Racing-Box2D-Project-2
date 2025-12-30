@@ -16,6 +16,7 @@ ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start
 {
 	ray_on = false;
 	sensed = false;
+	
 }
 
 ModuleGame::~ModuleGame()
@@ -27,6 +28,12 @@ bool ModuleGame::Start()
 {
 	LOG("Loading Intro assets");
 	bool ret = true;
+
+	crash = LoadSound("Assets/Audio/Car/car-crash.wav");
+	backgroundMusic = LoadMusicStream("Assets/Audio/Music/music.wav");
+	std::unordered_map<int, std::string> aliases = { {0, "animation"}};
+
+	semaforo.LoadFromTSX("Assets/map/semaforo.tsx",aliases );
 	return ret;
 }
 
@@ -40,14 +47,19 @@ bool ModuleGame::CleanUp()
 	}
 	entities.clear();
 	playerCar = nullptr;
-
+	UnloadSound(crash);
+	
 	return true;
 }
 
 // Update: draw background
 update_status ModuleGame::Update()
 {
-
+	if(!IsMusicStreamPlaying(backgroundMusic))
+	{
+		PlayMusicStream(backgroundMusic);
+	}
+	UpdateMusicStream(backgroundMusic);
 	if (checkpointFeedbackTimer > 0.0f)
 	{
 		checkpointFeedbackTimer -= GetFrameTime();
@@ -329,21 +341,22 @@ update_status ModuleGame::Update()
 			float timePerFrame = 0.2f;
 			if (semaphoreTileset != nullptr && semaphoreState < totalFrames)
 			{
-				semaphoreTimer += GetFrameTime();
-				if (semaphoreTimer >= timePerFrame)
-				{
-					semaphoreState++;
-					semaphoreTimer = 0.0f;
-					if (semaphoreState == 9)
-					{
-						raceStarted = true;
-					}
-				}
-				if (semaphoreState < totalFrames)
-				{
-					// Llamamos a la nueva función pasando la textura y las medidas fijas
-					App->renderer->DrawSemaphore(semaphoreTileset->texture, semaphoreState, 96, 176, 3.0f);
-				}
+				//semaphoreTimer += GetFrameTime();
+				//if (semaphoreTimer >= timePerFrame)
+				//{
+				//	semaphoreState++;
+				//	semaphoreTimer = 0.0f;
+				//	if (semaphoreState == 9)
+				//	{
+				//		raceStarted = true;
+				//	}
+				//}
+				//if (semaphoreState < totalFrames)
+				//{
+				//	// Llamamos a la nueva función pasando la textura y las medidas fijas
+				//	App->renderer->DrawSemaphore(semaphoreTileset->texture, semaphoreState, 96, 176, 3.0f);
+				//}
+				semaforo.SetCurrent("animation");
 			}
 			float miniMapSize = 200.0f;
 			float margen = 20.0f;
@@ -392,8 +405,22 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	PhysBody* IAcar = nullptr;
 	PhysBody* checkpoint = nullptr;
 
-	if (bodyA->type == BodyType::CAR) car = bodyA;
-	else if (bodyB->type == BodyType::CAR) car = bodyB;
+	if (bodyA->type == BodyType::CAR) { 
+		car = bodyA;
+	if (IsSoundPlaying(crash)) {}
+	else {
+
+		PlaySound(crash);
+	}
+	}
+	else if (bodyB->type == BodyType::CAR) {
+		car = bodyB; 
+		if (IsSoundPlaying(crash)) {}
+	else {
+
+		PlaySound(crash);
+	}
+	}
 
 	if (bodyA->type == BodyType::CHECKPOINT) checkpoint = bodyA;
 	else if (bodyB->type == BodyType::CHECKPOINT) checkpoint = bodyB;
@@ -429,6 +456,10 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			checkpointFeedbackTimer = 2.0f;
 		}
 	}
+	
+	
+	
+	
 }
 
 void ModuleGame::OnUIMouseClickEvent(UIElement* element)
