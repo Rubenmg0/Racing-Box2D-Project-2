@@ -556,7 +556,7 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 	}
 	else {
 	
-		if (IsSoundPlaying(moveSound) & FX) {
+		if (IsSoundPlaying(moveSound) && FX) {
 
 			StopSound(moveSound);
 
@@ -580,11 +580,11 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 		car->motorJoints[1]->SetLimits(-maxSteerAngle, maxSteerAngle);
 
 		steer = -steerSpeed;
-		if (IsSoundPlaying(moveSound)) {
+		if (IsSoundPlaying(moveSound) && FX) {
 			StopSound(moveSound);
 			
 		}
-		if(IsSoundPlaying(brakeSound) == false) {
+		if(IsSoundPlaying(brakeSound) == false && FX) {
 			PlaySound(brakeSound);
 		}
 	}

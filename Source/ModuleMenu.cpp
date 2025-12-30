@@ -93,6 +93,7 @@ bool ModuleMenu::CleanUp()
 {
 	LOG("Unloading Menu Scene");
 	App->renderer->ClearUI();
+	UnloadSound(btnSound);
 
 	return true;
 }

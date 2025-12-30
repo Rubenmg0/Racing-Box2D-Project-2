@@ -133,7 +133,7 @@ update_status ModuleRender::PostUpdate()
 		//Laps
 		const char* lapText = TextFormat("LAP %i/%i", App->scene_intro->completedLaps + 1, App->scene_intro->totalLaps);
 
-		timerChrono.Draw(100, 65, lapText, YELLOW, 8);
+		timerChrono.Draw(100, 65, lapText, DARKPURPLE, 8);
 
 		//Checkpoints
 		if (App->physics->IsDebug() || App->scene_intro->checkpointFeedbackTimer > 0.0f)
@@ -143,7 +143,7 @@ update_status ModuleRender::PostUpdate()
 
 			const char* cpText = TextFormat("Checkpoints: %i/%i", currentCP, App->scene_intro->totalCheckpoints - 1);
 
-			Color textColor = App->physics->IsDebug() ? ORANGE : GREEN;
+			Color textColor = App->physics->IsDebug() ? ORANGE : DARKPURPLE;
 
 			timerChrono.Draw(100, 110, cpText, textColor, 20);
 		}
@@ -207,8 +207,8 @@ update_status ModuleRender::PostUpdate()
 		const char* formTime = TextFormat("Your time: %02d:%02d.%02d", minutes, seconds, centiseconds);
 		const char* formBestTime = TextFormat("Best time: %02d:%02d.%02d", bestTime[0], bestTime[1], bestTime[2]);
 
-		timerChrono.Draw(68, 680, formTime, GREEN, 20);
-		timerChrono.Draw(70, 750, formBestTime, RED, 20);
+		timerChrono.Draw(68, 680, formTime, PURPLE, 20);
+		timerChrono.Draw(70, 750, formBestTime, PINK, 20);
 
 		break;
 	}
