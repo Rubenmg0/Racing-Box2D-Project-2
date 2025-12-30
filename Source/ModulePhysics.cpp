@@ -4,7 +4,7 @@
 #include "ModulePhysics.h"
 #include "ModuleGame.h"
 #include "ModuleMenu.h"
-
+#include "ModuleAudio.h"
 #include "p2Point.h"
 
 #include <math.h>
@@ -493,6 +493,7 @@ void ModulePhysics::KillLateralVelocity(b2Body* body)
 void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 {
 	// Check if playerCar exists
+	
 	if (car == nullptr) return;
 
 	if (!car->isColliding)
@@ -511,12 +512,13 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 	b2Vec2 velocity = car->body->GetLinearVelocity();
 	float currentSpeed = velocity.Length();
 
+	bool FX = App->audio->CheckFX();
 	// Turbo
 	if (IsKeyDown(KEY_SPACE) && !IsKeyDown(KEY_S))
 	{
 		currentAcceleration *= 1.3f;
 		maxSpeed *= 15.0f;
-		if (IsSoundPlaying(turboSound) == false) {
+		if (IsSoundPlaying(turboSound) == false && FX) {
 		
 		PlaySound(turboSound);
 		
@@ -532,7 +534,7 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 		{
 			car->wheels[i]->ApplyForceToCenter(currentAcceleration * forward, true);
 		}
-		if (IsSoundPlaying(moveSound) == false) {
+		if (IsSoundPlaying(moveSound) == false && FX) {
 		
 		PlaySound(moveSound);
 		
@@ -546,7 +548,7 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 		{
 			car->wheels[i]->ApplyForceToCenter(currentAcceleration * backward, true);
 		}
-		if (IsSoundPlaying(moveSound) == false) {
+		if (IsSoundPlaying(moveSound) == false && FX) {
 
 			PlaySound(moveSound);
 
@@ -554,7 +556,7 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 	}
 	else {
 	
-		if (IsSoundPlaying(moveSound)) {
+		if (IsSoundPlaying(moveSound) & FX) {
 
 			StopSound(moveSound);
 

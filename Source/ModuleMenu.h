@@ -37,7 +37,8 @@ public:
 	GameScreen currentScreen;
 	bool pendingChange = false;
 	GameScreen nextScreenToLoad;
-
+	//Button sound
+	Sound btnSound;
 	//Button Size
 	int btnWidth = 200;
 	int btnHeight = 40;

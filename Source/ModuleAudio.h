@@ -25,8 +25,14 @@ public:
 	bool PlayFx(unsigned int fx, int repeat = 0);
 	bool StopFx(unsigned int fx);
 
+	void MusicOn();
+	void FXOn();
+	bool CheckMusic();
+	bool CheckFX();
 private:
 
+	bool musicOn = true;
+	bool fxOn = true;
 	Music music;
 	Sound fx[MAX_SOUNDS];
     unsigned int fx_count;

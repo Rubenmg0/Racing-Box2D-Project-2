@@ -5,6 +5,7 @@
 #include "ModuleGame.h" 
 #include "UIElement.h"
 #include "UIButton.h"
+#include "ModuleAudio.h"
 
 ModuleMenu::ModuleMenu(Application* app, bool start_enabled) : Module(app, start_enabled), currentScreen(GameScreen::MENU)
 {
@@ -21,6 +22,7 @@ bool ModuleMenu::Start()
 	startY = SCREEN_HEIGHT / 2 - btnHeight * 2;
 
 	ChangeScreen(GameScreen::MENU);
+	btnSound = LoadSound("Assets/Audio/Music/button.mp3");
 	return ret;
 }
 void ModuleMenu::ChangeScreen(GameScreen newScreen)
@@ -97,6 +99,11 @@ bool ModuleMenu::CleanUp()
 
 void ModuleMenu::OnUIMouseClickEvent(UIElement* element)
 {
+	bool sound = App->audio->CheckFX();
+	if(sound)
+	{
+		PlaySound(btnSound);
+	}
 	if (element->id == ID_BTN_PLAY)
 	{
 		pendingChange = true;
@@ -137,6 +144,19 @@ void ModuleMenu::OnUIMouseClickEvent(UIElement* element)
 		{
 			nextScreenToLoad = GameScreen::MENU;
 		}
+	}
+	 if(element->id ==ID_BTN_MUSIC)
+	{
+		
+		
+		App->audio->MusicOn();
+		
+	}
+	else if (element->id == ID_BTN_SOUND)
+	{
+	
+		App->audio->FXOn();
+		
 	}
 	else if (element->id == ID_BTN_QUIT && currentScreen == GameScreen::MENU)
 	{

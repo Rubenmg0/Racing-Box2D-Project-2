@@ -59,6 +59,7 @@ bool ModuleGame::CleanUp()
 // Update: draw background
 update_status ModuleGame::Update()
 {
+	bool sound = App->audio->CheckMusic();
 	if (checkpointFeedbackTimer > 0.0f)
 	{
 		checkpointFeedbackTimer -= GetFrameTime();
@@ -68,17 +69,25 @@ update_status ModuleGame::Update()
 	{
 	case GameScreen::MENU:
 
-		if (!IsMusicStreamPlaying(waitMusic))
+		if (!IsMusicStreamPlaying(waitMusic) && sound)
 		{
 			PlayMusicStream(waitMusic);
+		}
+		else if(!sound) {
+			StopMusicStream(waitMusic);
+		
 		}
 		UpdateMusicStream(waitMusic);
 
 		break;
 	case GameScreen::CONTROLS:
-		if (!IsMusicStreamPlaying(waitMusic))
+		if (!IsMusicStreamPlaying(waitMusic) && sound)
 		{
 			PlayMusicStream(waitMusic);
+		}
+		else if (!sound) {
+			StopMusicStream(waitMusic);
+
 		}
 		UpdateMusicStream(waitMusic);
 
@@ -94,18 +103,25 @@ update_status ModuleGame::Update()
 		break;
 	case GameScreen::MAP_SELECT:
 
-		if (!IsMusicStreamPlaying(waitMusic))
+		if (!IsMusicStreamPlaying(waitMusic) && sound)
 		{
 			PlayMusicStream(waitMusic);
+		}
+		else if (!sound) {
+			StopMusicStream(waitMusic);
 		}
 		UpdateMusicStream(waitMusic);
 
 		break;
 	case GameScreen::GAME:
 
-		if (!IsMusicStreamPlaying(backgroundMusic))
+		if (!IsMusicStreamPlaying(backgroundMusic) && sound)
 		{
 			PlayMusicStream(backgroundMusic);
+		}
+		else if (!sound) {
+		
+			StopMusicStream(backgroundMusic);
 		}
 		UpdateMusicStream(backgroundMusic);
 
@@ -448,17 +464,18 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	PhysBody* car = nullptr;
 	PhysBody* IAcar = nullptr;
 	PhysBody* checkpoint = nullptr;
+	bool sound = App->audio->CheckFX();
 
 	if (bodyA->type == BodyType::CAR && bodyB->type != BodyType::CHECKPOINT) {
 		car = bodyA;
-		if (IsSoundPlaying(crash)) {}
+		if (IsSoundPlaying(crash) || !sound) {}
 		else {
 			PlaySound(crash);
 		}
 	}
 	else if (bodyB->type == BodyType::CAR && bodyA->type != BodyType::CHECKPOINT) {
 		car = bodyB;
-		if (IsSoundPlaying(crash)) {}
+		if (IsSoundPlaying(crash) || !sound) {}
 		else {
 			PlaySound(crash);
 		}

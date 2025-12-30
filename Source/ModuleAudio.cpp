@@ -10,6 +10,9 @@ ModuleAudio::ModuleAudio(Application* app, bool start_enabled) : Module(app, sta
 {
 	fx_count = 0;
 	music = Music{ 0 };
+
+	musicOn = true;
+	fxOn = true;
 }
 
 // Destructor
@@ -121,4 +124,26 @@ bool ModuleAudio::StopFx(unsigned int id)
 	if (id < fx_count) StopSound(fx[id]);
 
 	return ret;
+}
+
+void ModuleAudio::MusicOn()
+{
+	musicOn = !musicOn;
+}
+void ModuleAudio::FXOn()
+{
+	fxOn = !fxOn;
+}
+
+bool ModuleAudio:: CheckMusic()
+{
+	if(musicOn == false)
+	{
+		int i = 9;
+	}
+	return musicOn;
+}
+bool ModuleAudio :: CheckFX()
+{
+	return fxOn;
 }
