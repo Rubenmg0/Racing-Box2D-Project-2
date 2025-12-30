@@ -14,6 +14,8 @@ public:
 
 	void Update() override;
 	void Draw() override;
+	int currentLap = 0;
+	int nextCheckpoint = 0;
 	int RayHit(vec2<int> ray, vec2<int> pos, vec2<float>& normal) override;
 	void DeletePhysBody() override;
 
