@@ -329,7 +329,7 @@ update_status ModuleGame::Update()
 			nextCheckpointRequired = 0;
 			semaphoreState = 0;
 			semaphoreTimer = 0.0f;
-
+			App->renderer->resetTime = false;
 			App->map->CleanUp();
 			App->menu->Enable();
 			App->menu->pendingChange = true;
