@@ -430,6 +430,9 @@ update_status ModulePhysics::PostUpdate()
 bool ModulePhysics::CleanUp()
 {
 	LOG("Destroying physics world");
+	UnloadSound(turboSound);
+	UnloadSound(moveSound);
+	UnloadSound(brakeSound);
 	b2Body* body = world->GetBodyList();
 	while (body != nullptr){
 		b2BodyUserData& data = body->GetUserData();
