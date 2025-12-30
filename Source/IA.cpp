@@ -114,3 +114,8 @@ int IACar::RayHit(vec2<int> ray, vec2<int> pos, vec2<float>& normal)
 {
 	return body->RayCastWorld(ray.x, ray.y, pos.x, pos.y, normal.x, normal.y, app);
 }
+
+void IACar::DeletePhysBody()
+{
+    this->body->DeleteAllBodies(app);
+}

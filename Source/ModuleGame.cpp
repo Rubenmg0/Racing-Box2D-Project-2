@@ -319,7 +319,11 @@ update_status ModuleGame::Update()
 
 		if (IsKeyPressed(KEY_SPACE))
 		{
-			for (auto& entity : entities) delete entity;
+			for (auto& entity : entities)
+			{
+				entity->DeletePhysBody();
+				delete entity;
+			}
 			entities.clear();
 			playerCar = nullptr;
 

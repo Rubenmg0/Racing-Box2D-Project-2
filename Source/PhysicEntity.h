@@ -18,6 +18,8 @@ public:
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 
+	virtual void DeletePhysBody() = 0;
+
 	virtual int RayHit(vec2<int> ray, vec2<int> mouse, vec2<float>& normal)
 	{
 		return 0;
