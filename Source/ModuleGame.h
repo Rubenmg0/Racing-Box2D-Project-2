@@ -62,4 +62,6 @@ public:
 	Sound crash;
 
 	Music backgroundMusic;
+	Music waitMusic;
+	Music finishMusic;
 };
