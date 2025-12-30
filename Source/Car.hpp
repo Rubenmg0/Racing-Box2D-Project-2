@@ -10,7 +10,7 @@ class Car : public PhysicEntity
 {
 public:
 	Car(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture, Texture2D _wheeltexture)
-		: PhysicEntity(physics->CreateCar(_x, _y), _listener), texture(_texture), wheel(_wheeltexture) {}
+		: PhysicEntity(physics->CreateCar(_x, _y, BodyType::CAR), _listener), texture(_texture), wheel(_wheeltexture) {}
 
 	void Update() override;
 	void Draw() override;

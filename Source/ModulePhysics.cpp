@@ -45,20 +45,6 @@ update_status ModulePhysics::PreUpdate()
 {
 	world->Step(1.0f / 60.0f, 6, 2);
 
-	for (b2Contact* c = world->GetContactList(); c; c = c->GetNext())
-	{
-		if (c->GetFixtureA()->IsSensor() && c->IsTouching())
-		{
-			b2BodyUserData data1 = c->GetFixtureA()->GetBody()->GetUserData();
-			b2BodyUserData data2 = c->GetFixtureA()->GetBody()->GetUserData();
-
-			PhysBody* pb1 = (PhysBody*)data1.pointer;
-			PhysBody* pb2 = (PhysBody*)data2.pointer;
-			if (pb1 && pb2 && pb1->listener)
-				pb1->listener->OnCollision(pb1, pb2);
-		}
-	}
-
 	return UPDATE_CONTINUE;
 }
 
@@ -178,7 +164,7 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size)
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
+PhysBody* ModulePhysics::CreateCar(int x, int y, BodyType type, int mass)
 {
 	//Create PhysBody
 	PhysBody* pbody = new PhysBody();
@@ -190,8 +176,8 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.userData.pointer = reinterpret_cast<uintptr_t>(pbody);
 
-	body.angularDamping = 3.0f;
-	body.linearDamping = 0.3f;
+	body.angularDamping = 8.0f;
+	body.linearDamping = 1.0f;
 
 	b2Body* chassis = world->CreateBody(&body);
 
@@ -205,14 +191,14 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, int mass)
 	fixture.shape = &box;
 	fixture.density = (float)mass / (carWidth * carHeigh);
 	fixture.isSensor = false;
-	fixture.restitution = 7.0f;
+	fixture.restitution = 5.0f;
 	chassis->CreateFixture(&fixture);
 
 	//Physic Body variables
 	pbody->body = chassis;
 	pbody->width = carWidth;
 	pbody->height = carHeigh;
-	pbody->type = BodyType::CAR;
+	pbody->type = type;
 
 	float wheelOffset = (carHeigh / 2) - 5.5f;
 
@@ -597,16 +583,8 @@ void ModulePhysics::MoveAI(PhysBody* car, int horitzontal, int forward)
 {
 	if (car == nullptr) return;
 
-	if (!car->isColliding)
-	{
-		KillLateralVelocity(car->body);
-		for (int i = 0; i < 4; i++) {
-			KillLateralVelocity(car->wheels[i]);
-		}
-	}
-
-	float baseAcceleration = 0.50f;
-	float maxSpeed = 10.0f;
+	float baseAcceleration = 0.8f;
+	float maxSpeed = 12.0f;
 
 	b2Vec2 velocity = car->body->GetLinearVelocity();
 	float currentSpeed = velocity.Length();
@@ -616,7 +594,8 @@ void ModulePhysics::MoveAI(PhysBody* car, int horitzontal, int forward)
 		b2Vec2 forwardVec = car->body->GetWorldVector(b2Vec2(0, -1));
 		for (int i = 0; i < 4; i++)
 		{
-			car->wheels[i]->ApplyForceToCenter(baseAcceleration * forwardVec, true);
+			float force = (currentSpeed < 1.0f) ? baseAcceleration * 2.0f : baseAcceleration;
+			car->wheels[i]->ApplyForceToCenter(force * forwardVec, true);
 		}
 	}
 	else if (forward == -1)
@@ -628,7 +607,7 @@ void ModulePhysics::MoveAI(PhysBody* car, int horitzontal, int forward)
 		}
 	}
 
-	float steerSpeed = 0.6f;
+	float steerSpeed = 1.2f;
 	if (currentSpeed > 6.0f)
 	{
 		steerSpeed = steerSpeed / 3;
@@ -656,7 +635,7 @@ void ModulePhysics::MoveAI(PhysBody* car, int horitzontal, int forward)
 	{
 		float currentAngle = car->motorJoints[0]->GetJointAngle();
 
-		if (abs(currentAngle) < 5 * DEG2RAD)
+		if (abs(currentAngle) < 2 * DEG2RAD)
 		{
 			steer = 0;
 			car->motorJoints[0]->SetLimits(0, 0);
@@ -664,7 +643,7 @@ void ModulePhysics::MoveAI(PhysBody* car, int horitzontal, int forward)
 		}
 		else
 		{
-			float returnSpeed = 3.0f;
+			float returnSpeed = 10.0f;
 
 			if (currentAngle > 0) steer = -returnSpeed;
 			else steer = returnSpeed;
@@ -755,11 +734,8 @@ int PhysBody::RayCastWorld(int x1, int y1, int x2, int y2, float& normal_x, floa
 
 void ModulePhysics::BeginContact(b2Contact* contact)
 {
-	b2BodyUserData dataA = contact->GetFixtureA()->GetBody()->GetUserData();
-	b2BodyUserData dataB = contact->GetFixtureB()->GetBody()->GetUserData();
-
-	PhysBody* physA = (PhysBody*)dataA.pointer;
-	PhysBody* physB = (PhysBody*)dataB.pointer;
+	PhysBody* physA = (PhysBody*)contact->GetFixtureA()->GetBody()->GetUserData().pointer;
+	PhysBody* physB = (PhysBody*)contact->GetFixtureB()->GetBody()->GetUserData().pointer;
 
 	if (physA && physB)
 	{

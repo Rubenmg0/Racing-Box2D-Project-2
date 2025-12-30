@@ -104,12 +104,34 @@ update_status ModuleGame::Update()
 				bodyCar->SetTransform(positionCar, angleRadians);
 			}
 
+			//We define the central route of the circuit
+			std::vector<b2Vec2> centralRoute = { //Falta ordenarlo y crear mas puntos
+				{1888, 640},  //Punto 0: Salida
+				{5500, 640},  //Punto 1: Fin recta superior
+				{6200, 1200}, //Punto 2: Curva arriba-derecha
+				{6200, 4000}, //Punto 3: Recta larga derecha (bajada)
+				{3000, 4100}, //Punto 4: Recta inferior
+				{800, 4100},  //Punto 5: Curva abajo-izquierda
+				{800, 2400},  //Punto 6: Recta izquierda (subida)
+				{4000, 2400}, //Punto 7: Recta central
+				{4000, 1000}, //Punto 8: Giro hacia meta
+				{1888, 640}   //Punto 9: Meta
+			};
+
 			for (int i = 1; i < 4; i++)
 			{
 				float inX = posInit.x - (150.0f * i);
 				float inY = posInit.y - (75.0f * (i % 2)); // Alternate up/down
 
 				IACar* newIA = new IACar(App->physics, (int)inX, (int)inY, this, App->renderer->normalCar, App->renderer->wheel);
+
+				// Asignamos carril: el coche 1 va por dentro (-50), el 2 por el centro (0), el 3 por fuera (50)
+				newIA->laneOffset = (float)(i - 2) * 60.0f;
+
+				// Creamos su ruta personalizada sumando el offset
+				for (auto& p : centralRoute) {
+					newIA->waypoints.push_back({ p.x + newIA->laneOffset, p.y + newIA->laneOffset });
+				}
 
 				entities.emplace_back(newIA);
 
@@ -157,7 +179,7 @@ update_status ModuleGame::Update()
 			}
 			if (touchingCircuit)
 			{
-				friction = 12.0f;
+				friction = 6.0f;
 				powerMultiplier = 1.0f;
 			}
 			else if (touchingGrass)
@@ -317,12 +339,16 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		return;
 	}
 
+	PhysBody* car = nullptr;
 	PhysBody* checkpoint = nullptr;
+
+	if (bodyA->type == BodyType::CAR) car = bodyA;
+	else if (bodyB->type == BodyType::CAR) car = bodyB;
 
 	if (bodyA->type == BodyType::CHECKPOINT) checkpoint = bodyA;
 	else if (bodyB->type == BodyType::CHECKPOINT) checkpoint = bodyB;
 
-	if (checkpoint != nullptr)
+	if (car != nullptr && checkpoint != nullptr)
 	{
 		//If you cross the finish line
 		if (checkpoint->checkpointID == 0)

@@ -17,7 +17,7 @@
 #define carHeigh 50
 #define carWidth 25
 
-enum class BodyType { UNKNOWN, CAR, WALL, CHECKPOINT };
+enum class BodyType { UNKNOWN, CAR, IACAR, WALL, CHECKPOINT };
 
 // Small class to return to other modules to track position and rotation of physics bodies
 class PhysBody
@@ -67,7 +67,7 @@ public:
 	PhysBody* CreateChain(int x, int y, const int* points, int size);
 	PhysBody* CreateStaticWall(int x, int y, int width, int height);
 
-	PhysBody* CreateCar(int x, int y, int mass = 100);
+	PhysBody* CreateCar(int x, int y, BodyType type, int mass = 100);
 	b2Body* CreateWheels(int x, int y);
 	void KillLateralVelocity(b2Body* body);
 
