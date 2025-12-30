@@ -38,6 +38,7 @@ public:
 	Texture2D box;
 
 	//Cars texture
+	Texture2D aiCarTextures[4];
 	Texture2D burgerCar;
 	Texture2D normalCar;
 	Texture2D wheel;

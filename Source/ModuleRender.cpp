@@ -26,8 +26,13 @@ bool ModuleRender::Init()
 	box = LoadTexture("Assets/crate.png");
 
 	//Cars
-	burgerCar = LoadTexture("Assets/Cars/BurgerCar/burger_car.png");
-	normalCar = LoadTexture("Assets/Cars/NormalCars/normal_car_yellow.png");
+	normalCar = LoadTexture("Assets/Cars/BurgerCar/burger_car.png");
+
+	aiCarTextures[0] = LoadTexture("Assets/Cars/NormalCars/normal_car_green.png");
+	aiCarTextures[1] = LoadTexture("Assets/Cars/NormalCars/normal_car_blue.png");
+	aiCarTextures[2] = LoadTexture("Assets/Cars/NormalCars/normal_car_cian.png");
+	aiCarTextures[3] = LoadTexture("Assets/Cars/NormalCars/normal_car_pink.png");
+
 	wheel = LoadTexture("Assets/Cars/NormalCars/wheel_animation_spritesheet.png");
 
 	//Scenes
@@ -165,9 +170,11 @@ bool ModuleRender::CleanUp()
 
 	//Cars
 	UnloadTexture(burgerCar);
-	UnloadTexture(normalCar);
 	UnloadTexture(wheel);
 
+	for (int i = 0; i < 4; i++) {
+		UnloadTexture(aiCarTextures[i]);
+	}
 	//Scenes
 	UnloadTexture(menu);
 	UnloadTexture(chrono_base);
