@@ -279,6 +279,43 @@ update_status ModuleGame::Update()
 
 
 		}
+		break;
+	case GameScreen::GAMEOVER:
+		delete playerCar;
+		playerCar = nullptr;
+
+		break;
+	default:
+		break;
+	}
+
+	// Prepare for raycast ------------------------------------------------------
+
+	vec2i mouse;
+	mouse.x = GetMouseX();
+	mouse.y = GetMouseY();
+	int ray_hit = ray.DistanceTo(mouse);
+
+	vec2f normal(0.0f, 0.0f);
+
+	// All draw functions ------------------------------------------------------
+
+	for (PhysicEntity* entity : entities)
+	{
+		entity->Update();
+		entity->Draw();
+		if (ray_on)
+		{
+			int hit = entity->RayHit(ray, mouse, normal);
+			if (hit >= 0)
+			{
+				ray_hit = hit;
+			}
+		}
+	}
+	
+	if (App->menu->currentScreen == GameScreen::GAME)
+	{
 		EndMode2D();
 		{
 			int totalFrames = 10;
@@ -317,42 +354,8 @@ update_status ModuleGame::Update()
 				App->map->DrawMinimap(miniMapArea, Vector2{ (float)x, (float)y });
 			}
 		}
-		BeginMode2D(App->renderer->camera);
-		break;
-	case GameScreen::GAMEOVER:
-		delete playerCar;
-		playerCar = nullptr;
-
-		break;
-	default:
-		break;
+		BeginMode2D(App->renderer->camera); 
 	}
-
-	// Prepare for raycast ------------------------------------------------------
-
-	vec2i mouse;
-	mouse.x = GetMouseX();
-	mouse.y = GetMouseY();
-	int ray_hit = ray.DistanceTo(mouse);
-
-	vec2f normal(0.0f, 0.0f);
-
-	// All draw functions ------------------------------------------------------
-
-	for (PhysicEntity* entity : entities)
-	{
-		entity->Update();
-		entity->Draw();
-		if (ray_on)
-		{
-			int hit = entity->RayHit(ray, mouse, normal);
-			if (hit >= 0)
-			{
-				ray_hit = hit;
-			}
-		}
-	}
-
 	// ray -----------------
 	if (ray_on == true)
 	{
