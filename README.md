@@ -1,71 +1,70 @@
 # 🎮 CuteRacing
 LINK: https://github.com/Rubenmg0/Racing-Box2D-Project-2
 
-## 🕹️ Juego Original
-CuteRacing es un videojuego de carreras top-down inspirado en juegos clásicos de racing arcade.  
-Los **assets gráficos** han sido diseñados por **Irene Calatrava** y **Rubén Mateo**.  
-El proyecto utiliza **sonidos sin copyright** y música de **Tsundere Twintails**.
+## 🕹️ Original Game
+CuteRacing is a top-down racing videogame inspired by classic arcade racing games.  
+The **graphic assets** were designed by **Irene Calatrava** and **Rubén Mateo**.  
+The project uses **copyright-free sounds** and music by **Tsundere Twintails**.
 
 ---
 
-## 🧩 Descripción del Proyecto
-Videojuego de **Racing top-down** desarrollado en **C++**, utilizando:
-- **Box2D** para el sistema de físicas.
-- **raylib** para el renderizado, entrada y audio.
+## 🧩 Project Description
+**Top-down Racing** videogame developed in **C++**, using:
+- **Box2D** for the physics system.
+- **raylib** for rendering, input, and audio.
 
-Este proyecto forma parte de la asignatura **Physics II – Project 02: Racing**.
+This project is part of the course **Physics II – Project 02: Racing**.
 
 ---
 
 ## ✨ Key Features
-- Físicas de coche en Box2D.
-- Sistema de colisiones con muros y obstáculos.
-- Zonas especiales (hierba que ralentiza el vehículo).
-- Muros con rebote.
-- Sistema de turbo.
-- HUD con información de carrera.
-- Sistema de escenas (menú y gameplay).
-- Cámara dinámica siguiendo al jugador.
-- Audio integrado (música y efectos).
-- Modo debug con visualización de físicas.
+- Car physics using Box2D.
+- Collision system with walls and obstacles.
+- Special zones (grass that slows down the vehicle).
+- Bouncy walls.
+- Turbo system.
+- HUD with race information.
+- Scene system (menu and gameplay).
+- Dynamic camera following the player.
+- Integrated audio (music and sound effects).
+- Debug mode with physics visualization.
 
 ---
 
-## 🎮 Controles
+## 🎮 Controls
 
 ### Gameplay
-- `W` → Acelerar  
-- `A` → Girar a la izquierda  
-- `D` → Girar a la derecha  
-- `S` → Frenar  
+- `W` → Accelerate  
+- `A` → Turn left  
+- `D` → Turn right  
+- `S` → Brake  
 - `SPACE` → Turbo  
-- `F1` → Activar / desactivar modo debug (hitboxes y mouse joint)  
-- `Click izquierdo` sobre el coche → Arrastrar con el mouse (modo debug)
+- `F1` → Enable / disable debug mode (hitboxes and mouse joint)  
+- `Left Click` on the car → Drag with the mouse (debug mode)
 
 ---
 
-## 🧠 Mecánicas Especiales
-- **Turbo** activable por el jugador.
-- **Zonas de hierba** que reducen la velocidad.
-- **Muros con rebote**.
+## 🧠 Special Mechanics
+- **Turbo** activated by the player.
+- **Grass zones** that reduce speed.
+- **Bouncy walls**.
 
 ---
 
 ## 🧑‍🤝‍🧑 Developers
 
-| Desarrollador | GitHub | Aportaciones |
-|--------------|--------|--------------|
-| **Marc Jiménez** | [MarcJM-00](https://github.com/MarcJM-00) | Menú, HUD y sistema de escenas , IA|
-| **Irene Calatrava** | [irentren](https://github.com/irentren) | Arte y assets visuales |
-| **Jan Corredor** | [JanCorredor](https://github.com/JanCorredor) | Físicas de los coches, IA |
-| **Queralt Escutia** | [Keral06](https://github.com/Keral06) | Gestión de memoria y memory leaks, mecanicas especiales |
-| **Rubén Mateo** | [Rubenmg0](https://github.com/Rubenmg0) | Mapa, cámara y colisiones, implementación de assets y movimiento coche |
+| Developer | GitHub | Contributions |
+|----------|--------|---------------|
+| **Marc Jiménez** | [MarcJM-00](https://github.com/MarcJM-00) | Menu, HUD, and scene system, AI |
+| **Irene Calatrava** | [irentren](https://github.com/irentren) | Art and visual assets |
+| **Jan Corredor** | [JanCorredor](https://github.com/JanCorredor) | Car physics, AI |
+| **Queralt Escutia** | [Keral06](https://github.com/Keral06) | Memory management and memory leaks, special mechanics |
+| **Rubén Mateo** | [Rubenmg0](https://github.com/Rubenmg0) | Map, camera, and collisions, asset implementation and car movement |
 
 ---
 
-## 📜 Licencia
-Este proyecto está publicado bajo la **MIT License** (sin modificaciones).  
-Consulta el archivo `LICENSE` para más detalles.
+## 📜 License
+This project is published under the **MIT License** (without modifications).  
+See the `LICENSE` file for more details.
 
 ---
-
