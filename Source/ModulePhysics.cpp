@@ -176,8 +176,8 @@ PhysBody* ModulePhysics::CreateCar(int x, int y, BodyType type, int mass)
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.userData.pointer = reinterpret_cast<uintptr_t>(pbody);
 
-	body.angularDamping = 8.0f;
-	body.linearDamping = 1.0f;
+	body.angularDamping = 3.0f;
+	body.linearDamping = 0.3f;
 
 	b2Body* chassis = world->CreateBody(&body);
 
@@ -496,7 +496,7 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 		}
 	}
 
-	float baseAcceleration = 0.85f;
+	float baseAcceleration = 1.0f;
 	float maxSpeed = 14.0f * powerMultiplier;
 
 	float currentAcceleration = baseAcceleration * powerMultiplier;
@@ -507,7 +507,7 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 	// Turbo
 	if (IsKeyDown(KEY_SPACE) && !IsKeyDown(KEY_S))
 	{
-		currentAcceleration *= 1.5f;
+		currentAcceleration *= 1.3f;
 		maxSpeed *= 15.0f;
 	}
 
@@ -530,16 +530,16 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 		}
 	}
 
-	float steerSpeed = 0.6f;
-	if (currentSpeed > 6.0f)
+	float steerSpeed = 1.3f;
+	if (currentSpeed > 8.0f)
 	{
-		steerSpeed= steerSpeed/3;
+		steerSpeed= steerSpeed/3.5;
 	}
 
 	float steer = 0.0f;
 
 	// Limits
-	float maxSteerAngle = 30 * DEG2RAD;
+	float maxSteerAngle = 35 * DEG2RAD;
 	if (IsKeyDown(KEY_A))
 	{
 		car->motorJoints[0]->SetLimits(-maxSteerAngle, maxSteerAngle);
@@ -583,7 +583,7 @@ void ModulePhysics::MoveAI(PhysBody* car, int horitzontal, int forward)
 {
 	if (car == nullptr) return;
 
-	float baseAcceleration = 0.8f;
+	float baseAcceleration = 1.0f;
 	float maxSpeed = 12.0f;
 
 	b2Vec2 velocity = car->body->GetLinearVelocity();
@@ -607,14 +607,14 @@ void ModulePhysics::MoveAI(PhysBody* car, int horitzontal, int forward)
 		}
 	}
 
-	float steerSpeed = 1.2f;
-	if (currentSpeed > 6.0f)
+	float steerSpeed = 1.3f;
+	if (currentSpeed > 8.0f)
 	{
-		steerSpeed = steerSpeed / 3;
+		steerSpeed = steerSpeed / 3.5;
 	}
 
 	float steer = 0.0f;
-	float maxSteerAngle = 30 * DEG2RAD;
+	float maxSteerAngle = 35 * DEG2RAD;
 
 	car->motorJoints[0]->SetLimits(-maxSteerAngle, maxSteerAngle);
 	car->motorJoints[1]->SetLimits(-maxSteerAngle, maxSteerAngle);
