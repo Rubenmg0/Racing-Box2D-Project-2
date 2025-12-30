@@ -56,7 +56,7 @@ This project is part of the course **Physics II – Project 02: Racing**.
 | Developer | GitHub | Contributions |
 |----------|--------|---------------|
 | **Marc Jiménez** | [MarcJM-00](https://github.com/MarcJM-00) | Menu, HUD, and scene system, AI |
-| **Irene Calatrava** | [irentren](https://github.com/irentren) | Art and visual assets |
+| **Irene Calatrava** | [irentren](https://github.com/irentren) | Audio implementation, visual assets|
 | **Jan Corredor** | [JanCorredor](https://github.com/JanCorredor) | Car physics, AI |
 | **Queralt Escutia** | [Keral06](https://github.com/Keral06) | Memory management and memory leaks, special mechanics |
 | **Rubén Mateo** | [Rubenmg0](https://github.com/Rubenmg0) | Map, camera, and collisions, asset implementation and car movement |
