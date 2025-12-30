@@ -59,7 +59,6 @@ void ModuleMenu::ChangeScreen(GameScreen newScreen)
 		break;
 
 	case GameScreen::GAME:
-		this->Disable();
 		break;
 	case GameScreen::GAMEOVER:
 		App->renderer->CreateButton(ID_BTN_GAMEOVER, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 2, (float)btnWidth, (float)btnHeight }, "Main Menu", this);
