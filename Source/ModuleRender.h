@@ -55,6 +55,7 @@ public:
 	Texture2D chrono_base;
 	Texture2D chrono_base2;
 	bool resetTime = false;
+	int bestTime[3] = { 999,0,0 };
 
 	//Music
 	uint32 menuMusic;
