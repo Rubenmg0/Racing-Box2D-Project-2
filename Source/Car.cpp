@@ -14,10 +14,6 @@ void Car::Draw()
 	float car_scaleX = 1.3f;
 	float car_scaleY = 1.6f;
 
-	DrawTexturePro(texture, Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
-		Rectangle{ (float)x, (float)y, (float)texture.width * car_scaleX, (float)texture.height * car_scaleY },
-		Vector2{ (float)texture.width * car_scaleX / 2.0f, (float)texture.height * car_scaleY / 2.0f }, body->GetRotation() * RAD2DEG, WHITE);
-
 	if (wheel.height != 0)
 	{
 		for (int i = 0; i < 4; i++)
@@ -32,6 +28,10 @@ void Car::Draw()
 				Vector2{ (float)wheel.width * wheel_scale / 2.0f, (float)wheel.height * wheel_scale / 2.0f }, 90+ body->wheels[i]->GetAngle() * RAD2DEG, WHITE);
 		}
 	}
+	DrawTexturePro(texture, Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
+		Rectangle{ (float)x, (float)y, (float)texture.width * car_scaleX, (float)texture.height * car_scaleY },
+		Vector2{ (float)texture.width * car_scaleX / 2.0f, (float)texture.height * car_scaleY / 2.0f }, body->GetRotation() * RAD2DEG, WHITE);
+
 }
 
 int Car::RayHit(vec2<int> ray, vec2<int> mouse, vec2<float>& normal) 
