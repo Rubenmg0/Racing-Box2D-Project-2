@@ -339,22 +339,21 @@ update_status ModuleGame::Update()
 			float timePerFrame = 0.2f;
 			if (semaphoreTileset != nullptr && semaphoreState < totalFrames)
 			{
-				//semaphoreTimer += GetFrameTime();
-				//if (semaphoreTimer >= timePerFrame)
-				//{
-				//	semaphoreState++;
-				//	semaphoreTimer = 0.0f;
-				//	if (semaphoreState == 9)
-				//	{
-				//		raceStarted = true;
-				//	}
-				//}
-				//if (semaphoreState < totalFrames)
-				//{
-				//	// Llamamos a la nueva función pasando la textura y las medidas fijas
-				//	App->renderer->DrawSemaphore(semaphoreTileset->texture, semaphoreState, 96, 176, 3.0f);
-				//}
-				semaforo.SetCurrent("animation");
+				semaphoreTimer += GetFrameTime();
+				if (semaphoreTimer >= timePerFrame)
+				{
+					semaphoreState++;
+					semaphoreTimer = 0.0f;
+					if (semaphoreState == 9)
+					{
+						raceStarted = true;
+					}
+				}
+				if (semaphoreState < totalFrames)
+				{
+					// Llamamos a la nueva función pasando la textura y las medidas fijas
+					App->renderer->DrawSemaphore(semaphoreTileset->texture, semaphoreState, 96, 176, 3.0f);
+				}
 			}
 			float miniMapSize = 200.0f;
 			float margen = 20.0f;
