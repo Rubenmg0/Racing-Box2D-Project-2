@@ -31,9 +31,7 @@ bool ModuleGame::Start()
 
 	crash = LoadSound("Assets/Audio/Car/car-crash.wav");
 	backgroundMusic = LoadMusicStream("Assets/Audio/Music/music.wav");
-	std::unordered_map<int, std::string> aliases = { {0, "animation"}};
 
-	semaforo.LoadFromTSX("Assets/map/semaforo.tsx",aliases );
 	return ret;
 }
 
