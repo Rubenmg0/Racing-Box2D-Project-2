@@ -16,7 +16,7 @@ ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start
 {
 	ray_on = false;
 	sensed = false;
-	
+
 }
 
 ModuleGame::~ModuleGame()
@@ -31,8 +31,8 @@ bool ModuleGame::Start()
 
 	crash = LoadSound("Assets/Audio/Car/car-crash.wav");
 	backgroundMusic = LoadMusicStream("Assets/Audio/Music/music.wav");
-	finishMusic = LoadMusicStream("Assets/Audio/Music/music1.mp3");
-	waitMusic = LoadMusicStream("Assets/Audio/Music/music2.wav");
+	waitMusic = LoadMusicStream("Assets/Audio/Music/music1.wav");
+	finishMusic = LoadMusicStream("Assets/Audio/Music/music2.wav");
 
 	return ret;
 }
@@ -51,15 +51,14 @@ bool ModuleGame::CleanUp()
 	UnloadMusicStream(backgroundMusic);
 	UnloadMusicStream(finishMusic);
 	UnloadMusicStream(waitMusic);
-	
-	
+
+
 	return true;
 }
 
 // Update: draw background
 update_status ModuleGame::Update()
 {
-		
 	if (checkpointFeedbackTimer > 0.0f)
 	{
 		checkpointFeedbackTimer -= GetFrameTime();
@@ -68,11 +67,13 @@ update_status ModuleGame::Update()
 	switch (App->menu->currentScreen)
 	{
 	case GameScreen::MENU:
+
 		if (!IsMusicStreamPlaying(waitMusic))
 		{
 			PlayMusicStream(waitMusic);
 		}
 		UpdateMusicStream(waitMusic);
+
 		break;
 	case GameScreen::CONTROLS:
 		if (!IsMusicStreamPlaying(waitMusic))
@@ -80,20 +81,16 @@ update_status ModuleGame::Update()
 			PlayMusicStream(waitMusic);
 		}
 		UpdateMusicStream(waitMusic);
+
 		break;
 	case GameScreen::CREDITS:
-		if (!IsMusicStreamPlaying(waitMusic))
-		{
-			PlayMusicStream(waitMusic);
-		}
-		UpdateMusicStream(waitMusic);
+
+
 		break;
 	case GameScreen::CAR_SELECT:
-		if (!IsMusicStreamPlaying(waitMusic))
-		{
-			PlayMusicStream(waitMusic);
-		}
-		UpdateMusicStream(waitMusic);
+
+
+
 		break;
 	case GameScreen::MAP_SELECT:
 
@@ -102,14 +99,16 @@ update_status ModuleGame::Update()
 			PlayMusicStream(waitMusic);
 		}
 		UpdateMusicStream(waitMusic);
+
 		break;
 	case GameScreen::GAME:
-	
+
 		if (!IsMusicStreamPlaying(backgroundMusic))
 		{
 			PlayMusicStream(backgroundMusic);
 		}
 		UpdateMusicStream(backgroundMusic);
+
 		//Aqui se carga el mapa del Tiled
 		if (!mapLoad)
 		{
@@ -323,6 +322,7 @@ update_status ModuleGame::Update()
 		}
 		break;
 	default:
+
 		break;
 	}
 
@@ -430,7 +430,7 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		}
 	}
 	else if (bodyB->type == BodyType::CAR && bodyA->type != BodyType::CHECKPOINT) {
-		car = bodyB; 
+		car = bodyB;
 		if (IsSoundPlaying(crash)) {}
 		else {
 			PlaySound(crash);
@@ -458,9 +458,12 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 				completedLaps++;
 
 				//If you have completed all the laps
+				//If you have completed all the laps
 				if (completedLaps >= totalLaps) {
+				
 					App->menu->ChangeScreen(GameScreen::GAMEOVER);
 				}
+
 
 				//If not, reset checkpoints
 				nextCheckpointRequired = 1;
@@ -473,10 +476,10 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			checkpointFeedbackTimer = 2.0f;
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 }
 
 void ModuleGame::OnUIMouseClickEvent(UIElement* element)
