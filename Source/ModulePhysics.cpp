@@ -551,7 +551,7 @@ void ModulePhysics::MoveCar(PhysBody* car, float powerMultiplier)
 	}
 	else {
 	
-		if (IsSoundPlaying(moveSound) == false) {
+		if (IsSoundPlaying(moveSound)) {
 
 			StopSound(moveSound);
 
