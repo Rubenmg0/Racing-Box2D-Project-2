@@ -328,14 +328,29 @@ update_status ModuleGame::Update()
 
 			App->renderer->camera.target = Vector2{ targetX, targetY };
 		}
-
-		if (IsKeyPressed(KEY_J)) completedLaps = 2, nextCheckpointRequired = totalCheckpoints;
-		if (IsKeyPressed(KEY_K))
+		if (IsKeyPressed(KEY_J))
 		{
-			playerWon = false; 
-			raceStarted = false; 
-			App->menu->ChangeScreen(GameScreen::GAMEOVER); 
+			for (auto& entity : entities)
+			{
+				if (entity->body != nullptr)
+				{
+					if (entity->body->type == BodyType::CAR)
+					{
+						Car* carPtr = (Car*)entity;
+						carPtr->currentLap = totalLaps - 1;      
+						carPtr->nextCheckpoint = totalCheckpoints; 
+					}
+					else if (entity->body->type == BodyType::IACAR)
+					{
+						IACar* iaPtr = (IACar*)entity;
+						iaPtr->currentLap = totalLaps - 1;        
+						iaPtr->nextCheckpoint = totalCheckpoints; 
+					}
+				}
+			}
 		}
+
+
 		break;
 	case GameScreen::GAMEOVER:
 
@@ -343,7 +358,7 @@ update_status ModuleGame::Update()
 		{
 			for (auto& entity : entities)
 			{
-				entity->DeletePhysBody();
+				
 				delete entity;
 			}
 			entities.clear();
@@ -456,7 +471,6 @@ update_status ModuleGame::Update()
 
 void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
-	//Security check. If any are null, we ignore the collision.
 	if (bodyA == nullptr || bodyB == nullptr) {
 		return;
 	}
@@ -481,57 +495,85 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		}
 	}
 
-	if (bodyA->type == BodyType::CAR) car = bodyA;
-	else if (bodyB->type == BodyType::CAR) car = bodyB;
-	if (bodyA->type == BodyType::CHECKPOINT) checkpoint = bodyA;
-	else if (bodyB->type == BodyType::CHECKPOINT) checkpoint = bodyB;
+	if ((bodyA->type == BodyType::CAR || bodyA->type == BodyType::IACAR) && bodyB->type == BodyType::CHECKPOINT) {
+		car = bodyA;
+		checkpoint = bodyB;
+	}
+	else if ((bodyB->type == BodyType::CAR || bodyB->type == BodyType::IACAR) && bodyA->type == BodyType::CHECKPOINT) {
+		car = bodyB;
+		checkpoint = bodyA;
+	}
 
 	if (car != nullptr && checkpoint != nullptr)
 	{
-		//If you cross the finish line
-		if (checkpoint->checkpointID == 0)
-		{
-			//Start of the race
-			if (nextCheckpointRequired == 0)
-			{
-				nextCheckpointRequired = 1;
-			}
-			//If you have already passed through all the checkpoints
-			else if (nextCheckpointRequired == totalCheckpoints)
-			{
-				completedLaps++;
-
-				//If you have completed all the laps
-				//If you have completed all the laps
-				if (completedLaps >= totalLaps) {
-					if (car == playerCar->body)
-					{
-						playerWon = true; 
-					}
-					else
-					{
-						playerWon = false; 
-					}
-				
-					App->menu->ChangeScreen(GameScreen::GAMEOVER);
-				}
-
-
-				//If not, reset checkpoints
-				nextCheckpointRequired = 1;
+		PhysicEntity* entity = nullptr;
+		for (auto& e : entities) {
+			if (e->body == car) {
+				entity = e;
+				break;
 			}
 		}
-		//If you cross a checkpoint
-		else if (checkpoint->checkpointID == nextCheckpointRequired)
+
+		if (entity != nullptr)
 		{
-			nextCheckpointRequired++;
-			checkpointFeedbackTimer = 2.0f;
+			int* pCurrentLap = nullptr;
+			int* pNextCheckpoint = nullptr;
+
+			if (car->type == BodyType::CAR) {
+				Car* player = (Car*)entity;
+				pCurrentLap = &player->currentLap;
+				pNextCheckpoint = &player->nextCheckpoint;
+			}
+			else if (car->type == BodyType::IACAR) {
+				IACar* ia = (IACar*)entity;
+				pCurrentLap = &ia->currentLap;
+				pNextCheckpoint = &ia->nextCheckpoint;
+			}
+			if (pCurrentLap != nullptr && pNextCheckpoint != nullptr)
+			{
+				if (checkpoint->checkpointID == 0)
+				{
+					if (*pNextCheckpoint == 0)
+					{
+						*pNextCheckpoint = 1;
+					}
+					else if (*pNextCheckpoint == totalCheckpoints)
+					{
+						(*pCurrentLap)++;
+						*pNextCheckpoint = 1; 
+						if (*pCurrentLap > completedLaps)
+						{
+							completedLaps = *pCurrentLap;
+						}
+						if (*pCurrentLap >= totalLaps)
+						{
+
+							if (entity == playerCar)
+							{
+								playerWon = true;
+							}
+							else
+							{
+								playerWon = false;
+							}
+
+							App->menu->ChangeScreen(GameScreen::GAMEOVER);
+						}
+					}
+				}
+				// --- CHECKPOINTS INTERMEDIOS ---
+				else if (checkpoint->checkpointID == *pNextCheckpoint)
+				{
+					(*pNextCheckpoint)++;
+
+					if (entity == playerCar) {
+						checkpointFeedbackTimer = 2.0f;
+						nextCheckpointRequired = *pNextCheckpoint; 
+					}
+				}
+			}
 		}
 	}
-
-
-
-
 }
 
 void ModuleGame::OnUIMouseClickEvent(UIElement* element)

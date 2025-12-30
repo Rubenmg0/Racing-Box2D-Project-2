@@ -117,6 +117,7 @@ void ModuleMenu::OnUIMouseClickEvent(UIElement* element)
 	}
 	else if (element->id == ID_BTN_MAP1)
 	{
+		App->scene_intro->playerWon = false;
 		App->scene_intro->mapPath = "Assets/map/CuteRacing.tmx";
 		App->scene_intro->levelLoaded = 1;
 		pendingChange = true;
