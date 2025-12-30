@@ -46,10 +46,8 @@ bool ModuleGame::CleanUp()
 	entities.clear();
 	playerCar = nullptr;
 	UnloadSound(crash);
-	if (IsMusicReady(backgroundMusic))
-	{
-		UnloadMusicStream(backgroundMusic);
-	}
+	UnloadMusicStream(backgroundMusic);
+	
 	
 	return true;
 }
