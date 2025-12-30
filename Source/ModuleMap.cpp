@@ -159,12 +159,14 @@ bool ModuleMap::Load(const char* file_name)
             if (objectsGroups->name == "Collision") {
                 PhysBody* pb = App->physics->CreateStaticWall(obj->x + obj->width / 2, obj->y + obj->height / 2, obj->width, obj->height);
                 pb->type = BodyType::WALL;
+                map_data.colliders.push_back(pb);
             }
             else if (objectsGroups->name == "CheckPoints") {
                 PhysBody* pb = App->physics->CreateRectangleSensor(obj->x + obj->width / 2, obj->y + obj->height / 2, obj->width, obj->height);
                 pb->type = BodyType::CHECKPOINT;
                 pb->checkpointID = cpCount++;
                 pb->listener = (Module*)App->scene_intro;
+                map_data.colliders.push_back(pb);
             }
         }
     }
@@ -247,6 +249,12 @@ bool ModuleMap::CleanUp()
         delete group; 
     }
     map_data.objectGroups.clear();
+
+    for (auto& collider : map_data.colliders) {
+        collider->DeleteAllBodies(App);
+        delete collider;
+    }
+    map_data.colliders.clear();
 
     return true;
 }

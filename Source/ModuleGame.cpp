@@ -358,7 +358,7 @@ update_status ModuleGame::Update()
 		{
 			for (auto& entity : entities)
 			{
-				
+				entity->DeletePhysBody();
 				delete entity;
 			}
 			entities.clear();

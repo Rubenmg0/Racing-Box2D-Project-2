@@ -780,7 +780,10 @@ void PhysBody::DeleteAllBodies(Application* app)
 {
 	for (int i = 0; i < 4; i++)
 	{
-		app->physics->GetPhysWorld()->DestroyBody(wheels[i]);
+		if (wheels[i] != nullptr)
+		{
+			app->physics->GetPhysWorld()->DestroyBody(wheels[i]);
+		}
 	}
 	app->physics->GetPhysWorld()->DestroyBody(this->body);
 }

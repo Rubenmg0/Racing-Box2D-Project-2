@@ -56,6 +56,7 @@ struct MapData
     std::vector<TileSet*> tilesets;
     std::vector<ObjectGroup*> objectGroups;
     std::vector<MapLayer*> layers;
+    std::vector<PhysBody*> colliders;
 };
 
 class ModuleMap : public Module
