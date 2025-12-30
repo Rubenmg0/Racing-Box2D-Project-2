@@ -198,7 +198,7 @@ bool ModuleRender::CleanUp()
 	UnloadTexture(box);
 
 	//Cars
-	UnloadTexture(burgerCar);
+	UnloadTexture(normalCar);
 	UnloadTexture(wheel);
 
 	for (int i = 0; i < 4; i++) {
@@ -207,8 +207,12 @@ bool ModuleRender::CleanUp()
 	//Scenes
 	UnloadTexture(menu);
 	UnloadTexture(chrono_base);
+	UnloadTexture(chrono_base2);
+	UnloadTexture(controls);      
+	UnloadTexture(victory);       
+	UnloadTexture(defeat);
 
-
+	
 	return true;
 }
 

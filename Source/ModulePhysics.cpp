@@ -160,7 +160,7 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size)
 
 	b->CreateFixture(&fixture);
 
-	delete p;
+	delete[] p;
 
 	pbody->body = b;
 	pbody->width = pbody->height = 0;
