@@ -548,13 +548,15 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 						if (*pCurrentLap >= totalLaps)
 						{
 
-							if (entity == playerCar)
+							if (entity == playerCar && !finishActive)
 							{
 								playerWon = true;
+								finishActive = true;
 							}
-							else
+							else if (entity != playerCar && !finishActive)
 							{
 								playerWon = false;
+								finishActive = true;
 							}
 
 							App->menu->ChangeScreen(GameScreen::GAMEOVER);

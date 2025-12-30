@@ -47,6 +47,7 @@ public:
 
 	int completedLaps = 0;
 	int totalLaps = 3;
+	bool finishActive = false;
 
 	vec2<int> ray;
 	bool ray_on;
