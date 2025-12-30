@@ -10,6 +10,8 @@
 #include "Car.hpp"
 #include "IA.h"
 
+#include <random>
+
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	ray_on = false;
@@ -162,7 +164,13 @@ update_status ModuleGame::Update()
 				float inX = posInit.x - (150.0f * i);
 				float inY = posInit.y - (75.0f * (i % 2)); // Alternate up/down
 
-				IACar* newIA = new IACar(App->physics, (int)inX, (int)inY, this, App->renderer->normalCar, App->renderer->wheel);
+				//Randomness (From an online forum)
+				std::random_device rd;
+				std::mt19937 gen(rd()); // Mersenne Twister engine
+				std::uniform_int_distribution<> dist(0, 3);
+				int randomNumber = dist(gen);
+
+				IACar* newIA = new IACar(App->physics, (int)inX, (int)inY, this, App->renderer->aiCarTextures[randomNumber], App->renderer->wheel);
 
 				// Asignamos carril: el coche 1 va por dentro (-50), el 2 por el centro (0), el 3 por fuera (50)
 				newIA->laneOffset = (float)(i - 2) * 60.0f;
