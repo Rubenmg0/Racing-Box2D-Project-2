@@ -45,7 +45,7 @@ bool ModuleRender::Init()
 	timerChrono.LoadFont("Assets/Font/alagard.ttf", 48);
 
 	chrono_base = LoadTexture("Assets/Scenes/Base_Chrono.png");
-	chrono_base2 = LoadTexture("Assets/Scenes/stopwatch.png");
+	chrono_base2 = LoadTexture("Assets/Scenes/Base_Chrono.png");
 
 	//Load music and sfx (No inicia nada, falta poner alguna musica en la carpeta)
 	menuMusic = App->audio->LoadFx("Assets/Audio/menuMusic.wav");
