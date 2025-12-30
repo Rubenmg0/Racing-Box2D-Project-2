@@ -61,7 +61,8 @@ void ModuleMenu::ChangeScreen(GameScreen newScreen)
 	case GameScreen::GAME:
 		this->Disable();
 		break;
-
+	case GameScreen::GAMEOVER:
+		App->renderer->CreateButton(ID_BTN_GAMEOVER, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 2, (float)btnWidth, (float)btnHeight }, "Main Menu", this);
 	default:
 		break;
 	}
@@ -84,7 +85,6 @@ update_status ModuleMenu::Update()
 
 update_status ModuleMenu::PostUpdate()
 {
-
 	return UPDATE_CONTINUE;
 }
 
@@ -142,5 +142,10 @@ void ModuleMenu::OnUIMouseClickEvent(UIElement* element)
 	else if (element->id == ID_BTN_QUIT && currentScreen == GameScreen::MENU)
 	{
 		exitGame = true;
+	}
+	else if (element->id == ID_BTN_GAMEOVER && currentScreen == GameScreen::GAMEOVER)
+	{
+		pendingChange = true;
+		nextScreenToLoad = GameScreen::MENU;
 	}
 }

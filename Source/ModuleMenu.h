@@ -64,6 +64,9 @@ public:
 	const int ID_BTN_BACK = 9;
 	const int ID_BTN_QUIT = 10;
 	const int ID_BTN_CREDITS = 11;
+	
+	//Ids GameOver
+	const int ID_BTN_GAMEOVER= 12;
 
 	Timer timer;
 };
