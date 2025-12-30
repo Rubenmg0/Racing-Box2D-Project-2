@@ -774,6 +774,15 @@ int PhysBody::RayCastWorld(int x1, int y1, int x2, int y2, float& normal_x, floa
 	return (int)(callback.fraction * dist);
 }
 
+void PhysBody::DeleteAllBodies(Application* app)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		app->physics->GetPhysWorld()->DestroyBody(wheels[i]);
+	}
+	app->physics->GetPhysWorld()->DestroyBody(this->body);
+}
+
 void ModulePhysics::BeginContact(b2Contact* contact)
 {
 	PhysBody* physA = (PhysBody*)contact->GetFixtureA()->GetBody()->GetUserData().pointer;
