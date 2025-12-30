@@ -37,11 +37,14 @@ bool ModuleRender::Init()
 
 	//Scenes
 	menu = LoadTexture("Assets/Scenes/menu_bg.png");
+	victory = LoadTexture("Assets/Scenes/Victory.png");
+	defeat = LoadTexture("Assets/Scenes/Defeat.png");
 
 	//Text
 	timerChrono.LoadFont("Assets/Font/alagard.ttf", 48);
 
 	chrono_base = LoadTexture("Assets/Scenes/Base_Chrono.png");
+	chrono_base2 = LoadTexture("Assets/Scenes/stopwatch.png");
 
 	//Load music and sfx (No inicia nada, falta poner alguna musica en la carpeta)
 	menuMusic = App->audio->LoadFx("Assets/Audio/menuMusic.wav");
@@ -140,7 +143,33 @@ update_status ModuleRender::PostUpdate()
 	}
 	break;
 	case GameScreen::GAMEOVER:
+
 		timer.Stop();
+
+		Vector2 position = { -40, -38 };
+		float rotation = 0.0f;
+		float scale = 0.56f;
+
+		gameover = victory;
+
+		DrawTextureEx(gameover, position, rotation, scale, WHITE);
+		DrawTextureEx(chrono_base2, { 20, 360 }, 0.0f, 2.81f, WHITE);
+
+		double totalSeconds = timer.ReadSec();
+
+		int minutes = (int)totalSeconds / 60;
+		int seconds = (int)totalSeconds % 60;
+		int centiseconds = (int)((totalSeconds - (int)totalSeconds) * 100);
+
+		//Chrono
+		const char* formTime = TextFormat("Your time: %02d:%02d.%02d", minutes, seconds, centiseconds);
+		const char* formBestTime = TextFormat("Best time: %02d:%02d.%02d", minutes, seconds, centiseconds);
+
+		timerChrono.Draw(68, 430, formTime, GREEN, 20);
+		timerChrono.Draw(70, 500, formBestTime, RED, 20);
+
+
+
 
 		break;
 	}

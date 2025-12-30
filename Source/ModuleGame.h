@@ -28,7 +28,7 @@ public:
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
 	void OnUIMouseClickEvent(UIElement* element);
 
-	std::string mapPath = "Assets/map/CuteRacing.tmx";
+	std::string mapPath;
 	PhysicEntity* playerCar = nullptr;
 public:
 	std::vector<PhysicEntity*> entities;

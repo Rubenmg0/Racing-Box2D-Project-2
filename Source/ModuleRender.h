@@ -45,10 +45,14 @@ public:
 
 	//Scenes textures
 	Texture2D menu;
+	Texture2D gameover;
+	Texture2D victory;
+	Texture2D defeat;
 
 	Text timerChrono;
 	Timer timer;
 	Texture2D chrono_base;
+	Texture2D chrono_base2;
 	bool resetTime = false;
 
 	//Music
