@@ -36,7 +36,8 @@ bool ModuleRender::Init()
 	wheel = LoadTexture("Assets/Cars/NormalCars/wheel_animation_spritesheet.png");
 
 	//Scenes
-	menu = LoadTexture("Assets/Scenes/menu_bg.png");
+	menu = LoadTexture("Assets/Scenes/menu.png");
+	controls = LoadTexture("Assets/Scenes/controls.png");
 	victory = LoadTexture("Assets/Scenes/Victory.png");
 	defeat = LoadTexture("Assets/Scenes/Defeat.png");
 
@@ -66,6 +67,10 @@ update_status ModuleRender::PreUpdate()
 
 		DrawTexturePro(menu, Rectangle{ 0, 0, (float)menu.width, (float)menu.height }, Rectangle{ 0, 0, (float)SCREEN_WIDTH, (float)SCREEN_HEIGHT }, Vector2{ 0, 0 }, 0.0f, WHITE);
 		break;
+	case GameScreen::CONTROLS:
+
+		DrawTexturePro(controls, Rectangle{ 0, 0, (float)controls.width, (float)controls.height }, Rectangle{ 0, 0, (float)SCREEN_WIDTH, (float)SCREEN_HEIGHT }, Vector2{ 0, 0 }, 0.0f, WHITE);
+		break;
 	}
 	return UPDATE_CONTINUE;
 }
@@ -92,11 +97,6 @@ update_status ModuleRender::PostUpdate()
 
 	//Draw all the textures of every scene
 	switch (App->menu->currentScreen) {
-
-	case GameScreen::CONTROLS:
-
-
-		break;
 
 	case GameScreen::GAME:
 	{

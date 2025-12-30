@@ -13,7 +13,7 @@ ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app,
 {
 	world = NULL;
 	mouse_joint = NULL;
-	debug = true;
+	debug = false;
 }
 
 // Destructor
@@ -595,7 +595,7 @@ void ModulePhysics::MoveAI(PhysBody* car, int horitzontal, int forward)
 		for (int i = 0; i < 4; i++)
 		{
 			float force = (currentSpeed < 1.0f) ? baseAcceleration * 2.0f : baseAcceleration;
-			car->wheels[i]->ApplyForceToCenter(force * forwardVec, true);
+			car->wheels[i]->ApplyForceToCenter(force * 10.0f * forwardVec, true);
 		}
 	}
 	else if (forward == -1)
