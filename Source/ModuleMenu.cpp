@@ -37,16 +37,15 @@ void ModuleMenu::ChangeScreen(GameScreen newScreen)
 	switch (currentScreen)
 	{
 	case GameScreen::MENU:
-		App->renderer->CreateButton(ID_BTN_PLAY, Rectangle{ (float)centerX, (float)startY, (float)btnWidth, (float)btnHeight }, "PLAY", this);
-		App->renderer->CreateButton(ID_BTN_SETTINGS, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding), (float)btnWidth, (float)btnHeight }, "SETTINGS", this);
-		App->renderer->CreateButton(ID_BTN_QUIT, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 2, (float)btnWidth, (float)btnHeight }, "QUIT", this);
+		App->renderer->CreateButton(ID_BTN_PLAY, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 6, (float)btnWidth, (float)btnHeight }, "PLAY", this);
+		App->renderer->CreateButton(ID_BTN_SETTINGS, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 7, (float)btnWidth, (float)btnHeight }, "SETTINGS", this);
+		App->renderer->CreateButton(ID_BTN_QUIT, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 8, (float)btnWidth, (float)btnHeight }, "QUIT", this);
 		break;
 
 	case GameScreen::MAP_SELECT:
-		App->renderer->CreateButton(ID_BTN_MAP1, Rectangle{ (float)centerX, (float)startY, (float)btnWidth, (float)btnHeight }, "CIRCUIT 1", this);
-		App->renderer->CreateButton(ID_BTN_MAP2, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding), (float)btnWidth, (float)btnHeight }, "CIRCUIT 2", this);
-
-		App->renderer->CreateButton(ID_BTN_BACK, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 2, (float)btnWidth, (float)btnHeight }, "BACK", this);
+		App->renderer->CreateButton(ID_BTN_MAP1, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 6, (float)btnWidth, (float)btnHeight }, "CIRCUIT 1", this);
+		App->renderer->CreateButton(ID_BTN_MAP2, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 7, (float)btnWidth, (float)btnHeight }, "CIRCUIT 2", this);
+		App->renderer->CreateButton(ID_BTN_BACK, Rectangle{ (float)centerX, (float)startY + (btnHeight + padding) * 8, (float)btnWidth, (float)btnHeight }, "BACK", this);
 		break;
 
 	case GameScreen::CONTROLS:

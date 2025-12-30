@@ -45,6 +45,7 @@ public:
 
 	//Scenes textures
 	Texture2D menu;
+	Texture2D controls;
 	Texture2D gameover;
 	Texture2D victory;
 	Texture2D defeat;
