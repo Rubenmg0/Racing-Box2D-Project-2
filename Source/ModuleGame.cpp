@@ -32,7 +32,7 @@ bool ModuleGame::Start()
 	crash = LoadSound("Assets/Audio/Car/car-crash.wav");
 	backgroundMusic = LoadMusicStream("Assets/Audio/Music/music.wav");
 	finishMusic = LoadMusicStream("Assets/Audio/Music/music1.mp3");
-	finishMusic = LoadMusicStream("Assets/Audio/Music/music2.wav");
+	waitMusic = LoadMusicStream("Assets/Audio/Music/music2.wav");
 
 	return ret;
 }
@@ -73,8 +73,6 @@ update_status ModuleGame::Update()
 			PlayMusicStream(waitMusic);
 		}
 		UpdateMusicStream(waitMusic);
-
-
 		break;
 	case GameScreen::CONTROLS:
 		if (!IsMusicStreamPlaying(waitMusic))
@@ -82,9 +80,6 @@ update_status ModuleGame::Update()
 			PlayMusicStream(waitMusic);
 		}
 		UpdateMusicStream(waitMusic);
-
-
-
 		break;
 	case GameScreen::CREDITS:
 		if (!IsMusicStreamPlaying(waitMusic))
@@ -92,9 +87,6 @@ update_status ModuleGame::Update()
 			PlayMusicStream(waitMusic);
 		}
 		UpdateMusicStream(waitMusic);
-
-
-
 		break;
 	case GameScreen::CAR_SELECT:
 		if (!IsMusicStreamPlaying(waitMusic))
@@ -102,9 +94,6 @@ update_status ModuleGame::Update()
 			PlayMusicStream(waitMusic);
 		}
 		UpdateMusicStream(waitMusic);
-
-
-
 		break;
 	case GameScreen::MAP_SELECT:
 
@@ -113,8 +102,6 @@ update_status ModuleGame::Update()
 			PlayMusicStream(waitMusic);
 		}
 		UpdateMusicStream(waitMusic);
-
-
 		break;
 	case GameScreen::GAME:
 	
@@ -336,7 +323,6 @@ update_status ModuleGame::Update()
 		}
 		break;
 	default:
-
 		break;
 	}
 
@@ -473,7 +459,7 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 
 				//If you have completed all the laps
 				if (completedLaps >= totalLaps) {
-					App->menu->currentScreen = GameScreen::GAMEOVER;
+					App->menu->ChangeScreen(GameScreen::GAMEOVER);
 				}
 
 				//If not, reset checkpoints

@@ -71,6 +71,13 @@ update_status ModuleRender::PreUpdate()
 
 		DrawTexturePro(controls, Rectangle{ 0, 0, (float)controls.width, (float)controls.height }, Rectangle{ 0, 0, (float)SCREEN_WIDTH, (float)SCREEN_HEIGHT }, Vector2{ 0, 0 }, 0.0f, WHITE);
 		break;
+	case GameScreen::GAMEOVER:
+		gameover = victory;
+		Vector2 position = { 960.0f, -2.0f };
+		float rotation = 0.0f;
+		float scale = 0.47f;
+		DrawTextureEx(gameover, position, rotation, scale, WHITE);
+		break;
 	}
 	return UPDATE_CONTINUE;
 }
@@ -150,9 +157,7 @@ update_status ModuleRender::PostUpdate()
 		float rotation = 0.0f;
 		float scale = 1.8f;
 
-		gameover = victory;
 
-		DrawTextureEx(gameover, position, rotation, scale, WHITE);
 		DrawTextureEx(chrono_base2, { 20, 360 }, 0.0f, 0.85f, WHITE);
 
 		double totalSeconds = timer.ReadSec();
