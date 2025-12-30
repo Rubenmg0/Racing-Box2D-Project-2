@@ -37,6 +37,7 @@ public:
 
 	b2Vec2 posInit = { 1800, 670 };
 	bool mapLoad = false;
+	int levelLoaded;
 
 	PhysBody* sensor;
 	bool sensed;
