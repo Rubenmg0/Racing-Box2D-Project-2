@@ -1,5 +1,6 @@
 # 🎮 CuteRacing
-LINK: https://github.com/Rubenmg0/Racing-Box2D-Project-2
+LINK REPOSITORY: https://github.com/Rubenmg0/Racing-Box2D-Project-2
+LINK ITCHIO: https://rubenmg0.itch.io/cuteracing
 
 ## 🕹️ Original Game
 CuteRacing is a top-down racing videogame inspired by classic arcade racing games.  
@@ -41,6 +42,9 @@ This project is part of the course **Physics II – Project 02: Racing**.
 - `SPACE` → Turbo  
 - `F1` → Enable / disable debug mode (hitboxes and mouse joint)  
 - `Left Click` on the car → Drag with the mouse (debug mode)
+### UI
+- `SPACE` → Return Main Menu
+- `CLICK` → Interact with butons
 
 ---
 
