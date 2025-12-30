@@ -89,7 +89,6 @@ update_status ModuleGame::Update()
 				LOG("Error: No se encontró el tileset 'semaforo' en el mapa Tiled.");
 			}
 
-			std::reverse(IA_Route.begin(), IA_Route.end());
 
 			if (playerCar == nullptr) {
 				Car* newCar = new Car(App->physics, posInit.x, posInit.y, this, App->renderer->normalCar, App->renderer->wheel);
@@ -104,18 +103,31 @@ update_status ModuleGame::Update()
 				bodyCar->SetTransform(positionCar, angleRadians);
 			}
 
-			//We define the central route of the circuit
+			//We define the central route of the circuit of the first circuit
 			std::vector<b2Vec2> centralRoute = { //Falta ordenarlo y crear mas puntos
-				{1888, 640},  //Punto 0: Salida
-				{5500, 640},  //Punto 1: Fin recta superior
-				{6200, 1200}, //Punto 2: Curva arriba-derecha
-				{6200, 4000}, //Punto 3: Recta larga derecha (bajada)
-				{3000, 4100}, //Punto 4: Recta inferior
-				{800, 4100},  //Punto 5: Curva abajo-izquierda
-				{800, 2400},  //Punto 6: Recta izquierda (subida)
-				{4000, 2400}, //Punto 7: Recta central
-				{4000, 1000}, //Punto 8: Giro hacia meta
-				{1888, 640}   //Punto 9: Meta
+				{1888, 640},	//Point 0: Start
+				{6000, 640},	//Point 1: End of top  straight stretch
+				{6200, 1400},	//Point 2: Right Curve 1
+				{7000, 1400},	//Point 3: Right Curve 2
+				{7000, 2050},	//Point 4: Right Curve 3
+				{6000, 2200},	//Point 5: Right Curve 4
+				{6000, 3000},	//Point 6: Right Curve 5
+				{7000, 3000},	//Point 7: Right Curve 6
+				{7000, 4500},	//Point 8: End of Right Curve
+				{5500, 4500},	//Point 9: Bottom straight stretch 1
+				{5500, 4000},	//Point 9: Bottom Curve
+				{650, 4000},	//Point 9: Bottom straight stretch 1
+				{650, 2950},	//Point 10: Left curve 1
+				{5000, 2950},	//Point 11: Left straight stretch 1
+				{5000, 1670},	//Point 12: Central curve 1
+				{3460, 1670},	//Point 13: Central straight stretch 1
+				{3460, 2180},	//Point 14: Central curve 2
+				{2400, 2180},	//Point 15: Central  straight stretch 2
+				{2400, 1400},	//Point 16: Central  curve 3
+				{1400, 1400},	//Point 17: Central  curve 4
+				{1400, 2200},	//Point 18: Central  curve 5
+				{400, 2200},	//Point 19: Left Curve 2
+				{400, 640},		//Point 20: Left straight stretch 2
 			};
 
 			for (int i = 1; i < 4; i++)
@@ -130,7 +142,7 @@ update_status ModuleGame::Update()
 
 				// Creamos su ruta personalizada sumando el offset
 				for (auto& p : centralRoute) {
-					newIA->waypoints.push_back({ p.x + newIA->laneOffset, p.y + newIA->laneOffset });
+					newIA->waypoints.push_back({ (p.x) + newIA->laneOffset, (p.y) + newIA->laneOffset });
 				}
 
 				entities.emplace_back(newIA);
