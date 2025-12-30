@@ -146,14 +146,14 @@ update_status ModuleRender::PostUpdate()
 
 		timer.Stop();
 
-		Vector2 position = { -40, -38 };
+		Vector2 position = { 0, 0};
 		float rotation = 0.0f;
-		float scale = 0.56f;
+		float scale = 1.8f;
 
 		gameover = victory;
 
 		DrawTextureEx(gameover, position, rotation, scale, WHITE);
-		DrawTextureEx(chrono_base2, { 20, 360 }, 0.0f, 2.81f, WHITE);
+		DrawTextureEx(chrono_base2, { 20, 360 }, 0.0f, 0.85f, WHITE);
 
 		double totalSeconds = timer.ReadSec();
 
@@ -161,15 +161,28 @@ update_status ModuleRender::PostUpdate()
 		int seconds = (int)totalSeconds % 60;
 		int centiseconds = (int)((totalSeconds - (int)totalSeconds) * 100);
 
+		if (minutes < bestTime[0])
+		{
+			bestTime[0] = minutes;
+			bestTime[1] = seconds;
+			bestTime[2] = centiseconds;
+		}
+		else if (minutes == bestTime[0] && seconds < bestTime[1])
+		{
+			bestTime[1] = seconds;
+			bestTime[2] = centiseconds;
+		}
+		else if (minutes == bestTime[0] && seconds == bestTime[1] && centiseconds < bestTime[2])
+		{
+			bestTime[2] = centiseconds;
+		}
+
 		//Chrono
 		const char* formTime = TextFormat("Your time: %02d:%02d.%02d", minutes, seconds, centiseconds);
-		const char* formBestTime = TextFormat("Best time: %02d:%02d.%02d", minutes, seconds, centiseconds);
+		const char* formBestTime = TextFormat("Best time: %02d:%02d.%02d", bestTime[0], bestTime[1], bestTime[2]);
 
 		timerChrono.Draw(68, 430, formTime, GREEN, 20);
 		timerChrono.Draw(70, 500, formBestTime, RED, 20);
-
-
-
 
 		break;
 	}

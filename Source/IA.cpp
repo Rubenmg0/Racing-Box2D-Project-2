@@ -7,6 +7,7 @@
 
 void IACar::Update()
 {
+    //If the race has not started
 	if (app->scene_intro->raceStarted == false || waypoints.empty())
 	{
 		body->body->SetLinearVelocity(b2Vec2(0, 0));
