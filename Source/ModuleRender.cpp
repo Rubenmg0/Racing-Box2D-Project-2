@@ -146,14 +146,14 @@ update_status ModuleRender::PostUpdate()
 
 		timer.Stop();
 
-		Vector2 position = { -40, -38 };
+		Vector2 position = { 0, 0};
 		float rotation = 0.0f;
-		float scale = 0.56f;
+		float scale = 1.8f;
 
 		gameover = victory;
 
 		DrawTextureEx(gameover, position, rotation, scale, WHITE);
-		DrawTextureEx(chrono_base2, { 20, 360 }, 0.0f, 2.81f, WHITE);
+		DrawTextureEx(chrono_base2, { 20, 360 }, 0.0f, 0.85f, WHITE);
 
 		double totalSeconds = timer.ReadSec();
 

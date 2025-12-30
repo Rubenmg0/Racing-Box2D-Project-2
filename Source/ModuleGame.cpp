@@ -404,23 +404,23 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	PhysBody* IAcar = nullptr;
 	PhysBody* checkpoint = nullptr;
 
-	if (bodyA->type == BodyType::CAR) { 
+	if (bodyA->type == BodyType::CAR && bodyB->type != BodyType::CHECKPOINT) {
 		car = bodyA;
-	if (IsSoundPlaying(crash)) {}
-	else {
-
-		PlaySound(crash);
+		if (IsSoundPlaying(crash)) {}
+		else {
+			PlaySound(crash);
+		}
 	}
-	}
-	else if (bodyB->type == BodyType::CAR) {
+	else if (bodyB->type == BodyType::CAR && bodyA->type != BodyType::CHECKPOINT) {
 		car = bodyB; 
 		if (IsSoundPlaying(crash)) {}
-	else {
-
-		PlaySound(crash);
+		else {
+			PlaySound(crash);
+		}
 	}
-	}
 
+	if (bodyA->type == BodyType::CAR) car = bodyA;
+	else if (bodyB->type == BodyType::CAR) car = bodyB;
 	if (bodyA->type == BodyType::CHECKPOINT) checkpoint = bodyA;
 	else if (bodyB->type == BodyType::CHECKPOINT) checkpoint = bodyB;
 
