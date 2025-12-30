@@ -31,7 +31,7 @@ bool ModuleGame::Start()
 
 	crash = LoadSound("Assets/Audio/Car/car-crash.wav");
 	backgroundMusic = LoadMusicStream("Assets/Audio/Music/music.wav");
-	finishMusic = LoadMusicStream("Assets/Audio/Music/music1.mp3");
+	waitMusic = LoadMusicStream("Assets/Audio/Music/music1.wav");
 	finishMusic = LoadMusicStream("Assets/Audio/Music/music2.wav");
 
 	return ret;
@@ -59,7 +59,6 @@ bool ModuleGame::CleanUp()
 // Update: draw background
 update_status ModuleGame::Update()
 {
-		
 	if (checkpointFeedbackTimer > 0.0f)
 	{
 		checkpointFeedbackTimer -= GetFrameTime();
@@ -68,13 +67,13 @@ update_status ModuleGame::Update()
 	switch (App->menu->currentScreen)
 	{
 	case GameScreen::MENU:
+
 		if (!IsMusicStreamPlaying(waitMusic))
 		{
 			PlayMusicStream(waitMusic);
 		}
 		UpdateMusicStream(waitMusic);
-
-
+		
 		break;
 	case GameScreen::CONTROLS:
 		if (!IsMusicStreamPlaying(waitMusic))
@@ -83,25 +82,12 @@ update_status ModuleGame::Update()
 		}
 		UpdateMusicStream(waitMusic);
 
-
-
 		break;
 	case GameScreen::CREDITS:
-		if (!IsMusicStreamPlaying(waitMusic))
-		{
-			PlayMusicStream(waitMusic);
-		}
-		UpdateMusicStream(waitMusic);
-
 
 
 		break;
 	case GameScreen::CAR_SELECT:
-		if (!IsMusicStreamPlaying(waitMusic))
-		{
-			PlayMusicStream(waitMusic);
-		}
-		UpdateMusicStream(waitMusic);
 
 
 
@@ -114,15 +100,15 @@ update_status ModuleGame::Update()
 		}
 		UpdateMusicStream(waitMusic);
 
-
 		break;
 	case GameScreen::GAME:
-	
+
 		if (!IsMusicStreamPlaying(backgroundMusic))
 		{
 			PlayMusicStream(backgroundMusic);
 		}
 		UpdateMusicStream(backgroundMusic);
+
 		//Aqui se carga el mapa del Tiled
 		if (!mapLoad)
 		{
