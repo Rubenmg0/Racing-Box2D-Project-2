@@ -49,7 +49,6 @@ public:
 	Texture2D gameover;
 	Texture2D victory;
 	Texture2D defeat;
-
 	Text timerChrono;
 	Timer timer;
 	Texture2D chrono_base;

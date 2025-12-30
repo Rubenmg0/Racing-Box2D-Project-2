@@ -314,6 +314,12 @@ update_status ModuleGame::Update()
 		}
 
 		if (IsKeyPressed(KEY_J)) completedLaps = 2, nextCheckpointRequired = totalCheckpoints;
+		if (IsKeyPressed(KEY_K))
+		{
+			playerWon = false; 
+			raceStarted = false; 
+			App->menu->ChangeScreen(GameScreen::GAMEOVER); 
+		}
 		break;
 	case GameScreen::GAMEOVER:
 
@@ -326,6 +332,7 @@ update_status ModuleGame::Update()
 			mapLoad = false;
 			raceStarted = false;
 			completedLaps = 0;
+			playerWon = false;
 			nextCheckpointRequired = 0;
 			semaphoreState = 0;
 			semaphoreTimer = 0.0f;
@@ -476,6 +483,14 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 				//If you have completed all the laps
 				//If you have completed all the laps
 				if (completedLaps >= totalLaps) {
+					if (car == playerCar->body)
+					{
+						playerWon = true; 
+					}
+					else
+					{
+						playerWon = false; 
+					}
 				
 					App->menu->ChangeScreen(GameScreen::GAMEOVER);
 				}

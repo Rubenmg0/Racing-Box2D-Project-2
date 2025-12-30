@@ -153,15 +153,33 @@ update_status ModuleRender::PostUpdate()
 
 		timer.Stop();
 		DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLACK);
-		Vector2 position = { 0, 0 };
+		if (App->scene_intro->playerWon)
+		{
+			gameover = victory;
+			Vector2 position = { 0, 0 };
+			float rotation = 0.0f;
+			float scale = 1.8f;
+			DrawTextureEx(gameover, position, rotation, scale, WHITE);
+			float margin = 16.0f;
+			float boxX = margin;
 
-		float rotation = 0.0f;
-		float scale = 1.8f;
-		DrawTextureEx(gameover, position, rotation, scale, WHITE);
-		float margin = 16.0f;    
-		float boxX = margin;
+			DrawTextureEx(chrono_base2, { boxX, 560 }, 0.0f, 0.9, WHITE);
+		}
+		else
+		{
+			gameover = defeat;
+			Vector2 position = { 0, 0 };
+			float rotation = 0.0f;
+			float scale = 1.8f;
+			DrawTextureEx(gameover, position, rotation, scale, WHITE);
+			float margin = 16.0f;
+			float boxX = margin;
 
-		DrawTextureEx(chrono_base2, { boxX, 560 }, 0.0f, 0.9, WHITE);
+			DrawTextureEx(chrono_base2, { boxX, 560 }, 0.0f, 0.9, WHITE);
+		}
+		
+
+		
 
 		double totalSeconds = timer.ReadSec();
 
