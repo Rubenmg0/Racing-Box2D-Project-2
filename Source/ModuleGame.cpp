@@ -350,12 +350,6 @@ update_status ModuleGame::Update()
 			}
 		}
 
-		if (IsKeyPressed(KEY_K))
-		{
-			playerWon = false;
-			raceStarted = false;
-			App->menu->ChangeScreen(GameScreen::GAMEOVER);
-		}
 
 		break;
 	case GameScreen::GAMEOVER:
@@ -547,7 +541,7 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 					{
 						(*pCurrentLap)++;
 						*pNextCheckpoint = 1; 
-						if (entity == playerCar)
+						if (*pCurrentLap > completedLaps)
 						{
 							completedLaps = *pCurrentLap;
 						}
