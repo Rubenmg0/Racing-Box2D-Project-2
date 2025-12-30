@@ -317,8 +317,23 @@ update_status ModuleGame::Update()
 		break;
 	case GameScreen::GAMEOVER:
 
-		for (const auto entity : entities) {
+		if (IsKeyPressed(KEY_SPACE))
+		{
+			for (auto& entity : entities) delete entity;
+			entities.clear();
+			playerCar = nullptr;
 
+			mapLoad = false;
+			raceStarted = false;
+			completedLaps = 0;
+			nextCheckpointRequired = 0;
+			semaphoreState = 0;
+			semaphoreTimer = 0.0f;
+
+			App->map->CleanUp();
+			App->menu->Enable();
+			App->menu->pendingChange = true;
+			App->menu->nextScreenToLoad = GameScreen::MENU;
 		}
 		break;
 	default:
@@ -336,21 +351,22 @@ update_status ModuleGame::Update()
 	vec2f normal(0.0f, 0.0f);
 
 	// All draw functions ------------------------------------------------------
-
-	for (PhysicEntity* entity : entities)
+	if (App->menu->currentScreen == GameScreen::GAME || App->menu->currentScreen == GameScreen::GAMEOVER)
 	{
-		entity->Update();
-		entity->Draw();
-		if (ray_on)
+		for (PhysicEntity* entity : entities)
 		{
-			int hit = entity->RayHit(ray, mouse, normal);
-			if (hit >= 0)
+			entity->Update();
+			entity->Draw();
+			if (ray_on)
 			{
-				ray_hit = hit;
+				int hit = entity->RayHit(ray, mouse, normal);
+				if (hit >= 0)
+				{
+					ray_hit = hit;
+				}
 			}
 		}
 	}
-
 	if (App->menu->currentScreen == GameScreen::GAME)
 	{
 		EndMode2D();

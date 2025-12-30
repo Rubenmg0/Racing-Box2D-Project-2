@@ -152,13 +152,16 @@ update_status ModuleRender::PostUpdate()
 	case GameScreen::GAMEOVER:
 
 		timer.Stop();
+		DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLACK);
+		Vector2 position = { 0, 0 };
 
-		Vector2 position = { 0, 0};
 		float rotation = 0.0f;
 		float scale = 1.8f;
+		DrawTextureEx(gameover, position, rotation, scale, WHITE);
+		float margin = 16.0f;    
+		float boxX = margin;
 
-
-		DrawTextureEx(chrono_base2, { 20, 360 }, 0.0f, 0.85f, WHITE);
+		DrawTextureEx(chrono_base2, { boxX, 560 }, 0.0f, 0.9, WHITE);
 
 		double totalSeconds = timer.ReadSec();
 
@@ -186,8 +189,8 @@ update_status ModuleRender::PostUpdate()
 		const char* formTime = TextFormat("Your time: %02d:%02d.%02d", minutes, seconds, centiseconds);
 		const char* formBestTime = TextFormat("Best time: %02d:%02d.%02d", bestTime[0], bestTime[1], bestTime[2]);
 
-		timerChrono.Draw(68, 430, formTime, GREEN, 20);
-		timerChrono.Draw(70, 500, formBestTime, RED, 20);
+		timerChrono.Draw(68, 680, formTime, GREEN, 20);
+		timerChrono.Draw(70, 750, formBestTime, RED, 20);
 
 		break;
 	}
